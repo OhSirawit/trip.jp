@@ -369,13 +369,6 @@
                     <div class="border-t border-slate-100 my-1"></div>
 
                     <li>
-                        <a href="https://script.google.com/macros/s/AKfycbzH3FzyMfwdGMaFSbYxImhyx1N5lV2aJKxmUebaq2ZFnXZzbtEdy8yx0YVtlo-d13oU/exec" target="_blank" onclick="toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3">
-                            <i class="fas fa-file-invoice-dollar w-4 text-[#D4AF37]"></i> Pre-Trip Expenses
-                        </a>
-                    </li>
-                    <div class="border-t border-slate-100 my-1"></div>
-
-                    <li>
                         <button onclick="switchPage('taxrefund'); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3">
                             <i class="fas fa-tag w-4 text-[#D9383A]"></i> Tax-Refund
                         </button>
@@ -1401,6 +1394,11 @@
                 ...limits
             };
 
+            // แนบ API Key ส่งไป Google Sheet ด้วย (ถ้ามีค่า)
+            if (apiKeyInput && apiKeyInput.value.trim() !== '') {
+                settingsPayload['GeminiAPIKey'] = apiKeyInput.value.trim();
+            }
+
             Object.keys(catLimits).forEach(cat => {
                 settingsPayload['CatLimit_' + cat] = catLimits[cat];
             });
@@ -1463,6 +1461,13 @@
                 PaymentMethodsOrder: Object.keys(limits).join(','),
                 ...limits
             };
+            
+            // แนบ API Key ไปเซฟด้วย 
+            const apiKeyInput = document.getElementById('gemini-api-key-input');
+            if (apiKeyInput && apiKeyInput.value.trim() !== '') {
+                settingsPayload['GeminiAPIKey'] = apiKeyInput.value.trim();
+            }
+
             Object.keys(catLimits).forEach(cat => {
                 settingsPayload['CatLimit_' + cat] = catLimits[cat];
             });
@@ -2442,7 +2447,7 @@
                             }
                         }
 
-                        const limits = getPaymentLimits();
+                        let limits = getPaymentLimits();
                         const loadedCatLimits = {};
                         let updatedLimits = false;
                         let updatedCatLimits = false;
