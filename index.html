@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyTrip Expense Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- เพิ่ม Chart.js สำหรับวาดกราฟ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background-color: #f6f7f9;
+        }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: #f6f7f9;
+            position: relative;
+            padding-bottom: 90px; /* Space for bottom nav */
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+        .dashboard-card {
+            background: linear-gradient(135deg, #1e2532 0%, #161b26 100%);
+            overflow: hidden;
+        }
+        .circle-accent {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 120px;
+            height: 120px;
+            background-color: #ef4444; /* red-500 */
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="app-container no-scrollbar overflow-y-auto">
+
+        <!-- Top Header -->
+        <header class="flex justify-between items-center p-5 pt-6">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white shadow-md shadow-red-200">
+                    <i class="fa-solid fa-plane transform -rotate-45 text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">MyTrip</h1>
+                    <p class="text-xs text-slate-500">Japan27</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="w-9 h-9 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center text-emerald-500">
+                    <i class="fa-solid fa-circle-dot text-xs"></i>
+                </button>
+                <button class="w-9 h-9 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center text-slate-600">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                
+                <!-- Dropdown Menu Container -->
+                <div class="relative" id="menuBtnContainer">
+                    <button onclick="toggleMenu()" class="w-9 h-9 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center text-slate-600 focus:outline-none transition hover:bg-slate-50">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    
+                    <!-- Dropdown Content -->
+                    <div id="topMenuDropdown" class="hidden absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] py-2 origin-top-right">
+                        <a href="#" onclick="editBudget(); document.getElementById('topMenuDropdown').classList.add('hidden'); return false;" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                            <i class="fa-solid fa-gear text-slate-400 w-5 text-center"></i> Settings & Limits
+                        </a>
+                        <a href="#" onclick="editApiKey(); document.getElementById('topMenuDropdown').classList.add('hidden'); return false;" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                            <i class="fa-solid fa-key text-blue-500 w-5 text-center"></i> API Key Setup
+                        </a>
+                        <a href="#" onclick="editCloudUrl(); document.getElementById('topMenuDropdown').classList.add('hidden'); return false;" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                            <i class="fa-brands fa-google-drive text-emerald-500 w-5 text-center"></i> Google Cloud Sync
+                        </a>
+                        <a href="#" onclick="switchView('Stats'); document.getElementById('topMenuDropdown').classList.add('hidden'); return false;" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                            <i class="fa-solid fa-chart-pie text-red-600 w-5 text-center"></i> Analytics
+                        </a>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                            <i class="fa-solid fa-file-invoice-dollar text-yellow-500 w-5 text-center"></i> Pre-Trip Expenses
+                        </a>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                            <i class="fa-solid fa-tag text-red-600 w-5 text-center"></i> Tax-Refund
+                        </a>
+                        <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                            <i class="fa-solid fa-box-open text-slate-600 w-5 text-center"></i> Pre-Orders
+                        </a>
+                        <a href="#" onclick="exportToExcel(); return false;" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                            <i class="fa-solid fa-file-export text-emerald-600 w-5 text-center"></i> Export to Excel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Card -->
+        <div class="px-5 mb-6">
+            <div class="dashboard-card rounded-[2rem] p-6 relative shadow-lg text-white">
+                <div class="circle-accent"></div>
+                
+                <div class="relative z-10 flex justify-between items-start mb-2">
+                    <p class="text-xs font-semibold text-slate-300 tracking-wider">CASH BALANCE</p>
+                    <p class="text-[10px] text-slate-400">Last Updated : <span id="lastUpdateTime">--:--</span></p>
+                </div>
+                
+                <div class="relative z-10 flex items-baseline gap-2 mb-6">
+                    <h2 id="displayBalance" class="text-4xl font-bold tracking-tight">0</h2>
+                    <span class="text-sm font-semibold text-slate-300">JPY</span>
+                </div>
+
+                <div class="relative z-10">
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-700 h-1.5 rounded-full mb-3 overflow-hidden">
+                        <div id="budgetProgress" class="bg-teal-400 h-full rounded-full" style="width: 0%;"></div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center text-xs font-medium">
+                        <p class="text-slate-300">Spent: <span id="displaySpent" class="text-white font-bold">0</span></p>
+                        <p class="text-slate-300 flex items-center gap-1">
+                            Budget: <span id="displayBudget" class="text-white font-bold">150,000</span>
+                            <button onclick="editBudget()" class="w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center text-[10px] ml-1">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Toast -->
+        <div id="toastBox" class="hidden mx-5 mb-4 p-3 rounded-xl text-sm font-bold transition-all duration-300 shadow-md text-white bg-emerald-500 text-center">
+            Saved Successfully!
+        </div>
+
+        <!-- Views Container -->
+        <div id="viewAdd" class="block">
+            <!-- Add Expense Form -->
+            <div class="px-5">
+                <div class="bg-white rounded-[2rem] p-6 shadow-sm">
+                    
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-white">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg leading-tight">Add New Expense</h3>
+                            <p class="text-xs text-slate-400">Please fill in all details</p>
+                        </div>
+                    </div>
+
+                    <form id="expenseForm" onsubmit="saveTransaction(event)">
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1.5"><i class="fa-regular fa-calendar text-red-500"></i> Date <span class="text-red-500">*</span></label>
+                                <input type="date" id="transDate" required class="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-700 focus:outline-none focus:border-slate-400 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1.5"><i class="fa-solid fa-tag text-red-500"></i> Category <span class="text-red-500">*</span></label>
+                                <select id="transCategory" class="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-700 focus:outline-none focus:border-slate-400 bg-white appearance-none">
+                                    <optgroup label="EXPENSES">
+                                        <option value="Food & Dining">🍱 Food & Dining</option>
+                                        <option value="Transport">🚆 Transport</option>
+                                        <option value="Beverage / Dessert">☕ Beverage / Dessert</option>
+                                        <option value="Shopping">🛍️ Shopping</option>
+                                        <option value="Admission">🎟️ Admission</option>
+                                        <option value="Top up IC Card">💳 Top up IC Card</option>
+                                        <option value="Pre-Order">📦 Pre-Order</option>
+                                        <option value="Gasoline">⛽ Gasoline</option>
+                                        <option value="Toll / ETC">🛣️ Toll / ETC</option>
+                                        <option value="Others">✨ Others</option>
+                                    </optgroup>
+                                    <optgroup label="REFUND / ADVANCE">
+                                        <option value="Tax Refund">💰 Tax Refund</option>
+                                        <option value="Advanced">⏳ Advanced</option>
+                                        <option value="Adjustment">⚙️ Adjustment</option>
+                                        <option value="Refund Pre-Order">↩️ Refund Pre-Order</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Amount Details Box -->
+                        <div class="border border-slate-100 rounded-[1.5rem] p-4 mb-4 relative shadow-sm">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="text-xs font-bold text-red-500"><i class="fa-solid fa-coins"></i> Amount Details</h4>
+                                <span class="text-[10px] font-bold text-slate-400">CURRENCY: JPY</span>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Amount (Calc) <span class="text-red-500">*</span></label>
+                                <input type="text" id="transAmountCalc" required placeholder="e.g. 1500+250" class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 text-lg font-bold text-slate-700 focus:outline-none focus:border-slate-400 bg-white shadow-inner">
+                                <p id="calcPreview" class="text-xs font-bold text-emerald-500 mt-1 hidden">= 0 JPY</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Payment Method</label>
+                                <select id="transPayment" class="w-full px-4 py-3 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-700 focus:outline-none focus:border-slate-400 bg-white appearance-none">
+                                    <option value="Cash">💵 Cash</option>
+                                    <option value="JCB : Thida">💳 JCB : Thida</option>
+                                    <option value="JCB : Oh">💳 JCB : Oh</option>
+                                    <option value="Travel Card">💳 Travel Card</option>
+                                    <option value="IC Card">🪪 IC Card</option>
+                                    <option value="QR Payment">📲 QR Payment</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-[11px] font-bold text-slate-600 mb-1.5"><i class="fa-regular fa-pen-to-square text-red-500"></i> Note / Details <span class="text-red-500">*</span></label>
+                            <input type="text" id="transNote" required placeholder="What did you buy?" class="w-full px-4 py-3.5 rounded-2xl border border-slate-200 text-sm font-semibold text-slate-700 focus:outline-none focus:border-slate-400 bg-white">
+                        </div>
+
+                        <!-- Quick Tags -->
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            <button type="button" onclick="addTag('7-Eleven')" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-500 bg-white hover:bg-slate-50">7-Eleven</button>
+                            <button type="button" onclick="addTag('Lawson')" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-500 bg-white hover:bg-slate-50">Lawson</button>
+                            <button type="button" onclick="addTag('FamilyMart')" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-500 bg-white hover:bg-slate-50">FamilyMart</button>
+                            <button type="button" onclick="addTag('Ramen')" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-500 bg-white hover:bg-slate-50">Ramen</button>
+                            <button type="button" onclick="addTag('Yakiniku')" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-500 bg-white hover:bg-slate-50">Yakiniku</button>
+                            <button type="button" onclick="addTag('Water/Drink')" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-500 bg-white hover:bg-slate-50">Water/Drink</button>
+                        </div>
+
+                        <!-- Action Buttons Grid -->
+                        <div class="grid grid-cols-2 gap-3 mb-6">
+                            <!-- AI Receipt Upload -->
+                            <label id="receiptUploadBtn" class="cursor-pointer flex flex-col items-center justify-center py-3 rounded-2xl border-2 border-dashed border-slate-300 text-slate-500 hover:bg-slate-50 transition relative overflow-hidden">
+                                <div id="receiptNormalState" class="flex items-center gap-2 text-sm font-bold">
+                                    <i class="fa-regular fa-image"></i> Add Receipt
+                                </div>
+                                <div id="receiptLoadingState" class="hidden flex items-center gap-2 text-xs font-bold text-indigo-500">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Scanning AI...
+                                </div>
+                                <img id="receiptPreviewImg" class="hidden absolute inset-0 w-full h-full object-cover opacity-30">
+                                <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                                <input type="hidden" id="transReceiptBase64">
+                            </label>
+                            
+                            <!-- Dummy Buttons for UI -->
+                            <button type="button" class="flex items-center justify-center gap-2 py-3 rounded-2xl border border-slate-200 text-sm font-bold text-slate-800 hover:bg-slate-50">
+                                <i class="fa-solid fa-square-check text-slate-800"></i> SAVE GPS
+                            </button>
+                            <button type="button" class="flex items-center justify-center gap-2 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-sm font-bold text-slate-400 cursor-not-allowed">
+                                <i class="fa-solid fa-users"></i> SHARED
+                            </button>
+                            <button type="button" class="flex items-center justify-center gap-2 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-sm font-bold text-slate-400 cursor-not-allowed">
+                                <i class="fa-solid fa-tag"></i> TAX-REFUND
+                            </button>
+                        </div>
+
+                        <button type="submit" class="w-full bg-[#d63d3d] hover:bg-red-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-red-200 transition text-base flex justify-center items-center gap-2">
+                            Save Expense <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- History View -->
+        <div id="viewHistory" class="hidden px-5 pb-5">
+            <div class="bg-white rounded-[2rem] p-6 shadow-sm min-h-[400px]">
+                <h3 class="font-bold text-lg mb-4 flex items-center justify-between">
+                    <span>Recent History</span>
+                    <span id="historyCount" class="text-xs font-semibold bg-slate-100 px-2 py-1 rounded-lg text-slate-500">0 items</span>
+                </h3>
+                <div id="historyList" class="space-y-4">
+                    <!-- Items render here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats View -->
+        <div id="viewStats" class="hidden pb-10">
+            <!-- Header Analytics -->
+            <div class="px-5 pt-4 pb-2 flex justify-between items-center sticky top-0 bg-[#f6f7f9]/90 backdrop-blur-md z-40">
+                <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Analytics</h2>
+            </div>
+
+            <div class="px-5 space-y-4" id="statsContainer">
+                <!-- Summary Card -->
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Spent</span>
+                        <span class="text-sm font-bold text-slate-800" id="statTotalSpent">0 JPY</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-xs font-bold text-emerald-500 uppercase tracking-wider">Refunds</span>
+                        <span class="text-sm font-bold text-emerald-500" id="statTotalRefund">0 JPY</span>
+                    </div>
+                    <div class="border-t border-slate-100 pt-4">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Net Spending</span>
+                        <div class="text-4xl font-extrabold text-slate-800 tracking-tight" id="statNetSpend">0</div>
+                    </div>
+                </div>
+
+                <!-- Settlement Banner -->
+                <div class="bg-[#1e2532] rounded-2xl p-4 flex items-center justify-between shadow-md">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center text-red-500">
+                            <i class="fa-solid fa-handshake"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold text-sm">Settlement</h4>
+                            <p class="text-slate-400 text-[10px]">Shared Expense Settlement</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-500"></i>
+                </div>
+
+                <!-- 4 Grid Metrics -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border-l-4 border-red-500">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Days</p>
+                        <p class="text-xl font-bold text-slate-800" id="statDays">0</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border-l-4 border-indigo-500">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Avg / Day</p>
+                        <p class="text-xl font-bold text-slate-800"><span id="statAvgDay">0</span> <span class="text-[10px] text-slate-400">JPY</span></p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border-l-4 border-orange-500">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Top Category</p>
+                        <p class="text-xl font-bold text-slate-800 truncate" id="statTopCat">-</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border-l-4 border-emerald-500">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Max Spend / Day</p>
+                        <p class="text-xl font-bold text-slate-800"><span id="statMaxDay">0</span> <span class="text-[10px] text-slate-400">JPY</span></p>
+                    </div>
+                </div>
+
+                <!-- By Payment -->
+                <div>
+                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 mt-2">By Payment</h3>
+                    <div class="grid grid-cols-2 gap-3" id="paymentGrid">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Trend Chart -->
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 mt-4">
+                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4 text-center">Daily Spending Trend</h3>
+                    <div class="w-full h-40">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Category Chart -->
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4 text-center">Category Overview</h3>
+                    <div class="w-full h-48 relative flex justify-center mb-6">
+                        <canvas id="catChart"></canvas>
+                    </div>
+                    <div id="catList" class="space-y-4">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Daily Focus -->
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Daily Focus</h3>
+                        <select id="dailyFocusSelect" onchange="renderDailyFocus()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-semibold text-slate-600 outline-none">
+                            <!-- Options by JS -->
+                        </select>
+                    </div>
+                    <div class="w-full h-40 relative flex justify-center mb-4">
+                        <canvas id="dailyFocusChart"></canvas>
+                    </div>
+                    <div id="dailyFocusList" class="space-y-3">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Top 5 Expenses -->
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4 text-center">Top 5 Highest Expenses</h3>
+                    <div id="top5List" class="space-y-4">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Daily Log -->
+                <div>
+                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 mt-4">Daily Log</h3>
+                    <div id="dailyLogList" class="space-y-3">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+                
+                <!-- Bottom padding space -->
+                <div class="h-6"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-[480px] bg-white border-t border-slate-100 rounded-t-3xl shadow-[0_-10px_20px_rgba(0,0,0,0.02)] z-50">
+            <div class="flex justify-between items-end px-8 pb-3 pt-3 relative">
+                <!-- Add -->
+                <button onclick="switchView('Add')" id="navAdd" class="nav-btn flex flex-col items-center justify-center w-12 text-red-500 transition">
+                    <i class="fa-solid fa-plus text-xl mb-1.5"></i>
+                    <span class="text-[9px] font-bold uppercase tracking-wider">Add</span>
+                </button>
+
+                <!-- History (Center FAB) -->
+                <div class="relative flex flex-col items-center justify-end w-16 h-8">
+                    <button onclick="switchView('History')" class="absolute -top-9 w-[60px] h-[60px] bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.08)] flex items-center justify-center border border-slate-50 transition transform hover:scale-105 z-10">
+                        <!-- AI Sparkle Icon -->
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#FF512F" />
+                                    <stop offset="100%" stop-color="#DD2476" />
+                                </linearGradient>
+                                <linearGradient id="grad2" x1="100%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#4776E6" />
+                                    <stop offset="100%" stop-color="#8E54E9" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M12 0L13.5 8.5L22 10L13.5 11.5L12 20L10.5 11.5L2 10L10.5 8.5L12 0Z" fill="url(#grad1)"/>
+                            <path d="M12 4L12.75 9.25L18 10L12.75 10.75L12 16L11.25 10.75L6 10L11.25 9.25L12 4Z" fill="url(#grad2)"/>
+                        </svg>
+                    </button>
+                    <span id="navHistoryText" class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mt-auto">History</span>
+                </div>
+
+                <!-- Stats -->
+                <button onclick="switchView('Stats')" id="navStats" class="nav-btn flex flex-col items-center justify-center w-12 text-slate-400 hover:text-slate-600 transition">
+                    <i class="fa-solid fa-chart-pie text-xl mb-1.5"></i>
+                    <span class="text-[9px] font-bold uppercase tracking-wider">Stats</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Receipt Modal Viewer -->
+        <div id="receiptModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4" onclick="closeModal()">
+            <div class="relative max-w-sm w-full" onclick="event.stopPropagation()">
+                <button onclick="closeModal()" class="absolute -top-10 right-0 text-white hover:text-red-400 text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <img id="modalImage" src="" alt="Full Receipt" class="w-full rounded-2xl">
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // State
+        let transactions = JSON.parse(localStorage.getItem('mytrip_transactions')) || [];
+        let budget = parseFloat(localStorage.getItem('mytrip_budget')) || 150000;
+        let currentView = 'Add';
+
+        // Init
+        window.onload = function() {
+            document.getElementById('transDate').valueAsDate = new Date();
+            updateTime();
+            setInterval(updateTime, 60000);
+            renderDashboard();
+            renderHistory();
+            
+            // Calc Preview logic
+            const calcInput = document.getElementById('transAmountCalc');
+            const calcPreview = document.getElementById('calcPreview');
+            
+            calcInput.addEventListener('input', function() {
+                try {
+                    // Safe basic evaluation for numbers and math operators
+                    const sanitized = this.value.replace(/[^0-9+\-*/.]/g, '');
+                    if (sanitized) {
+                        const result = Function('"use strict";return (' + sanitized + ')')();
+                        if (!isNaN(result) && isFinite(result)) {
+                            calcPreview.textContent = `= ${result.toLocaleString()} JPY`;
+                            calcPreview.classList.remove('hidden');
+                        } else {
+                            calcPreview.classList.add('hidden');
+                        }
+                    } else {
+                        calcPreview.classList.add('hidden');
+                    }
+                } catch (e) {
+                    calcPreview.classList.add('hidden');
+                }
+            });
+        };
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('lastUpdateTime').innerText = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        // Toggle Top Menu
+        function toggleMenu() {
+            document.getElementById('topMenuDropdown').classList.toggle('hidden');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menuContainer = document.getElementById('menuBtnContainer');
+            if (menuContainer && !menuContainer.contains(event.target)) {
+                document.getElementById('topMenuDropdown').classList.add('hidden');
+            }
+        });
+
+        // Quick Tag
+        function addTag(tag) {
+            const noteInput = document.getElementById('transNote');
+            if (noteInput.value) {
+                noteInput.value += ` - ${tag}`;
+            } else {
+                noteInput.value = tag;
+            }
+        }
+
+        // View Switching
+        function switchView(viewName) {
+            currentView = viewName;
+            
+            // Hide all
+            document.getElementById('viewAdd').classList.add('hidden');
+            document.getElementById('viewHistory').classList.add('hidden');
+            document.getElementById('viewStats').classList.add('hidden');
+            
+            // Show selected
+            document.getElementById(`view${viewName}`).classList.remove('hidden');
+            
+            // Update Nav Styles
+            ['Add', 'Stats'].forEach(v => {
+                const btn = document.getElementById(`nav${v}`);
+                if (v === viewName) {
+                    btn.classList.add('text-red-500');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    btn.classList.add('text-slate-400');
+                    btn.classList.remove('text-red-500');
+                }
+            });
+
+            // Update History Text Color
+            const historyText = document.getElementById('navHistoryText');
+            if (viewName === 'History') {
+                historyText.classList.add('text-red-500');
+                historyText.classList.remove('text-slate-400');
+            } else {
+                historyText.classList.add('text-slate-400');
+                historyText.classList.remove('text-red-500');
+            }
+
+            if (viewName === 'History') renderHistory();
+            if (viewName === 'Stats') renderStats(); // โหลดกราฟเมื่อกดเข้ามาหน้า Analytics
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Edit Budget
+        function editBudget() {
+            const newBudget = prompt("Enter new budget (JPY):", budget);
+            if (newBudget !== null && !isNaN(newBudget) && newBudget > 0) {
+                budget = parseFloat(newBudget);
+                localStorage.setItem('mytrip_budget', budget);
+                renderDashboard();
+            }
+        }
+
+        // Edit API Key
+        function editApiKey() {
+            const currentKey = localStorage.getItem('gemini_api_key') || '';
+            const newKey = prompt("Please enter your Gemini API Key (Get it free at aistudio.google.com):", currentKey);
+            if (newKey !== null) {
+                localStorage.setItem('gemini_api_key', newKey.trim());
+                alert("API Key saved securely in your browser!");
+            }
+        }
+
+        // Edit Cloud Sync URL
+        function editCloudUrl() {
+            const currentUrl = localStorage.getItem('mytrip_gas_url') || 'https://script.google.com/macros/s/AKfycbyX4hhigLpAybmL904t3Y7ytWsJLT5yguZY_bsnCHjfQ4oT3yDjSqTOSwVRSnoCGBqy/exec';
+            const newUrl = prompt("Please enter your Google Apps Script Web App URL (ลงท้ายด้วย /exec):", currentUrl);
+            if (newUrl !== null) {
+                localStorage.setItem('mytrip_gas_url', newUrl.trim());
+                alert("Cloud Sync URL saved! ข้อมูลจะถูกซิงค์ขึ้น Google Sheet อัตโนมัติเมื่อกดบันทึก");
+            }
+        }
+
+        // Save Transaction
+        function saveTransaction(event) {
+            event.preventDefault();
+            
+            const date = document.getElementById('transDate').value;
+            const category = document.getElementById('transCategory').value;
+            const payment = document.getElementById('transPayment').value;
+            const note = document.getElementById('transNote').value;
+            const receiptBase64 = document.getElementById('transReceiptBase64').value;
+            
+            let amount = 0;
+            const calcRaw = document.getElementById('transAmountCalc').value;
+            try {
+                const sanitized = calcRaw.replace(/[^0-9+\-*/.]/g, '');
+                amount = Function('"use strict";return (' + sanitized + ')')();
+            } catch (e) {
+                alert("Invalid amount calculation.");
+                return;
+            }
+
+            if (isNaN(amount) || amount <= 0) {
+                alert("Amount must be greater than 0");
+                return;
+            }
+
+            const item = { id: Date.now(), date, category, amount, payment, note, receiptBase64 };
+            transactions.unshift(item);
+            localStorage.setItem('mytrip_transactions', JSON.stringify(transactions));
+            
+            // --- NEW: Sync to Google Cloud ---
+            const scriptUrl = localStorage.getItem('mytrip_gas_url') || 'https://script.google.com/macros/s/AKfycbyX4hhigLpAybmL904t3Y7ytWsJLT5yguZY_bsnCHjfQ4oT3yDjSqTOSwVRSnoCGBqy/exec';
+            if (scriptUrl) {
+                const submitBtn = document.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing to Cloud...';
+                submitBtn.disabled = true;
+
+                let mimeType = 'image/jpeg';
+                if (receiptBase64 && receiptBase64.startsWith('data:')) {
+                    mimeType = receiptBase64.substring(5, receiptBase64.indexOf(';'));
+                }
+
+                const payload = {
+                    date: date,
+                    category: category,
+                    amount: amount,
+                    payment: payment,
+                    note: note,
+                    receiptBase64: receiptBase64,
+                    mimeType: mimeType
+                };
+
+                // ใช้ fetch โยนข้อมูลไปที่ Apps Script
+                fetch(scriptUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                }).then(() => {
+                    console.log('✅ Synced to Google Cloud');
+                }).catch(e => {
+                    console.error('❌ Cloud Sync Error', e);
+                }).finally(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
+            }
+            // ---------------------------------
+
+            // Reset form
+            document.getElementById('expenseForm').reset();
+            document.getElementById('transDate').valueAsDate = new Date();
+            document.getElementById('transReceiptBase64').value = '';
+            document.getElementById('calcPreview').classList.add('hidden');
+            
+            // Reset Receipt UI
+            document.getElementById('receiptPreviewImg').classList.add('hidden');
+            document.getElementById('receiptPreviewImg').src = '';
+            document.getElementById('receiptUploadBtn').classList.remove('border-indigo-400', 'bg-indigo-50');
+
+            renderDashboard();
+            showToast();
+            switchView('History');
+        }
+
+        // Render Dashboard
+        function renderDashboard() {
+            let spent = transactions.reduce((sum, tx) => sum + tx.amount, 0);
+            let balance = budget - spent;
+            
+            document.getElementById('displayBalance').innerText = balance.toLocaleString();
+            document.getElementById('displaySpent').innerText = spent.toLocaleString();
+            document.getElementById('displayBudget').innerText = budget.toLocaleString();
+            
+            let percent = (spent / budget) * 100;
+            if (percent > 100) percent = 100;
+            document.getElementById('budgetProgress').style.width = `${percent}%`;
+            
+            if (percent > 90) {
+                document.getElementById('budgetProgress').classList.replace('bg-teal-400', 'bg-red-500');
+            } else {
+                document.getElementById('budgetProgress').classList.replace('bg-red-500', 'bg-teal-400');
+            }
+        }
+
+        // Render History
+        function renderHistory() {
+            const listEl = document.getElementById('historyList');
+            document.getElementById('historyCount').innerText = `${transactions.length} items`;
+            
+            if (transactions.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-10 text-slate-400 text-sm">No expenses recorded yet.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = '';
+            transactions.forEach((tx, index) => {
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-slate-50";
+                
+                // Get Icon based on category
+                let icon = "fa-tag";
+                if(tx.category.includes("Food")) icon = "fa-utensils";
+                else if(tx.category.includes("Transport")) icon = "fa-train";
+                else if(tx.category.includes("Beverage")) icon = "fa-mug-hot";
+                else if(tx.category.includes("Shopping")) icon = "fa-bag-shopping";
+                else if(tx.category.includes("Admission")) icon = "fa-ticket";
+                else if(tx.category.includes("Gasoline")) icon = "fa-gas-pump";
+                else if(tx.category.includes("Toll")) icon = "fa-road";
+                else if(tx.category.includes("Refund") || tx.category.includes("Advanced") || tx.category.includes("Adjustment")) icon = "fa-money-bill-transfer";
+                else if(tx.category.includes("IC Card")) icon = "fa-id-card";
+                else if(tx.category.includes("Pre-Order")) icon = "fa-box";
+
+                div.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-600 shrink-0 text-lg">
+                            <i class="fa-solid ${icon}"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-slate-800 text-sm truncate">${escapeHtml(tx.note)}</h4>
+                            <p class="text-[10px] text-slate-500 font-semibold mt-0.5">${tx.date} • ${tx.payment}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end shrink-0 pl-2">
+                        <span class="font-bold text-slate-800">- ${tx.amount.toLocaleString()} JPY</span>
+                        <div class="flex gap-2 mt-1">
+                            ${tx.receiptBase64 ? `<button onclick="openModal('${tx.receiptBase64}')" class="text-[10px] text-indigo-500 font-bold bg-indigo-50 px-2 py-0.5 rounded"><i class="fa-solid fa-receipt"></i> View</button>` : ''}
+                            <button onclick="deleteTx(${tx.id})" class="text-[10px] text-red-500 font-bold bg-red-50 px-2 py-0.5 rounded"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+                listEl.appendChild(div);
+            });
+        }
+
+        function deleteTx(id) {
+            if (confirm("Delete this expense?")) {
+                transactions = transactions.filter(t => t.id !== id);
+                localStorage.setItem('mytrip_transactions', JSON.stringify(transactions));
+                renderDashboard();
+                renderHistory();
+            }
+        }
+
+        // AI Receipt Scan (Gemini)
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64String = e.target.result;
+                const base64DataOnly = base64String.split(',')[1];
+                const mimeType = file.type;
+
+                // UI Loading State
+                document.getElementById('receiptNormalState').classList.add('hidden');
+                document.getElementById('receiptLoadingState').classList.remove('hidden');
+                document.getElementById('receiptUploadBtn').classList.add('border-indigo-400', 'bg-indigo-50');
+                
+                try {
+                    const extractedData = await callGeminiAI(base64DataOnly, mimeType);
+                    if (extractedData) {
+                        if (extractedData.note) document.getElementById('transNote').value = extractedData.note;
+                        if (extractedData.amount) {
+                            document.getElementById('transAmountCalc').value = extractedData.amount;
+                            document.getElementById('transAmountCalc').dispatchEvent(new Event('input')); // Trigger preview
+                        }
+                        if (extractedData.category) {
+                            // Try to match category
+                            const catSelect = document.getElementById('transCategory');
+                            for(let i=0; i<catSelect.options.length; i++){
+                                if(catSelect.options[i].value.includes(extractedData.category)) {
+                                    catSelect.selectedIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // Save image
+                        document.getElementById('transReceiptBase64').value = base64String;
+                        const previewImg = document.getElementById('receiptPreviewImg');
+                        previewImg.src = base64String;
+                        previewImg.classList.remove('hidden');
+                        
+                        document.getElementById('receiptLoadingState').innerHTML = `<i class="fa-solid fa-check text-emerald-500"></i> <span class="text-emerald-500">Scanned!</span>`;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Failed to scan receipt via AI.");
+                    document.getElementById('receiptNormalState').classList.remove('hidden');
+                    document.getElementById('receiptLoadingState').classList.add('hidden');
+                    document.getElementById('receiptUploadBtn').classList.remove('border-indigo-400', 'bg-indigo-50');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function callGeminiAI(base64Data, mimeType) {
+            const systemPrompt = "Extract receipt data and return ONLY a JSON object. Fields: note (Short store name or item), amount (numeric total, convert to JPY if possible, just the number), category (choose one: 'Food & Dining', 'Transport', 'Beverage / Dessert', 'Shopping', 'Admission', 'Top up IC Card', 'Pre-Order', 'Gasoline', 'Toll / ETC', 'Others').";
+            
+            const payload = {
+                contents: [{
+                    role: "user",
+                    parts: [
+                        { text: "Extract data from this receipt to JSON." },
+                        { inlineData: { mimeType: mimeType, data: base64Data } }
+                    ]
+                }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "note": { "type": "STRING" },
+                            "amount": { "type": "NUMBER" },
+                            "category": { "type": "STRING" }
+                        }
+                    }
+                },
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            // ดึง API Key จาก LocalStorage (เครื่องของผู้ใช้)
+            let apiKey = localStorage.getItem('gemini_api_key');
+            if (!apiKey) {
+                apiKey = prompt("⚠️ API Key Required\nPlease enter your Gemini API Key to use the AI Scanner.\n(Get a free key at aistudio.google.com)");
+                if (apiKey && apiKey.trim() !== '') {
+                    localStorage.setItem('gemini_api_key', apiKey.trim());
+                } else {
+                    throw new Error("API Key is required to use AI Scanner.");
+                }
+            }
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            const candidate = result.candidates?.[0];
+            if (candidate && candidate.content?.parts?.[0]?.text) {
+                return JSON.parse(candidate.content.parts[0].text);
+            }
+            return null;
+        }
+
+        // Modal
+        function openModal(base64Img) {
+            document.getElementById('modalImage').src = base64Img;
+            document.getElementById('receiptModal').classList.remove('hidden');
+        }
+        function closeModal() {
+            document.getElementById('receiptModal').classList.add('hidden');
+        }
+
+        // Toast
+        function showToast() {
+            const toast = document.getElementById('toastBox');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        function escapeHtml(text) {
+            return text ? text.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;") : '';
+        }
+
+        // Export to Excel (CSV format)
+        function exportToExcel() {
+            if (transactions.length === 0) {
+                alert("No expenses to export.");
+                return;
+            }
+            
+            document.getElementById('topMenuDropdown').classList.add('hidden');
+            
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // Add BOM for Excel to read UTF-8 properly
+            csvContent += "Date,Category,Payment Method,Amount (JPY),Note\n";
+            
+            transactions.forEach(tx => {
+                // Escape double quotes inside the note field
+                let safeNote = tx.note ? tx.note.replace(/"/g, '""') : "";
+                csvContent += `"${tx.date}","${tx.category}","${tx.payment}","${tx.amount}","${safeNote}"\n`;
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "MyTrip_Expenses.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ------------------ Analytics & Charts Logic ------------------
+        let chartTrend, chartCat, chartDailyFocus;
+
+        const chartColors = [
+            '#ef4444', '#eab308', '#f9a8d4', '#3b82f6', '#10b981', 
+            '#8b5cf6', '#f97316', '#14b8a6', '#64748b', '#ec4899'
+        ];
+
+        function getCategoryColor(index) {
+            return chartColors[index % chartColors.length];
+        }
+
+        function renderStats() {
+            if (!transactions || transactions.length === 0) {
+                document.getElementById('statsContainer').innerHTML = '<div class="text-center py-20 text-slate-400"><i class="fa-solid fa-chart-pie text-4xl mb-3"></i><p>No data to analyze yet.</p></div>';
+                return;
+            } else {
+                // Restore layout if it was empty (simplified for this context)
+                if(document.getElementById('statsContainer').innerHTML.includes('No data')) {
+                    location.reload(); // Simple way to restore DOM structure if user adds data later
+                }
+            }
+
+            // Calculations
+            let totalSpent = 0;
+            let totalRefund = 0;
+            let dailyTotals = {};
+            let categoryTotals = {};
+            let paymentTotals = {};
+
+            transactions.forEach(tx => {
+                const isRefund = tx.category.includes('Refund') || tx.category.includes('Adjustment') || tx.category.includes('Advanced');
+                
+                if (isRefund) {
+                    totalRefund += tx.amount;
+                } else {
+                    totalSpent += tx.amount;
+                    
+                    // Daily
+                    dailyTotals[tx.date] = (dailyTotals[tx.date] || 0) + tx.amount;
+                    
+                    // Category
+                    categoryTotals[tx.category] = (categoryTotals[tx.category] || 0) + tx.amount;
+                }
+
+                // Payment (count both spent and refund? usually just spending for metrics)
+                if(!isRefund) {
+                    paymentTotals[tx.payment] = (paymentTotals[tx.payment] || 0) + tx.amount;
+                }
+            });
+
+            let netSpending = totalSpent - totalRefund;
+            
+            // Dates processing
+            const sortedDates = Object.keys(dailyTotals).sort();
+            const totalDays = sortedDates.length;
+            const avgDay = totalDays > 0 ? (netSpending / totalDays) : 0;
+            const maxDayVal = totalDays > 0 ? Math.max(...Object.values(dailyTotals)) : 0;
+
+            // Categories sorting
+            const sortedCats = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
+            const topCat = sortedCats.length > 0 ? sortedCats[0][0].replace(/[^a-zA-Z\s&]/g, '').trim() : '-';
+
+            // 1. Update Top Summary
+            document.getElementById('statTotalSpent').innerText = `${totalSpent.toLocaleString()} JPY`;
+            document.getElementById('statTotalRefund').innerText = `${totalRefund.toLocaleString()} JPY`;
+            document.getElementById('statNetSpend').innerText = netSpending.toLocaleString();
+
+            // 2. Update 4 Grid Metrics
+            document.getElementById('statDays').innerText = totalDays;
+            document.getElementById('statAvgDay').innerText = Math.round(avgDay).toLocaleString();
+            document.getElementById('statTopCat').innerText = topCat;
+            document.getElementById('statMaxDay').innerText = Math.round(maxDayVal).toLocaleString();
+
+            // 3. By Payment
+            const payGrid = document.getElementById('paymentGrid');
+            payGrid.innerHTML = '';
+            // Pre-defined list to match design, plus dynamic ones
+            const commonPayments = ["Cash", "Travel Card", "JCB : Thida", "JCB : Oh", "IC Card", "QR Payment", "Credit Card"];
+            const allPayments = new Set([...commonPayments, ...Object.keys(paymentTotals)]);
+            
+            Array.from(allPayments).forEach(pay => {
+                const amt = paymentTotals[pay] || 0;
+                // If it's 0 and not in common, skip it to save space, otherwise show
+                if (amt === 0 && !commonPayments.includes(pay)) return;
+
+                payGrid.innerHTML += `
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col justify-between">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">${pay}</p>
+                        <p class="text-lg font-bold text-slate-800">${amt.toLocaleString()}</p>
+                        <p class="text-[10px] text-red-500 font-medium mt-1">Remain: --</p>
+                    </div>
+                `;
+            });
+
+            // 4. Trend Chart (Line)
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            if (chartTrend) chartTrend.destroy();
+            
+            const trendLabels = sortedDates.map(d => {
+                const parts = d.split('-');
+                return `${parts[1]}/${parts[2]}`; // MM/DD
+            });
+            const trendData = sortedDates.map(d => dailyTotals[d]);
+
+            chartTrend = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: trendLabels,
+                    datasets: [{
+                        label: 'Spending',
+                        data: trendData,
+                        borderColor: '#1e293b',
+                        backgroundColor: '#ef4444',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#ef4444',
+                        pointBorderColor: '#fff',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 10, family: 'Nunito' } } },
+                        y: { display: false, min: 0 }
+                    }
+                }
+            });
+
+            // 5. Category Chart (Doughnut) & List
+            const catCtx = document.getElementById('catChart').getContext('2d');
+            if (chartCat) chartCat.destroy();
+
+            const catLabels = sortedCats.map(c => c[0].replace(/[^a-zA-Z\s&]/g, '').trim());
+            const catData = sortedCats.map(c => c[1]);
+            const catColors = sortedCats.map((_, i) => getCategoryColor(i));
+
+            chartCat = new Chart(catCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: catLabels,
+                    datasets: [{
+                        data: catData,
+                        backgroundColor: catColors,
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            const catListEl = document.getElementById('catList');
+            catListEl.innerHTML = '';
+            sortedCats.forEach((cat, index) => {
+                const name = cat[0].replace(/[^a-zA-Z\s&]/g, '').trim();
+                const amt = cat[1];
+                const pct = ((amt / totalSpent) * 100).toFixed(1);
+                const color = getCategoryColor(index);
+                
+                catListEl.innerHTML += `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full" style="background-color: ${color}"></div>
+                            <div>
+                                <span class="font-bold text-slate-700 text-sm">${name}</span>
+                                <span class="text-xs text-slate-400 ml-1">(${pct}%)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-slate-800 text-sm">${amt.toLocaleString()} JPY</span>
+                    </div>
+                `;
+            });
+
+            // 6. Top 5 Highest Expenses
+            const top5ListEl = document.getElementById('top5List');
+            top5ListEl.innerHTML = '';
+            
+            // Exclude refunds, sort by amount desc
+            const spendingOnly = transactions.filter(tx => !(tx.category.includes('Refund') || tx.category.includes('Adjustment') || tx.category.includes('Advanced')));
+            const top5Tx = [...spendingOnly].sort((a, b) => b.amount - a.amount).slice(0, 5);
+            
+            top5Tx.forEach((tx, index) => {
+                const catName = tx.category.replace(/[^a-zA-Z\s&]/g, '').trim();
+                top5ListEl.innerHTML += `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 ${index===0 ? 'bg-red-100 text-red-500' : ''}">
+                                ${index + 1}
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-700 text-sm leading-tight">${catName}</p>
+                                <p class="text-[10px] text-slate-400 font-semibold">${tx.note || 'No note'}</p>
+                            </div>
+                        </div>
+                        <span class="font-bold ${index===0 ? 'text-red-500' : 'text-slate-800'} text-sm">${tx.amount.toLocaleString()} JPY</span>
+                    </div>
+                `;
+            });
+
+            // 7. Daily Log (Grouped by date)
+            const dailyLogEl = document.getElementById('dailyLogList');
+            dailyLogEl.innerHTML = '';
+            
+            // Sort dates descending
+            const datesDesc = [...sortedDates].reverse();
+            datesDesc.forEach(date => {
+                const parts = date.split('-');
+                const dayStr = parts[2];
+                const amt = dailyTotals[date] || 0;
+                
+                dailyLogEl.innerHTML += `
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold text-lg">
+                                ${dayStr}
+                            </div>
+                            <span class="text-sm font-bold text-slate-500">${date}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-slate-800">${amt.toLocaleString()} JPY</span>
+                            <i class="fa-solid fa-chevron-down text-slate-300 text-xs"></i>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Prepare Daily Focus Options
+            const focusSelect = document.getElementById('dailyFocusSelect');
+            focusSelect.innerHTML = '';
+            datesDesc.forEach(date => {
+                focusSelect.innerHTML += `<option value="${date}">${date}</option>`;
+            });
+            
+            // Render initial Daily Focus
+            if(datesDesc.length > 0) renderDailyFocus();
+        }
+
+        // 8. Daily Focus Render Logic
+        function renderDailyFocus() {
+            const selectedDate = document.getElementById('dailyFocusSelect').value;
+            const txsForDate = transactions.filter(tx => tx.date === selectedDate && !(tx.category.includes('Refund') || tx.category.includes('Adjustment') || tx.category.includes('Advanced')));
+            
+            let focusCatTotals = {};
+            let dailyTotal = 0;
+            txsForDate.forEach(tx => {
+                focusCatTotals[tx.category] = (focusCatTotals[tx.category] || 0) + tx.amount;
+                dailyTotal += tx.amount;
+            });
+
+            const sortedFocusCats = Object.entries(focusCatTotals).sort((a, b) => b[1] - a[1]);
+            
+            const focusCtx = document.getElementById('dailyFocusChart').getContext('2d');
+            if (chartDailyFocus) chartDailyFocus.destroy();
+
+            const fLabels = sortedFocusCats.map(c => c[0].replace(/[^a-zA-Z\s&]/g, '').trim());
+            const fData = sortedFocusCats.map(c => c[1]);
+            const fColors = sortedFocusCats.map((_, i) => getCategoryColor(i));
+
+            chartDailyFocus = new Chart(focusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: fLabels,
+                    datasets: [{
+                        data: fData.length > 0 ? fData : [1], // fallback if empty
+                        backgroundColor: fData.length > 0 ? fColors : ['#f1f5f9'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            const focusListEl = document.getElementById('dailyFocusList');
+            focusListEl.innerHTML = '';
+            
+            if (sortedFocusCats.length === 0) {
+                focusListEl.innerHTML = '<p class="text-center text-xs text-slate-400">No spending on this date.</p>';
+                return;
+            }
+
+            sortedFocusCats.forEach((cat, index) => {
+                const name = cat[0].replace(/[^a-zA-Z\s&]/g, '').trim();
+                const amt = cat[1];
+                const pct = ((amt / dailyTotal) * 100).toFixed(0);
+                const color = getCategoryColor(index);
+                
+                focusListEl.innerHTML += `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full" style="background-color: ${color}"></div>
+                            <div>
+                                <span class="font-bold text-slate-700 text-sm">${name}</span>
+                                <span class="text-xs text-slate-400 ml-1">(${pct}%)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-slate-800 text-sm">${amt.toLocaleString()} JPY</span>
+                    </div>
+                `;
+            });
+        }
+
+    </script>
+</body>
+</html>
