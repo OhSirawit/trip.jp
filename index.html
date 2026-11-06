@@ -369,7 +369,7 @@
                     <div class="border-t border-slate-100 my-1"></div>
 
                     <li>
-                        <a href="https://script.google.com/macros/s/AKfycbwFRNFMd5vxB-j-uu4Sc7yczLFIBrACl3WSAHAAZViI4UVvipJ5WDkeONw2YBYeiJSi/exec" target="_blank" onclick="toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3">
+                        <a href="https://script.google.com/macros/s/AKfycbzH3FzyMfwdGMaFSbYxImhyx1N5lV2aJKxmUebaq2ZFnXZzbtEdy8yx0YVtlo-d13oU/exec" target="_blank" onclick="toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3">
                             <i class="fas fa-file-invoice-dollar w-4 text-[#D4AF37]"></i> Pre-Trip Expenses
                         </a>
                     </li>
@@ -639,6 +639,19 @@
                 <div id="settings-category-container" class="space-y-2 pt-1 border-t border-slate-100"></div>
             </div>
 
+            <!-- AI Scanner Settings -->
+            <div class="modern-card p-5 bg-white mt-4">
+                <div class="flex items-center gap-1.5 mb-3">
+                    <i class="fas fa-robot text-[#D9383A] text-[11px]"></i>
+                    <h3 class="text-[11px] font-bold text-[#D9383A]">AI Receipt Scanner (Gemini API)</h3>
+                </div>
+                <p class="text-[10px] font-medium text-slate-500 mb-2">ใส่ API Key ของ Gemini เพื่อใช้ AI อ่านใบเสร็จอัตโนมัติ</p>
+                <a href="https://aistudio.google.com/" target="_blank" class="text-[10px] font-bold text-[#457B9D] hover:underline mb-3 inline-block"><i class="fas fa-external-link-alt"></i> Get free API Key here</a>
+                <div class="flex gap-2">
+                    <input type="password" id="gemini-api-key-input" class="w-full bg-slate-50 p-3 text-[13px] font-bold text-slate-800 outline-none border border-[#EAE6DF] rounded-[12px] focus:border-[#D9383A] transition-colors" placeholder="AIzaSy...">
+                </div>
+            </div>
+
             <button id="save-settings-btn" onclick="saveSettings()" class="w-full mt-6 btn-modern bg-[#1C2536] hover:bg-[#0f172a] py-4 text-sm font-bold flex justify-center items-center shadow-lg">บันทึกการตั้งค่า</button>
             <button id="save-settings-btn" onclick="saveSettings()" class="w-full mt-6 btn-modern bg-[#1C2536] hover:bg-[#0f172a] py-4 text-sm font-bold flex justify-center items-center shadow-lg">Save Settings</button>
         </div>
@@ -848,7 +861,7 @@
 
     <!-- Scripts -->
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwFRNFMd5vxB-j-uu4Sc7yczLFIBrACl3WSAHAAZViI4UVvipJ5WDkeONw2YBYeiJSi/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbzH3FzyMfwdGMaFSbYxImhyx1N5lV2aJKxmUebaq2ZFnXZzbtEdy8yx0YVtlo-d13oU/exec";
 
         let expenses = []; 
         let myOverallCategoryChart = null; 
@@ -1342,6 +1355,12 @@
         async function saveSettings() {
             const btn = document.getElementById('save-settings-btn');
             if(!btn) return;
+
+            // Save API Key locally
+            const apiKeyInput = document.getElementById('gemini-api-key-input');
+            if (apiKeyInput) {
+                localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
+            }
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving...';
@@ -2275,6 +2294,11 @@
             renderSettings();
             renderCategorySettings();
             renderPaymentDropdown();
+
+            const savedApiKey = localStorage.getItem('gemini_api_key');
+            if (savedApiKey && document.getElementById('gemini-api-key-input')) {
+                document.getElementById('gemini-api-key-input').value = savedApiKey;
+            }
 
             let todayStr = new Date().toLocaleDateString('en-CA'); 
             document.getElementById('date').value = todayStr; 
