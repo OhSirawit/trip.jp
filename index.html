@@ -643,7 +643,6 @@
                 </div>
             </div>
 
-            <button id="save-settings-btn" onclick="saveSettings()" class="w-full mt-6 btn-modern bg-[#1C2536] hover:bg-[#0f172a] py-4 text-sm font-bold flex justify-center items-center shadow-lg">บันทึกการตั้งค่า</button>
             <button id="save-settings-btn" onclick="saveSettings()" class="w-full mt-6 btn-modern bg-[#1C2536] hover:bg-[#0f172a] py-4 text-sm font-bold flex justify-center items-center shadow-lg">Save Settings</button>
         </div>
 
@@ -1381,7 +1380,6 @@
                 showToast("กรุณาเพิ่มสมาชิกอย่างน้อย 1 คน", true);
                 showToast("Please add at least 1 member", true);
                 btn.disabled = false;
-                btn.innerHTML = 'บันทึกการตั้งค่า';
                 btn.innerHTML = 'Save Settings';
                 return;
             }
@@ -1441,7 +1439,6 @@
 
             if (!silent && btn) {
                 btn.disabled = false;
-                btn.innerHTML = 'บันทึกการตั้งค่า';
                 btn.innerHTML = 'Save Settings';
             }
         }
