@@ -1054,7 +1054,8 @@
                 }
             }
 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            // เปลี่ยนมาใช้โมเดลรุ่นมาตรฐานที่เสถียรที่สุด (gemini-1.5-flash)
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -1062,10 +1063,19 @@
                 body: JSON.stringify(payload)
             });
 
+            if (!response.ok) {
+                const errorData = await response.text();
+                console.error("Gemini API Error:", errorData);
+                throw new Error(`API Error: ${response.status}`);
+            }
+
             const result = await response.json();
             const candidate = result.candidates?.[0];
             if (candidate && candidate.content?.parts?.[0]?.text) {
-                return JSON.parse(candidate.content.parts[0].text);
+                let text = candidate.content.parts[0].text;
+                // ป้องกันกรณี AI แอบใส่ Markdown ```json คลุมข้อความมา
+                text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+                return JSON.parse(text);
             }
             return null;
         }
