@@ -584,7 +584,7 @@
 
         // Edit Cloud Sync URL
         function editCloudUrl() {
-            const currentUrl = localStorage.getItem('mytrip_gas_url') || 'https://script.google.com/macros/s/AKfycbyX4hhigLpAybmL904t3Y7ytWsJLT5yguZY_bsnCHjfQ4oT3yDjSqTOSwVRSnoCGBqy/exec';
+            const currentUrl = localStorage.getItem('mytrip_gas_url') || 'https://script.google.com/macros/s/AKfycbxYpjMB20sGGW_xVqTMu2d0GsM2mTJlwABjp9FenVZnrrEyVPdt6sciBlk2M52nuhJ_/exec';
             const newUrl = prompt("Please enter your Google Apps Script Web App URL (ลงท้ายด้วย /exec):", currentUrl);
             if (newUrl !== null) {
                 localStorage.setItem('mytrip_gas_url', newUrl.trim());
@@ -622,7 +622,7 @@
             localStorage.setItem('mytrip_transactions', JSON.stringify(transactions));
             
             // --- NEW: Sync to Google Cloud ---
-            const scriptUrl = localStorage.getItem('mytrip_gas_url') || 'https://script.google.com/macros/s/AKfycbyX4hhigLpAybmL904t3Y7ytWsJLT5yguZY_bsnCHjfQ4oT3yDjSqTOSwVRSnoCGBqy/exec';
+            const scriptUrl = localStorage.getItem('mytrip_gas_url') || 'https://script.google.com/macros/s/AKfycbxYpjMB20sGGW_xVqTMu2d0GsM2mTJlwABjp9FenVZnrrEyVPdt6sciBlk2M52nuhJ_/exec';
             if (scriptUrl) {
                 const submitBtn = document.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
