@@ -538,10 +538,8 @@
                     </div>
 
                     <div class="flex gap-3 mt-5 pt-2">
-                        <button type="button" id="cancel-edit-btn" onclick="cancelEdit()" class="hidden w-1/3 btn-cancel py-4 text-sm font-bold flex justify-center items-center">ยกเลิก</button>
                         <button type="button" id="cancel-edit-btn" onclick="cancelEdit()" class="hidden w-1/3 btn-cancel py-4 text-sm font-bold flex justify-center items-center">Cancel</button>
                         <!-- Torii Red Primary Button -->
-                        <button type="submit" id="submit-btn" class="flex-1 btn-modern bg-[#D9383A] hover:bg-[#BA2E30] py-4 text-sm font-bold flex justify-center items-center gap-2 shadow-lg shadow-[#D9383A]/30">บันทึกข้อมูล <i class="fas fa-paper-plane"></i></button>
                         <button type="submit" id="submit-btn" class="flex-1 btn-modern bg-[#D9383A] hover:bg-[#BA2E30] py-4 text-sm font-bold flex justify-center items-center gap-2 shadow-lg shadow-[#D9383A]/30">Save Expense <i class="fas fa-paper-plane"></i></button>
                     </div>
                 </form>
@@ -2280,12 +2278,10 @@
             if (navigator.onLine) {
                 btn.disabled = false;
                 btn.classList.remove('opacity-50', 'cursor-not-allowed');
-                btn.innerHTML = currentEditRowId ? 'Update Record <i class="fas fa-save"></i>' : 'บันทึกข้อมูล <i class="fas fa-paper-plane"></i>';
                 btn.innerHTML = currentEditRowId ? 'Update Record <i class="fas fa-save"></i>' : 'Save Expense <i class="fas fa-paper-plane"></i>';
             } else {
                 btn.disabled = true;
                 btn.classList.add('opacity-50', 'cursor-not-allowed');
-                btn.innerHTML = '<i class="fas fa-wifi text-rose-400"></i> ออฟไลน์ (Offline)';
                 btn.innerHTML = '<i class="fas fa-wifi text-rose-400"></i> Offline';
             }
         }
@@ -2691,7 +2687,6 @@
 
             document.getElementById('expense-form').reset();
             document.getElementById('date').value = new Date().toLocaleDateString('en-CA');
-            document.getElementById('submit-btn').innerHTML = 'บันทึกข้อมูล <i class="fas fa-paper-plane"></i>';
             document.getElementById('submit-btn').innerHTML = 'Save Expense <i class="fas fa-paper-plane"></i>';
             document.getElementById('form-title').innerHTML = 'Add New Expense';
             document.getElementById('cancel-edit-btn').classList.add('hidden');
@@ -3323,7 +3318,6 @@
                 }
 
                 btn.disabled = false; 
-                btn.innerHTML = 'บันทึกข้อมูล <i class="fas fa-paper-plane"></i>'; 
                 btn.innerHTML = 'Save Expense <i class="fas fa-paper-plane"></i>'; 
             }
         });
