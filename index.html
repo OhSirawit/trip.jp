@@ -1445,8 +1445,9 @@
 
             if (!silent && btn) {
                 btn.disabled = false;
-            btn.innerHTML = 'บันทึกการตั้งค่า';
-            btn.innerHTML = 'Save Settings';
+                btn.innerHTML = 'บันทึกการตั้งค่า';
+                btn.innerHTML = 'Save Settings';
+            }
         }
 
         async function saveSettingsSilently() {
@@ -2462,10 +2463,8 @@
                                 }
                                 localStorage.setItem(key, omiVal);
                             } else {
-                                if (!validPaymentMethods || validPaymentMethods.includes(key)) {
-                                    limits[key] = parseFloat(res.settings[key]) || 0;
-                                    updatedLimits = true;
-                                }
+                                limits[key] = parseFloat(res.settings[key]) || 0;
+                                updatedLimits = true;
                             }
                         });
 
