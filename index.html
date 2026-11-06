@@ -242,6 +242,7 @@
     </div>
 
     <!-- Settlement Modal -->
+            <!-- Settlement Modal -->
     <div id="settlement-modal" class="fixed inset-0 z-[350] bg-slate-900/40 backdrop-blur-sm hidden flex items-end justify-center transition-opacity duration-300 opacity-0 sm:items-center sm:px-6">
         <div class="bg-white w-full sm:max-w-md rounded-t-[24px] sm:rounded-[24px] p-6 pb-10 sm:pb-6 transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300 shadow-2xl max-h-[90vh] flex flex-col" id="settlement-modal-content">
             <div class="flex justify-between items-center mb-5 shrink-0">
@@ -251,6 +252,7 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-black text-slate-900 tracking-wide leading-tight">Settlement</h3>
+                        <p class="text-[10px] text-slate-500">สรุปยอดเคลียร์เงิน (Shared)</p>
                         <p class="text-[10px] text-slate-500">Shared Settlement Summary</p>
                     </div>
                 </div>
@@ -265,6 +267,7 @@
                         <span class="text-xs font-bold text-slate-500">JPY</span>
                     </div>
                     <div class="mt-3 pt-3 border-t border-[#EAE6DF] dark:border-slate-700 flex justify-center items-center gap-2 text-xs">
+                        <span class="text-slate-500">หารกันคนละ:</span>
                         <span class="text-slate-500">Per Person:</span>
                         <span id="settle-per-person" class="font-bold text-[#D9383A]">0 JPY</span>
                     </div>
@@ -434,6 +437,7 @@
                         </div>
                         <div>
                             <h3 id="form-title" class="text-[15px] font-bold text-gray-800 tracking-wide">Add New Expense</h3>
+                            <p class="text-[10px] text-gray-500">กรุณากรอกข้อมูลให้ครบถ้วน</p>
                             <p class="text-[10px] text-gray-500">Please fill in all details</p>
                         </div>
                     </div>
@@ -503,17 +507,13 @@
                     <div class="grid grid-cols-2 gap-3 pt-1">
                         <!-- Single Button for Add Receipt -->
                         <div class="relative w-full" id="receipt-container">
-                            <!-- Hidden File Inputs -->
                             <input type="file" id="receipt-cam" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptUpload(event)">
                             <input type="file" id="receipt-file" accept="image/*" class="hidden" onchange="handleReceiptUpload(event)">
-                            <input type="hidden" id="transReceiptBase64">
 
-                            <!-- Normal State Button -->
                             <button type="button" id="btn-add-receipt" onclick="openReceiptModal()" class="flex items-center justify-center gap-2 w-full py-3.5 border-2 border-dashed border-[#EAE6DF] bg-white hover:bg-slate-50 rounded-[14px] cursor-pointer transition-colors text-slate-400 font-bold text-[11px]">
                                 <i class="fas fa-image text-sm"></i> Add Receipt
                             </button>
-                            
-                            <!-- Processing/Done Label -->
+
                             <div id="receipt-label" onclick="openReceiptModal()" class="hidden flex items-center justify-center gap-2 w-full py-3.5 border-2 border-[#457B9D] bg-[#F0F8FF] rounded-[14px] cursor-pointer transition-colors">
                                 <i class="fas fa-check-circle text-[#457B9D] text-sm"></i><span class="text-[11px] text-[#457B9D] font-bold truncate max-w-[80px]" id="receipt-text">Attached</span>
                             </div>
@@ -539,6 +539,7 @@
 
                     <div class="flex gap-3 mt-5 pt-2">
                         <button type="button" id="cancel-edit-btn" onclick="cancelEdit()" class="hidden w-1/3 btn-cancel py-4 text-sm font-bold flex justify-center items-center">Cancel</button>
+                        <!-- Torii Red Primary Button -->
                         <button type="submit" id="submit-btn" class="flex-1 btn-modern bg-[#D9383A] hover:bg-[#BA2E30] py-4 text-sm font-bold flex justify-center items-center gap-2 shadow-lg shadow-[#D9383A]/30">Save Expense <i class="fas fa-paper-plane"></i></button>
                     </div>
                 </form>
@@ -572,6 +573,7 @@
             </div>
 
             <div id="offline-warning" class="hidden modern-card p-3 bg-rose-50 border-rose-200 text-center text-xs font-bold text-rose-600 shadow-sm mb-3">
+                <i class="fas fa-wifi"></i> มีรายการรอ Sync เมื่อต่อเน็ต (<span id="offline-count">0</span>)
                 <i class="fas fa-wifi"></i> Pending items to sync when online (<span id="offline-count">0</span>)
             </div>
 
@@ -593,6 +595,7 @@
                     <i class="fas fa-users text-[#D9383A] text-[11px]"></i>
                     <h3 class="text-[11px] font-bold text-[#D9383A]">Team Members</h3>
                 </div>
+                <p class="text-[10px] font-medium text-slate-500 mb-3">พิมพ์ชื่อแล้วกดปุ่ม + เพื่อเพิ่มสมาชิกในทริป</p>
                 <p class="text-[10px] font-medium text-slate-500 mb-3">Type name and press + to add a member</p>
                 <div class="flex gap-2 mb-3">
                     <input type="text" id="new-member-input" class="flex-1 bg-slate-50 p-3 text-[13px] font-bold text-slate-800 outline-none border border-[#EAE6DF] rounded-[12px] focus:border-[#D9383A] transition-colors" placeholder="e.g. John" onkeypress="if(event.key === 'Enter') { event.preventDefault(); addMemberSettings(); }">
@@ -607,6 +610,7 @@
                     <i class="fas fa-wallet text-[#D9383A] text-[11px]"></i>
                     <h3 class="text-[11px] font-bold text-[#D9383A]">Budget & Cards (JPY)</h3>
                 </div>
+                <p class="text-[10px] font-medium text-slate-500 mb-3">พิมพ์ชื่อช่องทางจ่ายเงินแล้วกด + เพื่อเพิ่มใหม่</p>
                 <p class="text-[10px] font-medium text-slate-500 mb-3">Type payment method and press + to add</p>
                 <div class="flex gap-2 mb-4">
                     <input type="text" id="new-payment-input" class="flex-1 bg-slate-50 p-3 text-[13px] font-bold text-slate-800 outline-none border border-[#EAE6DF] rounded-[12px] focus:border-[#D9383A] transition-colors" placeholder="e.g. Suica, Credit Card" onkeypress="if(event.key === 'Enter') { event.preventDefault(); addPaymentMethod(); }">
@@ -621,19 +625,22 @@
                     <i class="fas fa-chart-pie text-[#D9383A] text-[11px]"></i>
                     <h3 class="text-[11px] font-bold text-[#D9383A]">Category Budgets (JPY)</h3>
                 </div>
+                <p class="text-[10px] font-medium text-slate-500 mb-3">ตั้งงบประมาณแยกตามหมวดหมู่ (ปล่อยว่างไว้ถ้าไม่ต้องการจำกัดงบ)</p>
                 <p class="text-[10px] font-medium text-slate-500 mb-3">Set budget by category (Leave blank for no limit)</p>
                 <div id="settings-category-container" class="space-y-2 pt-1 border-t border-slate-100"></div>
             </div>
 
             <!-- AI Scanner Settings -->
-            <div class="modern-card p-5 bg-white mt-4 border border-[#EAE6DF]">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="fas fa-robot text-[#D9383A] text-[12px]"></i>
-                    <h3 class="text-[12px] font-bold text-[#D9383A]">AI Receipt Scanner (Gemini API)</h3>
+            <div class="modern-card p-5 bg-white mt-4">
+                <div class="flex items-center gap-1.5 mb-3">
+                    <i class="fas fa-robot text-[#D9383A] text-[11px]"></i>
+                    <h3 class="text-[11px] font-bold text-[#D9383A]">AI Receipt Scanner (Gemini API)</h3>
                 </div>
-                <p class="text-[10px] font-medium text-slate-500 mb-2">Enter Gemini API Key to enable automatic receipt scanning.</p>
-                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-[10px] text-[#457B9D] hover:underline mb-3 inline-block font-bold"><i class="fas fa-external-link-alt"></i> Get free API Key here</a>
-                <input type="password" id="gemini-api-key-input" class="w-full bg-slate-50 p-3 text-[12px] font-bold text-slate-800 outline-none border border-[#EAE6DF] rounded-[10px] focus:border-[#D9383A] transition-colors" placeholder="Paste your API Key here...">
+                <p class="text-[10px] font-medium text-slate-500 mb-2">ใส่ API Key ของ Gemini เพื่อใช้ AI อ่านใบเสร็จอัตโนมัติ</p>
+                <a href="https://aistudio.google.com/" target="_blank" class="text-[10px] font-bold text-[#457B9D] hover:underline mb-3 inline-block"><i class="fas fa-external-link-alt"></i> Get free API Key here</a>
+                <div class="flex gap-2">
+                    <input type="password" id="gemini-api-key-input" class="w-full bg-slate-50 p-3 text-[13px] font-bold text-slate-800 outline-none border border-[#EAE6DF] rounded-[12px] focus:border-[#D9383A] transition-colors" placeholder="AIzaSy...">
+                </div>
             </div>
 
             <button id="save-settings-btn" onclick="saveSettings()" class="w-full mt-6 btn-modern bg-[#1C2536] hover:bg-[#0f172a] py-4 text-sm font-bold flex justify-center items-center shadow-lg">Save Settings</button>
@@ -654,6 +661,7 @@
                     <span id="taxrefund-total" class="text-4xl font-black text-slate-900 leading-none tracking-tight">0</span>
                     <span class="text-sm font-bold text-slate-500">JPY</span>
                 </div>
+                <p class="text-[9px] font-bold text-slate-500 mt-2"><i class="fas fa-info-circle"></i> กรุณาเตรียมสินค้า ใบเสร็จ และพาสปอร์ตให้พร้อม</p>
                 <p class="text-[9px] font-bold text-slate-500 mt-2"><i class="fas fa-info-circle"></i> Please prepare your items, receipts, and passport</p>
             </div>
 
@@ -748,6 +756,7 @@
                     <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[#D9383A]"><i class="fas fa-handshake"></i></div>
                     <div class="text-left">
                         <p class="text-[14px] font-bold">Settlement</p>
+                        <p class="text-[10px] text-slate-300 font-medium mt-0.5">ระบบสรุปยอดเคลียร์เงิน (Shared)</p>
                         <p class="text-[10px] text-slate-300 font-medium mt-0.5">Shared Expense Settlement</p>
                     </div>
                 </div>
@@ -953,6 +962,7 @@
             const label = document.getElementById('receipt-label');
             label.classList.remove('hidden');
 
+            // เปลี่ยนหน้าตาปุ่มตอนกำลังบีบอัดรูปภาพและ AI Scanner กำลังทำงาน
             label.className = 'flex items-center justify-center gap-2 w-full py-3.5 border-2 border-dashed border-[#457B9D] bg-[#F0F8FF] rounded-[14px] cursor-wait transition-colors';
             label.innerHTML = `<i class="fas fa-circle-notch fa-spin text-[#457B9D] text-sm"></i><span class="text-[11px] text-[#457B9D] font-bold">Scanning AI...</span>`;
 
@@ -963,7 +973,7 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width;
                     let height = img.height;
-                    const MAX_DIMENSION = 1200; 
+                    const MAX_DIMENSION = 1200; // บีบอัดให้กว้าง/ยาวไม่เกิน 1200px ให้ภาพยังชัดแต่ไฟล์เล็ก
 
                     if (width > height && width > MAX_DIMENSION) {
                         height *= MAX_DIMENSION / width;
@@ -978,6 +988,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
+                    // แปลงเป็น JPG คุณภาพ 70% (จากรูป 5MB จะเหลือแค่หลักสิบ-ร้อย KB โหลดไวมาก)
                     receiptBase64 = canvas.toDataURL('image/jpeg', 0.7);
                     receiptName = "receipt_" + Date.now() + ".jpg";
 
@@ -991,7 +1002,7 @@
                             }
                             if (extractedData.amount) {
                                 document.getElementById('amount').value = extractedData.amount;
-                                calculateTHB(); 
+                                calculateTHB(); // อัปเดตยอดเงินที่โชว์เป็นเงินบาท
                             }
                             if (extractedData.category) {
                                 const catSelect = document.getElementById('category');
@@ -1044,6 +1055,7 @@
                 systemInstruction: { parts: [{ text: systemPrompt }] }
             };
 
+            // ดึง API Key จาก LocalStorage (เครื่องของผู้ใช้)
             let apiKey = localStorage.getItem('gemini_api_key');
             if (!apiKey) {
                 apiKey = prompt("⚠️ API Key Required\nPlease enter your Gemini API Key to use the AI Scanner.\n(Get a free key at aistudio.google.com)");
@@ -1365,6 +1377,7 @@
 
             let newMembersString = tripMembers.join(', ');
             if (tripMembers.length === 0) {
+                showToast("กรุณาเพิ่มสมาชิกอย่างน้อย 1 คน", true);
                 showToast("Please add at least 1 member", true);
                 btn.disabled = false;
                 btn.innerHTML = 'Save Settings';
@@ -1480,6 +1493,7 @@
                     input.value = '';
                     saveSettingsSilently();
                 } else {
+                    showToast("มีช่องทางนี้อยู่แล้ว", true);
                     showToast("This method already exists", true);
                 }
             }
@@ -1488,6 +1502,8 @@
         function removePaymentMethod(keyToRemove) {
             if(keyToRemove === 'Cash') return;
             showConfirmModal(
+                "ลบช่องทางชำระเงิน",
+                `ต้องการลบช่องทาง '${keyToRemove}' ใช่หรือไม่?\n\n* ข้อมูลประวัติการใช้จ่ายจะไม่หายไป แต่ช่องทางนี้จะถูกลบออกจากตัวเลือก`,
                 "Delete Payment Method",
                 `Are you sure you want to delete '${keyToRemove}'?\n\n* Expense history will remain, but the option will be removed.`,
                 () => {
@@ -1619,20 +1635,20 @@
                 tripMembers.push(val);
                 input.value = '';
                 renderMembersSettings();
-                saveSettingsSilently();
             } else if (tripMembers.includes(val)) {
+                showToast("มีชื่อนี้อยู่แล้ว", true);
                 showToast("This name already exists", true);
             }
         }
 
         function removeMemberSettings(index) {
             if(tripMembers.length <= 1) {
+                showToast("ต้องมีสมาชิกอย่างน้อย 1 คน", true);
                 showToast("At least 1 member is required", true);
                 return;
             }
             tripMembers.splice(index, 1);
             renderMembersSettings();
-            saveSettingsSilently();
         }
 
         // Settlement Calculation & Modal
@@ -1742,6 +1758,7 @@
             listContainer.innerHTML = '';
 
             if (transactions.length === 0) {
+                listContainer.innerHTML = '<div class="text-center py-6 text-slate-400 font-bold text-xs"><i class="fas fa-check-circle text-2xl text-emerald-400 mb-2 block"></i>เคลียร์กันลงตัวแล้ว!<br>ไม่ต้องมีใครโอนเงินเพิ่ม</div>';
                 listContainer.innerHTML = '<div class="text-center py-6 text-slate-400 font-bold text-xs"><i class="fas fa-check-circle text-2xl text-emerald-400 mb-2 block"></i>All settled!<br>No transfers needed.</div>';
                 return;
             }
@@ -2423,12 +2440,6 @@
                             }
                         }
 
-                        if(res.settings.GeminiAPIKey && res.settings.GeminiAPIKey.trim() !== "") {
-                            localStorage.setItem('gemini_api_key', res.settings.GeminiAPIKey);
-                            const apiKeyInput = document.getElementById('gemini-api-key-input');
-                            if(apiKeyInput) apiKeyInput.value = res.settings.GeminiAPIKey;
-                        }
-
                         let limits = getPaymentLimits();
                         const loadedCatLimits = {};
                         let updatedLimits = false;
@@ -2436,7 +2447,7 @@
                         let savedPaymentOrder = res.settings['PaymentMethodsOrder'] ? res.settings['PaymentMethodsOrder'].split(',') : null;
 
                         Object.keys(res.settings).forEach(key => {
-                            if(key === 'members' || key === 'PaymentMethodsOrder' || key === 'GeminiAPIKey') return;
+                            if(key === 'members' || key === 'PaymentMethodsOrder') return;
 
                             if (key.startsWith('CatLimit_')) {
                                 const catName = key.replace('CatLimit_', '');
@@ -2444,6 +2455,7 @@
                                 updatedCatLimits = true;
                             } else if (key.toLowerCase().startsWith('omiyage')) {
                                 let omiVal = String(res.settings[key]);
+                                // แก้ปัญหา Google Sheets ตัดเลข 0 ข้างหน้าออก (เบอร์โทรเหลือ 9 หลัก, บัตรปชชเหลือ 12 หลัก)
                                 if (key.toLowerCase().includes('promptpay') && (omiVal.length === 9 || omiVal.length === 12)) {
                                     omiVal = '0' + omiVal;
                                 }
@@ -2454,32 +2466,17 @@
                             }
                         });
 
-                        loadOmiyageSettings();
-
-                        Object.keys(limits).forEach(key => {
-                            if(res.settings[key] === undefined && key !== 'Cash' && !key.startsWith('CatLimit_') && !key.toLowerCase().startsWith('omiyage')) {
-                                delete limits[key];
-                                updatedLimits = true;
-                            }
-                            if (key.toLowerCase().startsWith('omiyage')) {
-                                delete limits[key];
-                                updatedLimits = true;
-                            }
-                        });
-
-                        if (savedPaymentOrder) {
-                            let orderedLimits = {};
-                            savedPaymentOrder.forEach(k => {
-                                if(limits[k] !== undefined) orderedLimits[k] = limits[k];
-                            });
-                            Object.keys(limits).forEach(k => {
-                                if(orderedLimits[k] === undefined) orderedLimits[k] = limits[k];
-                            });
-                            limits = orderedLimits;
-                            updatedLimits = true;
-                        }
-
                         if(updatedLimits) {
+                            if (savedPaymentOrder) {
+                                let orderedLimits = {};
+                                savedPaymentOrder.forEach(k => {
+                                    if(limits[k] !== undefined) orderedLimits[k] = limits[k];
+                                });
+                                Object.keys(limits).forEach(k => {
+                                    if(orderedLimits[k] === undefined) orderedLimits[k] = limits[k];
+                                });
+                                limits = orderedLimits;
+                            }
                             localStorage.setItem('paymentLimits', JSON.stringify(limits));
                             renderSettings(); 
                             renderPaymentDropdown();
