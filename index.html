@@ -1352,18 +1352,19 @@
             }
         }
 
-        async function saveSettings() {
+        async function saveSettings(silent = false) {
             const btn = document.getElementById('save-settings-btn');
-            if(!btn) return;
-
+            
             // Save API Key locally
             const apiKeyInput = document.getElementById('gemini-api-key-input');
             if (apiKeyInput) {
                 localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
             }
 
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving...';
+            if (!silent && btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving...';
+            }
 
             const limits = getPaymentLimits();
             Object.keys(limits).forEach(key => {
@@ -1396,6 +1397,7 @@
 
             const settingsPayload = {
                 members: newMembersString,
+                PaymentMethodsOrder: Object.keys(limits).join(','),
                 ...limits
             };
 
@@ -1421,17 +1423,18 @@
                         updateUserAvatar();
                     }
 
-                    showToast("อัปเดตการตั้งค่าส่วนกลางแล้ว!");
-                    showToast("Global settings updated!");
-                    updateUI();
-                    switchPage('home');
+                    if (!silent) {
+                        showToast("Global settings updated!");
+                        updateUI();
+                        switchPage('home');
+                    }
                 } else {
-                    showToast("เกิดข้อผิดพลาดจากเซิร์ฟเวอร์", true);
-                    showToast("Server error occurred", true);
+                    if (!silent) showToast("Server error occurred", true);
                 }
             } catch(err) {
-                showToast("ออฟไลน์: บันทึกข้อมูลเฉพาะในเครื่อง", true);
-                showToast("Offline: Data saved locally", true);
+                if (!silent) {
+                    showToast("Offline: Data saved locally", true);
+                }
                 localStorage.setItem('paymentLimits', JSON.stringify(limits));
                 localStorage.setItem('categoryLimits', JSON.stringify(catLimits));
                 localStorage.setItem('tripMembers', JSON.stringify(tripMembers));
@@ -1440,9 +1443,34 @@
                 updateUI();
             }
 
-            btn.disabled = false;
+            if (!silent && btn) {
+                btn.disabled = false;
             btn.innerHTML = 'บันทึกการตั้งค่า';
             btn.innerHTML = 'Save Settings';
+        }
+
+        async function saveSettingsSilently() {
+            const limits = getPaymentLimits();
+            Object.keys(limits).forEach(key => {
+                const input = document.getElementById('limit-' + key.replace(/\s+|:/g, '-'));
+                if (input) limits[key] = parseFloat(input.value) || 0;
+            });
+            const catLimits = getCategoryLimits();
+            let newMembersString = tripMembers.join(', ');
+            const settingsPayload = {
+                members: newMembersString,
+                PaymentMethodsOrder: Object.keys(limits).join(','),
+                ...limits
+            };
+            Object.keys(catLimits).forEach(cat => {
+                settingsPayload['CatLimit_' + cat] = catLimits[cat];
+            });
+            try {
+                fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'saveSettings', settings: settingsPayload })
+                });
+            } catch(e) {}
         }
 
         function addPaymentMethod() {
@@ -1462,6 +1490,7 @@
                     renderSettings();
                     renderPaymentDropdown();
                     input.value = '';
+                    saveSettingsSilently();
                 } else {
                     showToast("มีช่องทางนี้อยู่แล้ว", true);
                     showToast("This method already exists", true);
@@ -1488,6 +1517,7 @@
                     localStorage.setItem('paymentLimits', JSON.stringify(currentLimits));
                     renderSettings();
                     renderPaymentDropdown();
+                    saveSettingsSilently();
                 }
             );
         }
@@ -1519,6 +1549,7 @@
             localStorage.setItem('paymentLimits', JSON.stringify(newLimits));
             renderSettings();
             renderPaymentDropdown();
+            saveSettingsSilently();
         }
 
         function renderSettings() {
@@ -2414,9 +2445,10 @@
                         const loadedCatLimits = {};
                         let updatedLimits = false;
                         let updatedCatLimits = false;
+                        let savedPaymentOrder = res.settings['PaymentMethodsOrder'] ? res.settings['PaymentMethodsOrder'].split(',') : null;
 
                         Object.keys(res.settings).forEach(key => {
-                            if(key === 'members') return;
+                            if(key === 'members' || key === 'PaymentMethodsOrder') return;
 
                             if (key.startsWith('CatLimit_')) {
                                 const catName = key.replace('CatLimit_', '');
@@ -2430,27 +2462,24 @@
                                 }
                                 localStorage.setItem(key, omiVal);
                             } else {
-                                limits[key] = parseFloat(res.settings[key]) || 0;
-                                updatedLimits = true;
-                            }
-                        });
-
-                        // Reload Omiyage settings for the current user in case they were updated from online
-                        loadOmiyageSettings();
-
-                        Object.keys(limits).forEach(key => {
-                            if(res.settings[key] === undefined && key !== 'Cash' && !key.startsWith('CatLimit_') && !key.toLowerCase().startsWith('omiyage')) {
-                                delete limits[key];
-                                updatedLimits = true;
-                            }
-                            // ป้องกัน Omiyage โผล่มาเป็น Payment Method
-                            if (key.toLowerCase().startsWith('omiyage')) {
-                                delete limits[key];
-                                updatedLimits = true;
+                                if (!validPaymentMethods || validPaymentMethods.includes(key)) {
+                                    limits[key] = parseFloat(res.settings[key]) || 0;
+                                    updatedLimits = true;
+                                }
                             }
                         });
 
                         if(updatedLimits) {
+                            if (savedPaymentOrder) {
+                                let orderedLimits = {};
+                                savedPaymentOrder.forEach(k => {
+                                    if(limits[k] !== undefined) orderedLimits[k] = limits[k];
+                                });
+                                Object.keys(limits).forEach(k => {
+                                    if(orderedLimits[k] === undefined) orderedLimits[k] = limits[k];
+                                });
+                                limits = orderedLimits;
+                            }
                             localStorage.setItem('paymentLimits', JSON.stringify(limits));
                             renderSettings(); 
                             renderPaymentDropdown();
