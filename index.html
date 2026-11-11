@@ -204,6 +204,23 @@
 </head>
 <body class="pb-32 relative">
 
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="fixed inset-0 z-[1000] bg-[#F7F6F2] flex flex-col items-center justify-center p-6 transition-opacity duration-500">
+        <div class="w-20 h-20 bg-[#D9383A] rounded-full flex items-center justify-center text-white shadow-lg mb-6">
+            <i class="fas fa-plane text-4xl"></i>
+        </div>
+        <h1 class="text-3xl font-black text-slate-900 tracking-wide mb-2">MyTrip</h1>
+        <p class="text-xs font-bold text-slate-500 mb-8 uppercase tracking-widest">Expense Tracker</p>
+
+        <div class="bg-white p-6 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.05)] w-full max-w-sm border border-[#EAE6DF] text-center">
+            <h2 class="text-sm font-bold text-slate-800 mb-4">Sign in to continue</h2>
+            <button onclick="window.signInWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 font-bold text-sm py-3.5 rounded-xl hover:bg-slate-50 transition-colors shadow-sm">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google Logo">
+                Continue with Google
+            </button>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast-notification" class="fixed top-8 left-1/2 transform -translate-x-1/2 z-[100] -translate-y-32 opacity-0 pointer-events-none w-[90%] max-w-md text-center">
         <div id="toast-bg" class="bg-[#1C2536]/95 backdrop-blur-md text-white px-5 py-3.5 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] flex items-center justify-center gap-3 inline-flex">
@@ -354,7 +371,11 @@
                     <!-- User Dropdown Menu -->
                     <div id="user-menu" class="hidden absolute top-12 right-0 w-40 modern-card p-2 z-50 shadow-[0_15px_40px_rgba(0,0,0,0.1)] flex-col space-y-1">
                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2 py-1" data-i18n="select_profile">Select Profile</p>
-                        <div id="user-list-container" class="space-y-1"></div>
+                        <div id="user-list-container" class="space-y-1 mb-1"></div>
+                        <div class="border-t border-slate-100"></div>
+                        <button onclick="window.logoutTrip()" class="w-full text-left px-3 py-2 text-xs font-bold text-rose-500 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-2">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
                     </div>
                 </div>
 
@@ -880,7 +901,7 @@
 
     <!-- Scripts -->
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbzH3FzyMfwdGMaFSbYxImhyx1N5lV2aJKxmUebaq2ZFnXZzbtEdy8yx0YVtlo-d13oU/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbyoMquzlDvVNxDqj4Wf4iMC45EOeirEyh1SJrTUmBdpv1XnHRvdFLhtbdMxVQGvplFs/exec";
 
         let expenses = []; 
         let myOverallCategoryChart = null; 
@@ -3894,6 +3915,71 @@
             const wb = XLSX.utils.book_new(); 
             XLSX.utils.book_append_sheet(wb, ws, "Expenses"); 
             XLSX.writeFile(wb, `TripWallet_${new Date().toISOString().slice(0,10)}.xlsx`); 
+        }
+    </script>
+
+    <!-- Firebase Auth Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // ⚠️ ขั้นตอนที่ 1: นำ firebaseConfig จาก Firebase Console มาวางทับตรงนี้ ⚠️
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        let app, auth;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+        } catch(e) {
+            console.warn("Firebase not configured yet");
+        }
+
+        const provider = new GoogleAuthProvider();
+
+        window.signInWithGoogle = async () => {
+            if(!auth || firebaseConfig.apiKey === "YOUR_API_KEY") {
+                showToast(currentLang === 'en' ? "Please set Firebase Config in HTML first!" : "กรุณาใส่ Firebase Config ในโค้ดก่อนครับ", true);
+                return;
+            }
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Login Error:", error);
+                showToast("Login failed: " + error.message, true);
+            }
+        };
+
+        window.logoutTrip = async () => {
+            if(auth) await signOut(auth);
+        };
+
+        if(auth) {
+            onAuthStateChanged(auth, async (user) => {
+                const overlay = document.getElementById('login-overlay');
+                if (user) {
+                    // ล็อกอินสำเร็จ ซ่อนหน้า Login
+                    overlay.classList.add('opacity-0');
+                    setTimeout(() => overlay.classList.add('hidden'), 500);
+
+                    // เก็บ Token ไว้ใช้ส่งไปหา Google Apps Script ในอนาคต
+                    window.currentUserToken = await user.getIdToken();
+                    
+                    showToast(`Welcome, ${user.email}!`);
+                } else {
+                    // ยังไม่ล็อกอิน โชว์หน้า Login
+                    overlay.classList.remove('hidden');
+                    // Force reflow
+                    void overlay.offsetWidth;
+                    overlay.classList.remove('opacity-0');
+                }
+            });
         }
     </script>
 </body>
