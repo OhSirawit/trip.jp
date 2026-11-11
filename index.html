@@ -214,9 +214,14 @@
 
         <div class="bg-white p-6 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.05)] w-full max-w-sm border border-[#EAE6DF] text-center">
             <h2 class="text-sm font-bold text-slate-800 mb-4">Sign in to continue</h2>
-            <button onclick="window.signInWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 font-bold text-sm py-3.5 rounded-xl hover:bg-slate-50 transition-colors shadow-sm">
+            <button onclick="window.signInWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 font-bold text-sm py-3.5 rounded-xl hover:bg-slate-50 transition-colors shadow-sm mb-3">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google Logo">
                 Continue with Google
+            </button>
+
+            <!-- ปุ่ม Skip สำหรับให้กดเข้าไปดูหน้าเว็บได้ (เพิ่มเข้ามาใหม่) -->
+            <button onclick="window.skipLogin()" class="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 text-slate-500 font-bold text-xs py-3 rounded-xl hover:bg-slate-100 transition-colors">
+                Skip for now (Preview Mode)
             </button>
         </div>
     </div>
@@ -3935,8 +3940,13 @@
 
         let app, auth;
         try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
+            if(firebaseConfig.apiKey !== "YOUR_API_KEY") {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+            } else {
+                console.warn("Firebase not configured. Bypassing login for preview.");
+                document.getElementById('login-overlay').classList.add('hidden');
+            }
         } catch(e) {
             console.warn("Firebase not configured yet");
         }
@@ -3954,6 +3964,14 @@
                 console.error("Login Error:", error);
                 showToast("Login failed: " + error.message, true);
             }
+        };
+
+        // ฟังก์ชันสำหรับกดข้ามหน้า Login (เพิ่มเข้ามาใหม่)
+        window.skipLogin = () => {
+            const overlay = document.getElementById('login-overlay');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 500);
+            showToast("Preview Mode: Entered without login");
         };
 
         window.logoutTrip = async () => {
