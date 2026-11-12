@@ -222,9 +222,10 @@
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google Logo">
                 Continue with Google
             </button>
+            <div id="login-error-msg"></div>
 
             <!-- ปุ่ม Skip สำหรับให้กดเข้าไปดูหน้าเว็บได้ (เพิ่มเข้ามาใหม่) -->
-            <button onclick="window.skipLogin()" class="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 text-slate-500 font-bold text-xs py-3 rounded-xl hover:bg-slate-100 transition-colors">
+            <button onclick="window.skipLogin()" class="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 text-slate-500 font-bold text-xs py-3 rounded-xl hover:bg-slate-100 transition-colors mt-2">
                 Skip for now (Preview Mode)
             </button>
         </div>
@@ -374,16 +375,18 @@
             <div class="flex items-center gap-2.5 relative z-10">
                 <!-- User Profile Selector -->
                 <div class="relative">
-                    <button onclick="toggleDropdown('user-menu')" class="w-10 h-10 flex items-center justify-center rounded-[12px] bg-white shadow-sm border border-[#EAE6DF] focus:outline-none transition-colors hover:border-[#D9383A]">
-                        <div id="user-avatar" class="w-7 h-7 rounded-full bg-slate-100 text-slate-600 font-black text-[12px] flex items-center justify-center shadow-sm">U</div>
+                    <button onclick="toggleDropdown('user-menu')" class="w-10 h-10 flex items-center justify-center rounded-[12px] bg-white shadow-sm border border-[#EAE6DF] focus:outline-none transition-colors hover:border-[#D9383A] overflow-hidden p-0">
+                        <img id="user-avatar-img" src="" class="w-full h-full object-cover hidden" alt="User">
+                        <div id="user-avatar" class="w-full h-full bg-slate-100 text-slate-600 font-black text-[14px] flex items-center justify-center shadow-sm">U</div>
                     </button>
                     <!-- User Dropdown Menu -->
-                    <div id="user-menu" class="hidden absolute top-12 right-0 w-40 modern-card p-2 z-50 shadow-[0_15px_40px_rgba(0,0,0,0.1)] flex-col space-y-1">
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2 py-1" data-i18n="select_profile">Select Profile</p>
-                        <div id="user-list-container" class="space-y-1 mb-1"></div>
-                        <div class="border-t border-slate-100"></div>
+                    <div id="user-menu" class="hidden absolute top-12 right-0 w-48 modern-card p-2 z-50 shadow-[0_15px_40px_rgba(0,0,0,0.1)] flex-col space-y-1">
+                        <div class="px-3 py-2 border-b border-slate-100 mb-1">
+                            <p id="google-user-name" class="text-[12px] font-bold text-slate-800 truncate">Guest</p>
+                            <p id="google-user-email" class="text-[9px] font-medium text-slate-500 truncate">Not logged in</p>
+                        </div>
                         <button onclick="window.logoutTrip()" class="w-full text-left px-3 py-2 text-xs font-bold text-rose-500 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-2">
-                            <i class="fas fa-sign-out-alt"></i> Logout
+                            <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
                         </button>
                     </div>
                 </div>
@@ -431,6 +434,8 @@
                     <div class="border-t border-slate-100 my-1"></div>
 
                     <li><button onclick="exportToExcel(); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3"><i class="fas fa-file-export w-4 text-[#8A9A5B]"></i> <span data-i18n="menu_export">Export to Excel</span></button></li>
+                    <div class="border-t border-slate-100 my-1"></div>
+                    <li><button onclick="window.logoutTrip();" class="w-full text-left px-4 py-3 text-sm font-bold text-rose-500 hover:bg-rose-50 rounded-xl transition-colors flex items-center gap-3"><i class="fas fa-sign-out-alt w-4"></i> <span data-i18n="logout">Logout</span></button></li>
                 </ul>
             </div>
         </nav>
@@ -1020,7 +1025,8 @@
                 'model_desc2': 'Key is used directly from browser and not sent to Google Sheet. API cost depends on your Google quota/package.',
                 'attached': 'Attached',
                 'stop_scan': 'Stop Scan',
-                'rescan_receipt': 'Rescan Receipt'
+                'rescan_receipt': 'Rescan Receipt',
+                'logout': 'Logout'
             },
             'th': {
                 'app_title': 'MyTrip',
@@ -1117,7 +1123,8 @@
                 'model_desc2': 'Key ใช้จากเบราว์เซอร์นี้โดยตรงและไม่ส่งไป Google Sheet ค่า API ขึ้นอยู่กับโควตาและแพ็กเกจของ Google',
                 'attached': 'แนบรูปแล้ว',
                 'stop_scan': 'หยุดอ่าน',
-                'rescan_receipt': 'สแกนใบเสร็จอีกครั้ง'
+                'rescan_receipt': 'สแกนใบเสร็จอีกครั้ง',
+                'logout': 'ออกจากระบบ'
             }
         };
 
@@ -1168,13 +1175,13 @@
         try {
             tripMembers = JSON.parse(localStorage.getItem('tripMembers'));
             if (!Array.isArray(tripMembers) || tripMembers.length === 0) {
-                tripMembers = ['Thida', 'Oh']; 
+                tripMembers = ['User']; 
             }
         } catch(e) {
-            tripMembers = ['Thida', 'Oh'];
+            tripMembers = ['User'];
         }
 
-        let currentUser = localStorage.getItem('tripUser');
+        let currentUser = localStorage.getItem('tripUser') || 'User';
 
         // Pre-Order Data State
         let preOrderList = [];
@@ -1716,7 +1723,6 @@
                 currentUser = tripMembers[0] || 'User';
                 localStorage.setItem('tripUser', currentUser);
             }
-            renderUserMenu();
             updateUserAvatar();
 
             if (typeof renderMembersSettings === 'function') {
@@ -1724,38 +1730,12 @@
             }
         }
 
-        function setCurrentUser(name) {
-            currentUser = name;
-            localStorage.setItem('tripUser', name);
-            updateUserAvatar();
-            toggleDropdown('user-menu');
-            loadOmiyageSettings(); 
-            showToast("Profile switched to " + name);
-        }
-
-        function renderUserMenu() {
-            const container = document.getElementById('user-list-container');
-            if(!container) return;
-            container.innerHTML = '';
-
-            tripMembers.forEach(name => {
-                const style = getAvatarStyle(name);
-                const initial = name.charAt(0).toUpperCase();
-
-                const btn = document.createElement('button');
-                btn.onclick = () => setCurrentUser(name);
-                btn.className = "w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2";
-                btn.innerHTML = `<div class="w-5 h-5 rounded-full ${style.bg} ${style.text} flex items-center justify-center text-[10px] font-black">${initial}</div> <span class="truncate">${name}</span>`;
-                container.appendChild(btn);
-            });
-        }
-
         function updateUserAvatar() {
             const avatar = document.getElementById('user-avatar');
-            if(avatar) {
+            if(avatar && currentUser) {
                 avatar.innerText = currentUser.charAt(0).toUpperCase();
                 const style = getAvatarStyle(currentUser);
-                avatar.className = `w-7 h-7 rounded-full ${style.bg} ${style.text} font-black text-[12px] flex items-center justify-center shadow-sm`;
+                avatar.className = `w-full h-full ${style.bg} ${style.text} font-black text-[14px] flex items-center justify-center`;
             }
         }
 
@@ -1969,12 +1949,7 @@
                     localStorage.setItem('categoryLimits', JSON.stringify(catLimits));
                     localStorage.setItem('tripMembers', JSON.stringify(tripMembers));
 
-                    if (!tripMembers.includes(currentUser)) {
-                        setCurrentUser(tripMembers[0] || 'USER');
-                    } else {
-                        renderUserMenu();
-                        updateUserAvatar();
-                    }
+                    updateUserAvatar();
 
                     if (!silent) {
                         showToast("Global settings updated!");
@@ -1991,7 +1966,6 @@
                 localStorage.setItem('paymentLimits', JSON.stringify(limits));
                 localStorage.setItem('categoryLimits', JSON.stringify(catLimits));
                 localStorage.setItem('tripMembers', JSON.stringify(tripMembers));
-                renderUserMenu();
                 updateUserAvatar();
                 updateUI();
             }
@@ -2782,7 +2756,7 @@
                             </div>
                         </label>
                         <div class="flex items-center gap-1 ml-2 shrink-0">
-                            <button onclick="togglePreOrderPaid('${item.id}')" class="w-8 h-8 rounded-full flex items-center justify-center transition-colors ${item.isPaid ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-300 hover:text-emerald-500 hover:bg-slate-50'}" title="Mark as Paid">
+                            <button onclick="togglePreOrderPaid('${item.id}')" class="w-8 h-8 rounded-full flex items-center justify-center transition-colors ${item.isPaid ? 'textemerald-500 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-300 hover:text-emerald-500 hover:bg-slate-50'}" title="Mark as Paid">
                                 <i class="fas fa-hand-holding-dollar text-[13px]"></i>
                             </button>
                             <button onclick="deletePreOrderItem('${item.id}')" class="text-slate-200 hover:text-rose-500 hover:bg-rose-50 w-8 h-8 rounded-full flex items-center justify-center transition-colors">
@@ -2980,13 +2954,7 @@
                             tripMembers = res.settings.members.split(',').map(s => s.trim());
                             localStorage.setItem('tripMembers', JSON.stringify(tripMembers));
                             if (typeof renderMembersSettings === 'function') renderMembersSettings();
-
-                            if (!tripMembers.includes(currentUser)) {
-                                setCurrentUser(tripMembers[0] || 'USER');
-                            } else {
-                                renderUserMenu();
-                                updateUserAvatar();
-                            }
+                            updateUserAvatar();
                         }
 
                         let limits = getPaymentLimits();
@@ -3943,13 +3911,9 @@
         };
 
         const button = document.querySelector('button[onclick="window.signInWithGoogle()"]');
-        const originalLabel = button ? button.innerHTML : 'Continue with Google';
+        const originalLabel = button?.innerHTML || 'Continue with Google';
         const overlay = document.getElementById('login-overlay');
-        const errorBox = document.createElement('div');
-        errorBox.className = 'mt-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-600 whitespace-pre-line break-words hidden font-bold text-left';
-        if (button && button.parentElement) {
-            button.parentElement.appendChild(errorBox);
-        }
+        const errorBox = document.getElementById('login-error-msg');
         
         let auth;
         let busy = false;
@@ -3959,22 +3923,24 @@
             busy = value;
             if (!button) return;
             button.disabled = value;
-            button.innerHTML = value ? '<i class="fas fa-circle-notch fa-spin text-slate-500"></i><span class="ml-2">Connecting...</span>' : originalLabel;
+            button.innerHTML = value ? '<i class="fas fa-circle-notch fa-spin"></i> Connecting...' : originalLabel;
         }
 
         function showError(error) {
             console.error('Google login:', error.code, error.message);
-            errorBox.classList.remove('hidden');
-            
-            // ตรวจสอบ Error คลาสสิก
-            if (error.code === 'auth/operation-not-allowed' || error.message.includes('not enabled')) {
-                errorBox.innerHTML = '<i class="fas fa-exclamation-circle text-rose-500 mr-1"></i> <b>ยังไม่ได้เปิดใช้งาน Google Login</b><br>กรุณาไปที่ Firebase Console &rarr; Authentication &rarr; แท็บ Sign-in method &rarr; กดเพิ่ม Google และกด Enable ครับ';
-            } else if (error.code === 'auth/unauthorized-domain') {
-                errorBox.innerHTML = '<i class="fas fa-exclamation-circle text-rose-500 mr-1"></i> <b>โดเมนยังไม่ได้รับอนุญาต</b><br>ไปที่ Firebase Console &rarr; Authentication &rarr; Settings &rarr; Authorized domains แล้วเพิ่ม ' + location.hostname;
-            } else if (error.code === 'auth/popup-closed-by-user') {
-                errorBox.innerHTML = '<i class="fas fa-exclamation-circle text-rose-500 mr-1"></i> <b>หน้าต่างถูกปิดไปก่อน</b><br>(ถ้าเด้งแล้วปิดเอง แสดงว่าลืมเปิด Google ใน Firebase Console หรือโดเมนยังไม่เซฟครับ)';
-            } else {
-                errorBox.textContent = error.message + ' (' + error.code + ')';
+            const messages = {
+                'auth/unauthorized-domain': 'เพิ่มโดเมน ' + location.hostname + ' ใน Firebase Console → Authentication → Settings → Authorized domains',
+                'auth/operation-not-allowed': 'เปิด Google ใน Firebase Console → Authentication → Sign-in method',
+                'auth/popup-blocked': 'เบราว์เซอร์บล็อก Popup กรุณาอนุญาต Popup แล้วลองอีกครั้ง',
+                'auth/popup-closed-by-user': 'หน้าต่างล็อกอินถูกปิดก่อนเสร็จ กรุณาลองอีกครั้ง',
+                'auth/cancelled-popup-request': 'มีหน้าต่างล็อกอินอื่นเปิดอยู่ กรุณาลองอีกครั้ง',
+                'auth/network-request-failed': 'เชื่อมต่อไม่ได้ กรุณาตรวจอินเทอร์เน็ตและตัวบล็อกเนื้อหา',
+                'auth/operation-not-supported-in-this-environment': 'เปิดเว็บผ่าน HTTPS หรือ localhost แทนการเปิดไฟล์ HTML โดยตรง',
+                'auth/web-storage-unsupported': 'เบราว์เซอร์ไม่อนุญาตให้จัดเก็บข้อมูล กรุณาตรวจการตั้งค่าเบราว์เซอร์',
+                'auth/invalid-api-key': 'Firebase API key ไม่ถูกต้อง กรุณาตรวจ Firebase config'
+            };
+            if(errorBox) {
+                errorBox.innerHTML = `<div class="text-xs text-rose-500 font-bold mt-3">${messages[error.code] || error.message || 'เข้าสู่ระบบไม่สำเร็จ'}</div>`;
             }
         }
 
@@ -3986,23 +3952,36 @@
         }
 
         window.skipLogin = hideOverlay;
-
+        
         window.signInWithGoogle = async () => {
             if (busy) return;
-            errorBox.classList.add('hidden');
+            if(errorBox) errorBox.innerHTML = '';
+            
             if (!auth) {
-                if(window.showToast) window.showToast('ระบบ Firebase ยังไม่พร้อม', true);
+                showError({message: 'ระบบ Firebase ยังไม่พร้อม กรุณาโหลดหน้าใหม่และตรวจ Console'});
+                return;
+            }
+            if (!['http:', 'https:'].includes(location.protocol)) {
+                showError({message: 'กรุณาเปิดเว็บผ่าน HTTPS หรือ localhost'});
                 return;
             }
             setBusy(true);
+            let redirecting = false;
             try {
                 const provider = new GoogleAuthProvider();
                 provider.setCustomParameters({ prompt: 'select_account' });
-                await signInWithPopup(auth, provider);
+                try {
+                    await signInWithPopup(auth, provider);
+                } catch (error) {
+                    if (error.code !== 'auth/popup-blocked') throw error;
+                    // ถ้าโดนบล็อก Popup สลับไปใช้ Redirect
+                    await signInWithRedirect(auth, provider);
+                    redirecting = true;
+                }
             } catch (error) {
                 showError(error);
             } finally {
-                setBusy(false);
+                if (!redirecting) setBusy(false);
             }
         };
 
@@ -4012,7 +3991,7 @@
                 await signOut(auth);
                 location.reload();
             } catch (error) {
-                if(window.showToast) window.showToast("Logout failed: " + error.message, true);
+                showError(error);
             }
         };
 
@@ -4020,10 +3999,46 @@
             auth = getAuth(initializeApp(firebaseConfig));
             onAuthStateChanged(auth, user => {
                 if (user) {
-                    errorBox.classList.add('hidden');
+                    if(errorBox) errorBox.classList.add('hidden');
                     hideOverlay();
+                    
+                    // อัปเดตข้อมูลจากบัญชี Google อัตโนมัติ
+                    const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+                    currentUser = displayName.split(' ')[0]; // ดึงชื่อหน้ามาใช้เป็นชื่อหลัก
+                    localStorage.setItem('tripUser', currentUser);
+
+                    // เพิ่มชื่อลงในกลุ่มเพื่อนร่วมทริปอัตโนมัติ (ถ้ายังไม่มีชื่อนี้) 
+                    // เพื่อให้สามารถคิดบิล/หารค่าใช้จ่ายกันได้
+                    if (!tripMembers.includes(currentUser)) {
+                        tripMembers.push(currentUser);
+                        localStorage.setItem('tripMembers', JSON.stringify(tripMembers));
+                        if (typeof renderMembersSettings === 'function') renderMembersSettings();
+                        saveSettingsSilently();
+                    }
+
+                    // อัปเดตรูปโปรไฟล์ที่มุมขวาบน
+                    const avatarImg = document.getElementById('user-avatar-img');
+                    const avatarInit = document.getElementById('user-avatar');
+                    if (user.photoURL && avatarImg) {
+                        avatarImg.src = user.photoURL;
+                        avatarImg.classList.remove('hidden');
+                        if(avatarInit) avatarInit.classList.add('hidden');
+                    } else if (avatarInit) {
+                        if(avatarImg) avatarImg.classList.add('hidden');
+                        avatarInit.classList.remove('hidden');
+                        updateUserAvatar(); // สร้างไอคอนตัวอักษรแทน
+                    }
+
+                    // อัปเดตข้อมูลเมนู Dropdown
+                    const nameEl = document.getElementById('google-user-name');
+                    const emailEl = document.getElementById('google-user-email');
+                    if(nameEl) nameEl.textContent = displayName;
+                    if(emailEl) emailEl.textContent = user.email || '';
+
+                    loadOmiyageSettings(); // โหลดบัญชีรับเงินของ User นี้เตรียมไว้รับหิ้วของ
+
                     if (user.displayName && window.showToast) {
-                        window.showToast('Welcome back, ' + user.displayName.split(' ')[0] + '!');
+                        window.showToast('Welcome back, ' + currentUser + '!');
                     }
                 } else if (overlay) {
                     clearTimeout(hideTimer);
@@ -4031,12 +4046,11 @@
                     void overlay.offsetWidth;
                     overlay.classList.remove('opacity-0');
                 }
-            }, (error) => {
-                console.error("Auth state error:", error);
-            });
+            }, showError);
+            
             getRedirectResult(auth).catch(showError);
         } catch (error) {
-            console.error("Firebase init error:", error);
+            showError(error);
         }
     </script>
 </body>
