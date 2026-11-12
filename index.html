@@ -21,7 +21,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Library สำหรับสแกน QR Code -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
@@ -29,16 +28,15 @@
 
         body { 
             font-family: 'Plus Jakarta Sans', 'Kanit', sans-serif; 
-            color: #1C2536; /* Sumi Black */
+            color: #1C2536; 
             -webkit-tap-highlight-color: transparent; 
             margin: 0;
             padding: 0;
-            background-color: #F7F6F2; /* Washi Paper */
+            background-color: #F7F6F2; 
             overflow-x: hidden; 
             transition: background-color 0.3s ease;
         }
 
-        /* Modern Zen Cards */
         .modern-card { 
             background: #ffffff; 
             border: 1px solid #EAE6DF; 
@@ -63,7 +61,7 @@
             color: #1C2536;
         }
         .input-style:focus { 
-            border-color: #D9383A; /* Torii Red */
+            border-color: #D9383A; 
             box-shadow: 0 0 0 3px rgba(217, 56, 58, 0.1); 
             outline: none;
         }
@@ -85,9 +83,7 @@
             border-color: #D9383A;
             background: rgba(255, 255, 255, 0.8);
         }
-        .trip-detail-input::placeholder {
-            color: #94a3b8;
-        }
+        .trip-detail-input::placeholder { color: #94a3b8; }
 
         .btn-modern { 
             background: #1C2536; 
@@ -169,7 +165,6 @@
         body.dark-mode .trip-detail-input { color: #cbd5e1; }
         body.dark-mode .trip-detail-input:focus, body.dark-mode .trip-detail-input:hover { border-color: #D9383A; background: rgba(30, 41, 59, 0.5); }
 
-        /* Dark Mode for Custom Modal */
         body.dark-mode #confirm-modal-content { background-color: #1E293B; border: 1px solid #334155; }
         body.dark-mode #confirm-title { color: #f8fafc; }
         body.dark-mode #confirm-message { color: #94a3b8; }
@@ -184,7 +179,6 @@
         body.dark-mode #qr-section { background-color: #0F172A; border-color: #334155; }
         body.dark-mode #qr-amount-text { color: #f8fafc; }
 
-        /* Dark Mode for Receipt Modal */
         body.dark-mode #receipt-modal-content { background-color: #1E293B; border: 1px solid #334155; }
         body.dark-mode #receipt-modal-content h3 { color: #f8fafc; }
         body.dark-mode #receipt-modal-content .bg-slate-50 { background-color: #0F172A; border-color: #334155; color: #cbd5e1; }
@@ -194,14 +188,8 @@
         body.dark-mode #btn-add-receipt { background-color: #1E293B; border-color: #334155; }
         body.dark-mode #btn-add-receipt:hover { background-color: #0F172A; }
 
-        /* Custom Checkbox for Pre-Order */
-        .preorder-checkbox:checked + div {
-            background-color: #D9383A;
-            border-color: #D9383A;
-        }
-        .preorder-checkbox:checked + div svg {
-            display: block;
-        }
+        .preorder-checkbox:checked + div { background-color: #D9383A; border-color: #D9383A; }
+        .preorder-checkbox:checked + div svg { display: block; }
         
         #reader__dashboard_section_csr span { color: #D9383A !important; }
     </style>
@@ -222,7 +210,8 @@
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google Logo">
                 Continue with Google
             </button>
-            <button onclick="window.skipLogin()" class="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 text-slate-500 font-bold text-xs py-3 rounded-xl hover:bg-slate-100 transition-colors">
+            <div id="login-error-msg"></div>
+            <button onclick="window.skipLogin()" class="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 text-slate-500 font-bold text-xs py-3 rounded-xl hover:bg-slate-100 transition-colors mt-2">
                 Skip for now (Preview Mode)
             </button>
         </div>
@@ -313,9 +302,7 @@
                 </div>
 
                 <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1" data-i18n="who_owes_who">Who owes who?</h4>
-                <div id="settlement-list" class="space-y-2 mb-2">
-                    <!-- Transactions will be generated here -->
-                </div>
+                <div id="settlement-list" class="space-y-2 mb-2"></div>
             </div>
         </div>
     </div>
@@ -329,20 +316,17 @@
             </div>
 
             <div class="overflow-y-auto custom-scrollbar flex-1 space-y-4">
-                <!-- Text Section -->
                 <div class="relative">
                     <textarea id="bill-text-area" class="w-full bg-slate-50 p-3 text-[11px] text-slate-700 font-medium rounded-xl border border-[#EAE6DF] outline-none resize-none h-36" readonly></textarea>
                     <button id="btn-copy-bill" onclick="copyBillTextOnly()" class="absolute top-2 right-2 bg-white text-[#457B9D] p-2 rounded-lg shadow-sm border border-slate-200 hover:bg-[#457B9D] hover:text-white transition-colors text-xs font-bold"><i class="far fa-copy"></i> <span data-i18n="copy">Copy</span></button>
                 </div>
 
-                <!-- QR Section -->
                 <div id="qr-section" class="hidden flex-col items-center justify-center bg-[#F8FAFC] p-4 rounded-xl border border-[#EAE6DF]">
                     <p class="text-[10px] font-black text-[#457B9D] uppercase tracking-widest mb-2"><i class="fas fa-qrcode"></i> Thai QR Payment</p>
                     <div id="promptpay-qr" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2 flex items-center justify-center"></div>
                     <p id="qr-amount-text" class="text-sm font-black text-slate-800 mt-2"></p>
                     <p class="text-[9px] text-slate-500 mt-1 text-center mb-2" data-i18n="scan_to_pay">Scan QR Code to pay</p>
 
-                    <!-- Checkbox เลือกว่าจะระบุยอดเงินหรือไม่ -->
                     <div id="qr-toggle-container" class="flex items-center gap-2 mt-1 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm transition-opacity">
                         <input type="checkbox" id="qr-include-amount" checked class="w-4 h-4 accent-[#457B9D] rounded cursor-pointer" onchange="renderQRInModal()">
                         <label for="qr-include-amount" class="text-[10px] font-bold text-slate-600 cursor-pointer" data-i18n="include_amount">Include Amount</label>
@@ -359,37 +343,35 @@
         <!-- Navigation Bar -->
         <nav class="sticky top-0 z-50 px-6 py-4 bg-[#F7F6F2]/90 backdrop-blur-xl border-b border-[#EAE6DF] flex justify-between items-center relative">
             <div class="flex items-center gap-3 relative z-10">
-                <!-- Zen Circular Logo -->
                 <div class="w-10 h-10 bg-[#D9383A] rounded-full flex items-center justify-center text-white shadow-md shadow-[#D9383A]/20">
                     <i class="fas fa-plane text-sm"></i>
                 </div>
                 <div>
                     <span class="font-bold text-gray-800 text-[14px] block leading-tight tracking-wide" data-i18n="app_title">MyTrip</span>
-                    <input type="text" id="trip-detail-header" class="trip-detail-input block" placeholder="e.g. Japan Trip" onchange="saveTripDetail(this.value)">
+                    <input type="text" id="trip-detail-header" class="trip-detail-input block" placeholder="e.g. Japan Trip 2026" onchange="saveTripDetail(this.value)">
                 </div>
             </div>
 
             <div class="flex items-center gap-2.5 relative z-10">
-                <!-- User Profile Selector -->
                 <div class="relative">
-                    <button onclick="toggleDropdown('user-menu')" class="w-10 h-10 flex items-center justify-center rounded-[12px] bg-white shadow-sm border border-[#EAE6DF] focus:outline-none transition-colors hover:border-[#D9383A] overflow-hidden">
-                        <img id="user-avatar-img" class="w-full h-full object-cover hidden" alt="Profile" />
-                        <div id="user-avatar" class="w-full h-full bg-slate-100 text-slate-600 font-black text-[12px] flex items-center justify-center">U</div>
+                    <button onclick="toggleDropdown('user-menu')" class="w-10 h-10 flex items-center justify-center rounded-[12px] bg-white shadow-sm border border-[#EAE6DF] focus:outline-none transition-colors hover:border-[#D9383A] overflow-hidden p-0">
+                        <img id="user-avatar-img" src="" class="w-full h-full object-cover hidden" alt="User">
+                        <div id="user-avatar" class="w-full h-full bg-slate-100 text-slate-600 font-black text-[14px] flex items-center justify-center shadow-sm">U</div>
                     </button>
-                    <!-- User Dropdown Menu -->
                     <div id="user-menu" class="hidden absolute top-12 right-0 w-48 modern-card p-2 z-50 shadow-[0_15px_40px_rgba(0,0,0,0.1)] flex-col space-y-1">
-                        <div class="px-2 py-2 flex flex-col">
-                            <span class="text-[12px] font-black text-slate-700 truncate" id="google-user-name">User</span>
-                            <span class="text-[9px] font-medium text-slate-400 truncate" id="google-user-email">email@example.com</span>
+                        <div class="px-3 py-2 border-b border-slate-100 mb-1">
+                            <div class="flex items-center gap-1.5 group" title="Click to edit name">
+                                <input type="text" id="google-user-name" class="text-[13px] font-black text-slate-800 w-full bg-transparent outline-none border-b border-dashed border-transparent focus:border-[#D9383A] transition-colors truncate cursor-text" value="Guest" onchange="window.updateProfileName(this.value)">
+                                <i class="fas fa-pencil-alt text-[9px] text-slate-300 pointer-events-none"></i>
+                            </div>
+                            <p id="google-user-email" class="text-[9px] font-medium text-slate-500 truncate mt-0.5">Not logged in</p>
                         </div>
-                        <div class="border-t border-slate-100"></div>
                         <button onclick="window.logoutTrip()" class="w-full text-left px-3 py-2 text-xs font-bold text-rose-500 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-2">
-                            <i class="fas fa-sign-out-alt"></i> Logout
+                            <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Language Toggle Button -->
                 <button onclick="toggleLanguage()" id="lang-btn" class="text-slate-500 hover:text-[#D9383A] transition-colors w-10 h-10 flex items-center justify-center rounded-[12px] bg-white shadow-sm border border-[#EAE6DF] focus:outline-none">
                     <span id="lang-text" class="font-bold text-[11px]">EN</span>
                 </button>
@@ -405,101 +387,58 @@
             <!-- Dropdown Menu -->
             <div id="top-menu" class="menu-dropdown absolute top-20 right-6 w-60 max-h-[75vh] overflow-y-auto modern-card p-2 z-50 shadow-[0_15px_40px_rgba(0,0,0,0.1)]">
                 <ul class="flex flex-col space-y-1">
-                    <li>
-                        <button onclick="switchPage('settings'); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3">
-                            <i class="fas fa-cog w-4 text-slate-400"></i> <span data-i18n="menu_settings">Settings & Limits</span>
-                        </button>
-                    </li>
+                    <li><button onclick="switchPage('settings'); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3"><i class="fas fa-cog w-4 text-slate-400"></i> <span data-i18n="menu_settings">Settings & Limits</span></button></li>
                     <div class="border-t border-slate-100 my-1"></div>
-
-                    <li>
-                        <button onclick="switchPage('dashboard'); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3">
-                            <i class="fas fa-chart-pie w-4 text-[#D9383A]"></i> <span data-i18n="menu_analytics">Analytics</span>
-                        </button>
-                    </li>
+                    <li><button onclick="switchPage('dashboard'); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3"><i class="fas fa-chart-pie w-4 text-[#D9383A]"></i> <span data-i18n="menu_analytics">Analytics</span></button></li>
                     <div class="border-t border-slate-100 my-1"></div>
-
-                    <li>
-                        <button onclick="switchPage('taxrefund'); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3">
-                            <i class="fas fa-tag w-4 text-[#D9383A]"></i> <span data-i18n="menu_tax">Tax-Refund</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button onclick="switchPage('preorder'); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3">
-                            <i class="fas fa-box-open w-4 text-[#457B9D]"></i> <span data-i18n="menu_preorders">Pre-Orders</span>
-                        </button>
-                    </li>
+                    <li><button onclick="switchPage('taxrefund'); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3"><i class="fas fa-tag w-4 text-[#D9383A]"></i> <span data-i18n="menu_tax">Tax-Refund</span></button></li>
+                    <li><button onclick="switchPage('preorder'); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3"><i class="fas fa-box-open w-4 text-[#457B9D]"></i> <span data-i18n="menu_preorders">Pre-Orders</span></button></li>
                     <div class="border-t border-slate-100 my-1"></div>
-
                     <li><button onclick="exportToExcel(); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors flex items-center gap-3"><i class="fas fa-file-export w-4 text-[#8A9A5B]"></i> <span data-i18n="menu_export">Export to Excel</span></button></li>
                     <div class="border-t border-slate-100 my-1"></div>
-                    
-                    <li>
-                        <button onclick="window.logoutTrip(); toggleMenu();" class="w-full text-left px-4 py-3 text-sm font-bold text-rose-500 hover:bg-rose-50 rounded-xl transition-colors flex items-center gap-3">
-                            <i class="fas fa-sign-out-alt w-4"></i> <span>Logout</span>
-                        </button>
-                    </li>
+                    <li><button onclick="window.logoutTrip();" class="w-full text-left px-4 py-3 text-sm font-bold text-rose-500 hover:bg-rose-50 rounded-xl transition-colors flex items-center gap-3"><i class="fas fa-sign-out-alt w-4"></i> <span data-i18n="logout">Logout</span></button></li>
                 </ul>
             </div>
         </nav>
 
         <!-- PAGE 1: HOME (Add Expense) -->
         <div id="page-home" class="page-content page-active max-w-xl mx-auto px-4 py-5 space-y-5">
-
-            <!-- Dashboard Widget - Modern Japan Style -->
             <div class="modern-card p-6 bg-[#1C2536] text-white border-none shadow-[0_10px_40px_rgba(28,37,54,0.25)] relative overflow-hidden rounded-[20px]">
-                <!-- Solid Torii Red Sun -->
                 <div class="absolute -top-10 -right-8 w-32 h-32 bg-[#D9383A] rounded-full pointer-events-none shadow-lg"></div>
-                <!-- Zen Enso Circle (Subtle lines) -->
                 <div class="absolute -bottom-16 -left-8 w-40 h-40 border-[16px] border-white/5 rounded-full pointer-events-none"></div>
-
                 <div class="relative z-10">
                     <div class="flex justify-between items-center mb-1">
                         <p class="text-[10px] font-black uppercase tracking-widest text-slate-300" data-i18n="cash_balance">Cash Balance</p>
-                        <div class="text-right">
-                            <span id="last-updated-text" class="text-[10px] font-bold text-slate-400">Last Updated : --:--:--</span>
-                        </div>
+                        <div class="text-right"><span id="last-updated-text" class="text-[10px] font-bold text-slate-400">Last Updated : --:--:--</span></div>
                     </div>
-
                     <div class="flex items-baseline gap-2 mb-5 mt-1">
                         <h3 id="cash-remaining" class="font-black text-white tracking-wide text-[40px] leading-none">0</h3>
                         <span class="text-sm font-bold text-slate-300">JPY</span>
                     </div>
-
-                    <!-- Progress Bar -->
                     <div class="w-full bg-[#0F172A] rounded-full h-2 mb-3 overflow-hidden border border-white/10">
                         <div id="budget-progress-bar" class="h-full rounded-full transition-all duration-1000 ease-out bg-[#D9383A] relative" style="width: 100%">
                             <div class="absolute top-0 left-0 w-full h-full bg-white/20 transform -skew-x-12 animate-[placeholderShimmer_2s_infinite]"></div>
                         </div>
                     </div>
-
                     <div class="flex justify-between items-center text-[11px] font-bold border-t border-white/10 pt-3">
                         <span class="text-slate-300"><span data-i18n="spent">Spent</span>: <span id="cash-used-text" class="text-white">0</span></span>
-                        <span class="text-slate-300 flex items-center gap-1">
-                            <span data-i18n="budget">Budget</span>: 
+                        <span class="text-slate-300 flex items-center gap-1"><span data-i18n="budget">Budget</span>: 
                             <span class="text-white cursor-pointer hover:text-[#EAE6DF] transition-colors flex items-center gap-1" onclick="switchPage('settings')">
-                                <span id="budget-text">150,000</span> 
-                                <i class="fas fa-pencil-alt text-[9px] text-slate-400 bg-[#0F172A] p-1.5 rounded-full"></i>
+                                <span id="budget-text">150,000</span> <i class="fas fa-pencil-alt text-[9px] text-slate-400 bg-[#0F172A] p-1.5 rounded-full"></i>
                             </span>
                         </span>
                     </div>
                 </div>
             </div>
 
-            <!-- Expense Form -->
             <section class="form-card-zen relative p-5">
                 <div class="flex justify-between items-start mb-6">
                     <div class="flex gap-3 items-center">
-                        <div class="w-10 h-10 rounded-[12px] bg-[#1C2536] text-white flex items-center justify-center shadow-md">
-                            <i class="fas fa-pen-nib"></i>
-                        </div>
-                        <div>
-                            <h3 id="form-title" class="text-[15px] font-bold text-gray-800 tracking-wide" data-i18n="add_new_expense">Add New Expense</h3>
-                            <p class="text-[10px] text-gray-500" data-i18n="fill_details">Please fill in all details</p>
-                        </div>
+                        <div class="w-10 h-10 rounded-[12px] bg-[#1C2536] text-white flex items-center justify-center shadow-md"><i class="fas fa-pen-nib"></i></div>
+                        <div><h3 id="form-title" class="text-[15px] font-bold text-gray-800 tracking-wide" data-i18n="add_new_expense">Add New Expense</h3>
+                            <p class="text-[10px] text-gray-500" data-i18n="fill_details">Please fill in all details</p></div>
                     </div>
                 </div>
-
                 <form id="expense-form" class="space-y-5">
                     <div class="grid grid-cols-2 gap-3">
                         <div class="space-y-1.5">
@@ -510,34 +449,20 @@
                             <label class="text-[11px] font-bold text-gray-700 flex items-center gap-1.5"><i class="fas fa-tags text-[#D9383A]"></i> <span data-i18n="category">Category</span> <span class="text-[#D9383A]">*</span></label>
                             <select id="category" class="w-full input-style p-3.5 text-[13px] font-bold outline-none cursor-pointer" required onchange="renderQuickTags()">
                                 <optgroup label="EXPENSES">
-                                    <option value="Food">🍱 Food & Dining</option>
-                                    <option value="Transportation">🚆 Transport</option>
-                                    <option value="Dessert/Beverage">☕ Beverage / Dessert</option>
-                                    <option value="Shopping">🛍️ Shopping</option>
-                                    <option value="Admission Fee">🎟️ Admission</option>
-                                    <option value="Tops up IC Card">🔋 Top up IC Card</option>
-                                    <option value="Pre-Order">📦 Pre-Order</option>
-                                    <option value="Gasoline">⛽ Gasoline</option>
-                                    <option value="Toll / ETC">🛣️ Toll / ETC</option>
-                                    <option value="Other">✨ Others</option>
+                                    <option value="Food">🍱 Food & Dining</option><option value="Transportation">🚆 Transport</option><option value="Dessert/Beverage">☕ Beverage / Dessert</option><option value="Shopping">🛍️ Shopping</option><option value="Admission Fee">🎟️ Admission</option><option value="Tops up IC Card">🔋 Top up IC Card</option><option value="Pre-Order">📦 Pre-Order</option><option value="Gasoline">⛽ Gasoline</option><option value="Toll / ETC">🛣️ Toll / ETC</option><option value="Other">✨ Others</option>
                                 </optgroup>
                                 <optgroup label="REFUND / ADVANCE">
-                                    <option value="Tax refund">💰 Tax Refund</option>
-                                    <option value="Advanced">⏳ Advanced</option>
-                                    <option value="Adjustment">⚙️ Adjustment</option>
-                                    <option value="Refund Pre-Order">↩️ Refund Pre-Order</option>
+                                    <option value="Tax refund">💰 Tax Refund</option><option value="Advanced">⏳ Advanced</option><option value="Adjustment">⚙️ Adjustment</option><option value="Refund Pre-Order">↩️ Refund Pre-Order</option>
                                 </optgroup>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Inner Card for Amount & Payment -->
                     <div class="bg-white border border-[#EAE6DF] rounded-[16px] p-4 shadow-sm relative">
                         <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-100">
                             <div class="text-[11px] font-bold text-[#D9383A] flex items-center gap-1.5"><i class="fas fa-coins"></i> <span data-i18n="amount_details">Amount Details</span></div>
                             <div class="text-[9px] text-gray-400 font-bold uppercase">CURRENCY: JPY</div>
                         </div>
-
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-1.5">
                                 <label class="text-[11px] font-bold text-gray-700"><span data-i18n="amount">Amount (Calc)</span> <span class="text-[#D9383A]">*</span></label>
@@ -545,14 +470,10 @@
                             </div>
                             <div class="space-y-1.5">
                                 <label class="text-[11px] font-bold text-gray-700" data-i18n="payment_method">Payment Method</label>
-                                <select id="payment" class="w-full h-[52px] input-style px-3.5 text-[13px] font-bold outline-none cursor-pointer">
-                                    <!-- Options will be populated dynamically via JavaScript -->
-                                </select>
+                                <select id="payment" class="w-full h-[52px] input-style px-3.5 text-[13px] font-bold outline-none cursor-pointer"></select>
                             </div>
                         </div>
-                        <div class="mt-2.5 flex justify-start min-h-[20px] empty:hidden">
-                            <span id="thb-equivalent" class="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-md shadow-sm border border-indigo-100 hidden transition-all"></span>
-                        </div>
+                        <div class="mt-2.5 flex justify-start min-h-[20px] empty:hidden"><span id="thb-equivalent" class="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-md shadow-sm border border-indigo-100 hidden transition-all"></span></div>
                     </div>
 
                     <div class="space-y-1.5">
@@ -562,44 +483,30 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 pt-1">
-                        <!-- Single Button for Add Receipt -->
                         <div class="relative w-full" id="receipt-container">
-                            <!-- Hidden File Inputs -->
                             <input type="file" id="receipt-cam" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptUpload(event)">
                             <input type="file" id="receipt-file" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="handleReceiptUpload(event)">
                             <input type="hidden" id="transReceiptBase64">
-
-                            <!-- Normal State Button -->
-                            <button type="button" id="btn-add-receipt" onclick="openReceiptModal()" class="flex items-center justify-center gap-2 w-full h-[52px] border-2 border-dashed border-[#EAE6DF] bg-white hover:bg-slate-50 rounded-[14px] cursor-pointer transition-colors text-slate-400 font-bold text-[11px]">
-                                <i class="fas fa-image text-sm"></i> <span data-i18n="add_receipt">Add Receipt</span>
-                            </button>
-                            
-                            <!-- Processing/Done Label -->
-                            <div id="receipt-label" onclick="openReceiptModal()" class="hidden flex items-center justify-center gap-2 w-full h-[52px] border-2 border-[#457B9D] bg-[#F0F8FF] rounded-[14px] cursor-pointer transition-colors">
-                                <i class="fas fa-check-circle text-[#457B9D] text-sm"></i><span class="text-[11px] text-[#457B9D] font-bold truncate max-w-[80px]" id="receipt-text" data-i18n="attached">Attached</span>
-                            </div>
+                            <button type="button" id="btn-add-receipt" onclick="openReceiptModal()" class="flex items-center justify-center gap-2 w-full h-[52px] border-2 border-dashed border-[#EAE6DF] bg-white hover:bg-slate-50 rounded-[14px] cursor-pointer transition-colors text-slate-400 font-bold text-[11px]"><i class="fas fa-image text-sm"></i> <span data-i18n="add_receipt">Add Receipt</span></button>
+                            <div id="receipt-label" onclick="openReceiptModal()" class="hidden flex items-center justify-center gap-2 w-full h-[52px] border-2 border-[#457B9D] bg-[#F0F8FF] rounded-[14px] cursor-pointer transition-colors"><i class="fas fa-check-circle text-[#457B9D] text-sm"></i><span class="text-[11px] text-[#457B9D] font-bold truncate max-w-[80px]" id="receipt-text" data-i18n="attached">Attached</span></div>
                             <button type="button" id="receipt-cancel-btn" onclick="cancelReceiptScan()" class="hidden mt-2 mr-3 text-[11px] font-bold text-red-600 hover:underline" data-i18n="stop_scan">หยุดอ่าน</button>
                             <button type="button" id="receipt-retry-btn" onclick="scanAttachedReceipt()" class="hidden mt-2 text-[11px] font-bold text-[#457B9D] hover:underline" data-i18n="rescan_receipt">สแกนใบเสร็จอีกครั้ง</button>
                         </div>
-
                         <div class="flex items-center justify-center gap-2 w-full h-[52px] bg-white border border-[#EAE6DF] rounded-[14px]">
                             <input type="checkbox" id="save-location" checked class="w-4 h-4 accent-[#1C2536] rounded cursor-pointer">
                             <label for="save-location" class="text-[11px] font-bold text-gray-600 uppercase cursor-pointer" data-i18n="save_gps">SAVE GPS</label>
                         </div>
-
                         <div class="flex items-center justify-center gap-2 w-full h-[52px] bg-white border border-[#EAE6DF] rounded-[14px] cursor-pointer transition-colors hover:bg-gray-50" onclick="toggleCheckbox('is-shared', 'icon-shared', 'text-[#D9383A]')">
                             <input type="checkbox" id="is-shared" class="hidden">
                             <i id="icon-shared" class="fas fa-users text-gray-300 text-sm transition-colors"></i>
                             <span class="text-[11px] font-bold text-gray-600 uppercase" data-i18n="shared">SHARED</span>
                         </div>
-
                         <div class="flex items-center justify-center gap-2 w-full h-[52px] bg-white border border-[#EAE6DF] rounded-[14px] cursor-pointer transition-colors hover:bg-gray-50" onclick="toggleCheckbox('is-taxfree', 'icon-taxfree', 'text-[#D9383A]')">
                             <input type="checkbox" id="is-taxfree" class="hidden">
                             <i id="icon-taxfree" class="fas fa-tag text-gray-300 text-sm transition-colors"></i>
                             <span class="text-[11px] font-bold text-gray-600 uppercase" data-i18n="tax_refund_badge">TAX-REFUND</span>
                         </div>
                     </div>
-
                     <p id="receipt-scan-status" role="status" aria-live="polite" class="text-[11px] text-slate-500 leading-relaxed"></p>
                     <div class="flex gap-3 mt-5 pt-2">
                         <button type="button" id="cancel-edit-btn" onclick="cancelEdit()" class="hidden w-1/3 btn-cancel py-4 text-sm font-bold flex justify-center items-center" data-i18n="cancel">Cancel</button>
@@ -615,30 +522,18 @@
                 <h2 class="text-2xl font-black text-slate-900 tracking-wide" data-i18n="timeline">Timeline</h2>
                 <div class="relative bg-white rounded-xl border border-slate-200 shadow-sm">
                     <select id="sort-filter" onchange="updateUI()" class="bg-transparent text-slate-700 text-[10px] font-bold px-3 py-2.5 outline-none appearance-none cursor-pointer pr-8">
-                        <option value="latest" selected data-i18n="sort_latest">⏱️ Latest</option>
-                        <option value="date" data-i18n="sort_date">📅 Date</option>
-                        <option value="payment" data-i18n="sort_payment">💳 Payment</option>
-                        <option value="category" data-i18n="sort_category">📂 Category</option>
-                        <option value="price-high" data-i18n="sort_price_high">💰 Price (High)</option>
-                        <option value="price-low" data-i18n="sort_price_low">💰 Price (Low)</option>
+                        <option value="latest" selected data-i18n="sort_latest">⏱️ Latest</option><option value="date" data-i18n="sort_date">📅 Date</option><option value="payment" data-i18n="sort_payment">💳 Payment</option><option value="category" data-i18n="sort_category">📂 Category</option><option value="price-high" data-i18n="sort_price_high">💰 Price (High)</option><option value="price-low" data-i18n="sort_price_low">💰 Price (Low)</option>
                     </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                        <i class="fas fa-chevron-down text-[8px]"></i>
-                    </div>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400"><i class="fas fa-chevron-down text-[8px]"></i></div>
                 </div>
             </div>
-
             <div class="relative mb-4">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i class="fas fa-search text-slate-400 text-sm"></i>
-                </div>
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fas fa-search text-slate-400 text-sm"></i></div>
                 <input type="text" id="search-input" onkeyup="updateUI()" data-i18n-placeholder="search_placeholder" placeholder="Search expenses..." class="w-full input-style py-3.5 pl-10 pr-4 text-sm font-medium outline-none">
             </div>
-
             <div id="offline-warning" class="hidden modern-card p-3 bg-rose-50 border-rose-200 text-center text-xs font-bold text-rose-600 shadow-sm mb-3">
                 <i class="fas fa-wifi"></i> Pending items to sync when online (<span id="offline-count">0</span>)
             </div>
-
             <div id="history-list" class="space-y-3"></div>
         </div>
 
@@ -646,12 +541,9 @@
         <div id="page-settings" class="page-content max-w-xl mx-auto px-5 py-4 space-y-5">
             <div class="flex justify-between items-center mb-4 px-1">
                 <h2 class="text-2xl font-black text-slate-900 tracking-wide" data-i18n="settings">Settings & Limits</h2>
-                <button onclick="switchPage('home')" class="text-slate-400 hover:text-[#D9383A] transition-colors w-9 h-9 rounded-full bg-white border border-[#EAE6DF] flex items-center justify-center shadow-sm">
-                    <i class="fas fa-times text-sm"></i>
-                </button>
+                <button onclick="switchPage('home')" class="text-slate-400 hover:text-[#D9383A] transition-colors w-9 h-9 rounded-full bg-white border border-[#EAE6DF] flex items-center justify-center shadow-sm"><i class="fas fa-times text-sm"></i></button>
             </div>
 
-            <!-- Team Members Settings -->
             <div class="modern-card p-5 bg-white">
                 <div class="flex items-center gap-1.5 mb-3">
                     <i class="fas fa-users text-[#D9383A] text-[11px]"></i>
@@ -665,12 +557,8 @@
                 <div id="members-chip-container" class="flex flex-wrap gap-2"></div>
             </div>
 
-            <!-- Budget & Cards Settings -->
             <div class="modern-card p-5 bg-white">
-                <div class="flex items-center gap-1.5 mb-3">
-                    <i class="fas fa-wallet text-[#D9383A] text-[11px]"></i>
-                    <h3 class="text-[11px] font-bold text-[#D9383A]" data-i18n="budget_cards">Budget & Cards (JPY)</h3>
-                </div>
+                <div class="flex items-center gap-1.5 mb-3"><i class="fas fa-wallet text-[#D9383A] text-[11px]"></i><h3 class="text-[11px] font-bold text-[#D9383A]" data-i18n="budget_cards">Budget & Cards (JPY)</h3></div>
                 <p class="text-[10px] font-medium text-slate-500 mb-3" data-i18n="add_payment_desc">Type payment method and press + to add</p>
                 <div class="flex gap-2 mb-4">
                     <input type="text" id="new-payment-input" class="flex-1 bg-slate-50 p-3 text-[13px] font-bold text-slate-800 outline-none border border-[#EAE6DF] rounded-[12px] focus:border-[#D9383A] transition-colors" placeholder="e.g. Suica, Credit Card" onkeypress="if(event.key === 'Enter') { event.preventDefault(); addPaymentMethod(); }">
@@ -679,22 +567,14 @@
                 <div id="settings-limits-container" class="space-y-3 pt-2 border-t border-slate-100"></div>
             </div>
 
-            <!-- Category Budgets Settings -->
             <div class="modern-card p-5 bg-white mt-4">
-                <div class="flex items-center gap-1.5 mb-3">
-                    <i class="fas fa-chart-pie text-[#D9383A] text-[11px]"></i>
-                    <h3 class="text-[11px] font-bold text-[#D9383A]" data-i18n="category_budgets">Category Budgets (JPY)</h3>
-                </div>
+                <div class="flex items-center gap-1.5 mb-3"><i class="fas fa-chart-pie text-[#D9383A] text-[11px]"></i><h3 class="text-[11px] font-bold text-[#D9383A]" data-i18n="category_budgets">Category Budgets (JPY)</h3></div>
                 <p class="text-[10px] font-medium text-slate-500 mb-3" data-i18n="cat_budget_desc">Set budget by category (Leave blank for no limit)</p>
                 <div id="settings-category-container" class="space-y-2 pt-1 border-t border-slate-100"></div>
             </div>
 
-            <!-- AI Scanner Settings -->
             <div class="modern-card p-5 bg-white mt-4 border border-[#EAE6DF]">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="fas fa-robot text-[#D9383A] text-[12px]"></i>
-                    <h3 class="text-[12px] font-bold text-[#D9383A]" data-i18n="ai_scanner_title">AI Receipt Scanner (Gemini API)</h3>
-                </div>
+                <div class="flex items-center gap-2 mb-2"><i class="fas fa-robot text-[#D9383A] text-[12px]"></i><h3 class="text-[12px] font-bold text-[#D9383A]" data-i18n="ai_scanner_title">AI Receipt Scanner (Gemini API)</h3></div>
                 <p class="text-[11px] text-slate-500 mb-2" data-i18n="ai_desc">เมื่อแนบรูป ระบบจะส่งรูปให้ Google Gemini อ่านชื่อร้าน ยอดรวม และหมวดหมู่ กรุณาตรวจข้อมูลก่อนบันทึก (ฟอร์มนี้ใช้ JPY)</p>
                 <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-[11px] text-[#457B9D] hover:underline mb-3 inline-block font-bold" data-i18n="create_api_key">สร้าง API Key ที่ Google AI Studio</a>
                 
@@ -708,7 +588,7 @@
                 <label for="gemini-model-input" class="block text-[11px] font-bold mt-3 mb-1">Gemini model</label>
                 <input type="text" id="gemini-model-input" value="gemini-3.5-flash-lite" spellcheck="false" class="w-full bg-slate-50 p-3 text-[12px] text-slate-800 outline-none border border-[#EAE6DF] rounded-[10px]" placeholder="gemini-3.5-flash-lite">
                 <p class="text-[10px] text-slate-500 mt-2" data-i18n="model_desc1">ค่าเริ่มต้นใช้ Flash-Lite สำหรับอ่านเร็ว หากตัวอักษรเล็กหรือผลไม่ถูกต้อง ให้เลือกภาพที่ชัดขึ้นหรือเปลี่ยนโมเดลแล้วสแกนซ้ำ</p>
-                <p class="text-[10px] text-slate-500 mt-2" data-i18n="model_desc2">Key ใช้จากเบราว์เซอร์นี้โดยตรงและไม่ส่งไป Google Sheet ค่า API ขึ้นอยู่กับโควตาและแพ็กเกจของ Google</p>
+                <p class="text-[10px] text-slate-500 mt-2" data-i18n="model_desc2">Key ใช้จากเบราว์เซอร์นี้โดยตรงและไม่ส่งไปเซิร์ฟเวอร์ ค่า API ขึ้นอยู่กับโควตาของ Google</p>
                 <button type="button" onclick="saveGeminiSettings()" class="mt-3 w-full bg-[#457B9D] text-white rounded-[10px] p-3 text-[12px] font-bold" data-i18n="save_ai_settings">บันทึกการตั้งค่า Gemini</button>
             </div>
 
@@ -719,11 +599,8 @@
         <div id="page-taxrefund" class="page-content max-w-xl mx-auto px-5 py-4 space-y-5">
             <div class="flex justify-between items-center mb-4 px-1">
                 <h2 class="text-2xl font-black text-slate-900 tracking-wide" data-i18n="tax_refund">Tax Refund</h2>
-                <button onclick="switchPage('home')" class="text-slate-400 hover:text-[#D9383A] transition-colors w-9 h-9 rounded-full bg-white border border-[#EAE6DF] flex items-center justify-center shadow-sm">
-                    <i class="fas fa-times text-sm"></i>
-                </button>
+                <button onclick="switchPage('home')" class="text-slate-400 hover:text-[#D9383A] transition-colors w-9 h-9 rounded-full bg-white border border-[#EAE6DF] flex items-center justify-center shadow-sm"><i class="fas fa-times text-sm"></i></button>
             </div>
-
             <div class="modern-card p-6 text-center space-y-2 relative overflow-hidden bg-[#FDF8EB] border-[#F2E3C6]">
                 <p class="text-[10px] font-black text-[#D4AF37] uppercase tracking-widest" data-i18n="total_eligible">Total Eligible Amount</p>
                 <div class="flex items-baseline justify-center gap-2">
@@ -732,7 +609,6 @@
                 </div>
                 <p class="text-[9px] font-bold text-slate-500 mt-2"><i class="fas fa-info-circle"></i> <span data-i18n="tax_prepare">Please prepare your items, receipts, and passport</span></p>
             </div>
-
             <div id="taxrefund-list" class="space-y-3"></div>
         </div>
 
@@ -740,12 +616,8 @@
         <div id="page-preorder" class="page-content max-w-xl mx-auto px-5 py-4 space-y-5">
             <div class="flex justify-between items-center mb-4 px-1">
                 <h2 class="text-2xl font-black text-slate-900 tracking-wide" data-i18n="pre_orders">Pre-Orders</h2>
-                <button onclick="switchPage('home')" class="text-slate-400 hover:text-[#D9383A] transition-colors w-9 h-9 rounded-full bg-white border border-[#EAE6DF] flex items-center justify-center shadow-sm">
-                    <i class="fas fa-times text-sm"></i>
-                </button>
+                <button onclick="switchPage('home')" class="text-slate-400 hover:text-[#D9383A] transition-colors w-9 h-9 rounded-full bg-white border border-[#EAE6DF] flex items-center justify-center shadow-sm"><i class="fas fa-times text-sm"></i></button>
             </div>
-
-            <!-- Billing Settings -->
             <div class="modern-card p-4 bg-white">
                 <div class="flex justify-between items-center cursor-pointer" onclick="toggleDropdown('omiyage-settings')">
                     <p class="text-[10px] font-black text-[#457B9D] uppercase tracking-widest"><i class="fas fa-cog"></i> <span data-i18n="billing_settings">BILLING SETTINGS</span></p>
@@ -767,17 +639,12 @@
                     <button onclick="saveOmiyageSettingsOnline()" id="btn-save-omiyage" class="bg-[#457B9D] text-white py-3 rounded-[10px] text-xs font-bold hover:bg-[#1D3557] transition-colors mt-1 shadow-sm w-full"><i class="fas fa-cloud-upload-alt mr-1"></i> <span data-i18n="save_online">Save Online</span></button>
                 </div>
             </div>
-
             <div class="modern-card p-5 bg-white">
                 <p class="text-[10px] font-black text-[#457B9D] uppercase tracking-widest mb-3"><i class="fas fa-plus-circle"></i> <span data-i18n="add_item">Add Item</span></p>
                 <div class="space-y-3">
                     <div class="flex gap-2">
-                        <div class="w-1/3">
-                            <input type="text" id="preorder-friend" class="w-full bg-slate-50 p-3 text-[12px] font-bold text-slate-800 outline-none border border-[#EAE6DF] rounded-[10px] focus:border-[#457B9D] transition-colors" data-i18n-placeholder="friend_name" placeholder="Friend's Name">
-                        </div>
-                        <div class="w-2/3">
-                            <input type="text" id="preorder-item" class="w-full bg-slate-50 p-3 text-[12px] font-bold text-slate-800 outline-none border border-[#EAE6DF] rounded-[10px] focus:border-[#457B9D] transition-colors" data-i18n-placeholder="item_name" placeholder="Item Name">
-                        </div>
+                        <div class="w-1/3"><input type="text" id="preorder-friend" class="w-full bg-slate-50 p-3 text-[12px] font-bold text-slate-800 outline-none border border-[#EAE6DF] rounded-[10px] focus:border-[#457B9D] transition-colors" data-i18n-placeholder="friend_name" placeholder="Friend's Name"></div>
+                        <div class="w-2/3"><input type="text" id="preorder-item" class="w-full bg-slate-50 p-3 text-[12px] font-bold text-slate-800 outline-none border border-[#EAE6DF] rounded-[10px] focus:border-[#457B9D] transition-colors" data-i18n-placeholder="item_name" placeholder="Item Name"></div>
                     </div>
                     <div class="flex gap-2">
                         <input type="number" id="preorder-price" class="flex-1 bg-slate-50 p-3 text-[12px] font-bold text-slate-800 outline-none border border-[#EAE6DF] rounded-[10px] focus:border-[#457B9D] transition-colors" placeholder="Price (JPY)">
@@ -785,30 +652,22 @@
                     </div>
                 </div>
             </div>
-
-            <div id="preorder-list" class="space-y-4">
-                <!-- Grouped pre-orders will appear here -->
-            </div>
+            <div id="preorder-list" class="space-y-4"></div>
         </div>
 
         <!-- PAGE 6: DASHBOARD (Detailed Analytics) -->
         <div id="page-dashboard" class="page-content max-w-xl mx-auto px-5 py-4 space-y-5">
             <div class="flex justify-between items-center mb-4 px-1">
                 <h2 class="text-2xl font-black text-slate-900 tracking-wide" data-i18n="analytics">Analytics</h2>
-                <button onclick="switchPage('home')" class="text-slate-400 hover:text-[#D9383A] transition-colors w-9 h-9 rounded-full bg-white border border-[#EAE6DF] flex items-center justify-center shadow-sm">
-                    <i class="fas fa-times text-sm"></i>
-                </button>
+                <button onclick="switchPage('home')" class="text-slate-400 hover:text-[#D9383A] transition-colors w-9 h-9 rounded-full bg-white border border-[#EAE6DF] flex items-center justify-center shadow-sm"><i class="fas fa-times text-sm"></i></button>
             </div>
 
-            <!-- Summary Overall -->
             <div class="modern-card p-6 text-center space-y-4 relative overflow-hidden bg-white">
                 <div class="flex justify-between text-xs font-bold text-slate-500">
-                    <span data-i18n="total_spent_stat">Total Spent</span>
-                    <span id="gross-total" class="text-slate-800">0 JPY</span>
+                    <span data-i18n="total_spent_stat">Total Spent</span><span id="gross-total" class="text-slate-800">0 JPY</span>
                 </div>
                 <div class="flex justify-between text-xs font-bold text-emerald-500">
-                    <span data-i18n="refunds">Refunds</span>
-                    <span id="refund-total">0 JPY</span>
+                    <span data-i18n="refunds">Refunds</span><span id="refund-total">0 JPY</span>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex justify-between items-end">
                     <div class="flex flex-col text-left">
@@ -818,7 +677,6 @@
                 </div>
             </div>
 
-            <!-- Settlement Button -->
             <button onclick="openSettlementModal()" class="w-full mt-1 modern-card bg-[#1C2536] text-white p-4 flex justify-between items-center shadow-lg shadow-[#1C2536]/20 transition-transform active:scale-95">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[#D9383A]"><i class="fas fa-handshake"></i></div>
@@ -830,66 +688,47 @@
                 <i class="fas fa-chevron-right text-slate-400 text-sm"></i>
             </button>
 
-            <!-- 1. KPI Summary -->
             <div class="grid grid-cols-2 gap-3 mt-4">
                 <div class="modern-card p-4 bg-white border-l-4 border-l-[#D9383A]">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1" data-i18n="total_days">Total Days</p>
-                    <p id="stat-total-days" class="text-xl font-black text-slate-800 leading-none">0</p>
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1" data-i18n="total_days">Total Days</p><p id="stat-total-days" class="text-xl font-black text-slate-800 leading-none">0</p>
                 </div>
                 <div class="modern-card p-4 bg-white border-l-4 border-l-[#1C2536]">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1" data-i18n="avg_day">Avg / Day</p>
-                    <p id="stat-avg-day" class="text-xl font-black text-slate-800 leading-none">0 <span class="text-xs font-bold text-slate-400">JPY</span></p>
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1" data-i18n="avg_day">Avg / Day</p><p id="stat-avg-day" class="text-xl font-black text-slate-800 leading-none">0 <span class="text-xs font-bold text-slate-400">JPY</span></p>
                 </div>
                 <div class="modern-card p-4 bg-white border-l-4 border-l-[#F4A261]">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1" data-i18n="top_category">Top Category</p>
-                    <p id="stat-top-cat" class="text-lg font-black text-slate-800 leading-none truncate">None</p>
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1" data-i18n="top_category">Top Category</p><p id="stat-top-cat" class="text-lg font-black text-slate-800 leading-none truncate">None</p>
                 </div>
                 <div class="modern-card p-4 bg-white border-l-4 border-l-[#8A9A5B]">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1" data-i18n="max_spend_day">Max Spend / Day</p>
-                    <p id="stat-max-day" class="text-lg font-black text-slate-800 leading-none">0 <span class="text-xs font-bold text-slate-400">JPY</span></p>
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1" data-i18n="max_spend_day">Max Spend / Day</p><p id="stat-max-day" class="text-lg font-black text-slate-800 leading-none">0 <span class="text-xs font-bold text-slate-400">JPY</span></p>
                 </div>
             </div>
 
             <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pt-2 px-1" data-i18n="by_payment">By Payment</h3>
             <div id="payment-summary-container" class="grid grid-cols-2 gap-3 mb-4"></div>
 
-            <!-- 2. Daily Trend Chart -->
             <div class="modern-card p-6 bg-white mt-4">
                 <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center mb-5" data-i18n="daily_trend">Daily Spending Trend</h3>
-                <div class="relative w-full h-40">
-                    <canvas id="dailyTrendChart"></canvas>
-                </div>
+                <div class="relative w-full h-40"><canvas id="dailyTrendChart"></canvas></div>
             </div>
 
-            <!-- 3. Category Overview -->
             <div class="modern-card p-6 bg-white mt-4">
                 <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center mb-5" data-i18n="cat_overview">Category Overview</h3>
-                <div class="relative w-full max-w-[200px] mx-auto">
-                    <canvas id="overallCategoryChart"></canvas>
-                </div>
+                <div class="relative w-full max-w-[200px] mx-auto"><canvas id="overallCategoryChart"></canvas></div>
                 <div id="category-dashboard-list" class="mt-7 space-y-1 border-t border-slate-100 pt-4"></div>
             </div>
 
-            <!-- 4. Daily Focus -->
             <div class="modern-card p-6 bg-white mt-4">
                 <div class="flex justify-between items-center mb-5 border-b border-slate-100 pb-3">
                     <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest" data-i18n="daily_focus">Daily Focus</h3>
                     <div class="relative bg-slate-50 rounded-lg border border-slate-100">
-                        <select id="dashboard-date-filter" onchange="updateDailyCategoryChart()" class="bg-transparent text-slate-700 text-[10px] font-bold px-3 py-1.5 outline-none appearance-none pr-7 cursor-pointer">
-                            <option value="">No Data</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
-                            <i class="fas fa-chevron-down text-[8px]"></i>
-                        </div>
+                        <select id="dashboard-date-filter" onchange="updateDailyCategoryChart()" class="bg-transparent text-slate-700 text-[10px] font-bold px-3 py-1.5 outline-none appearance-none pr-7 cursor-pointer"><option value="">No Data</option></select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400"><i class="fas fa-chevron-down text-[8px]"></i></div>
                     </div>
                 </div>
-                <div class="relative w-full max-w-[200px] mx-auto pt-2">
-                    <canvas id="dailyCategoryChart"></canvas>
-                </div>
+                <div class="relative w-full max-w-[200px] mx-auto pt-2"><canvas id="dailyCategoryChart"></canvas></div>
                 <div id="daily-category-list" class="mt-7 space-y-1 border-t border-slate-100 pt-4"></div>
             </div>
 
-            <!-- 5. Top 5 Most Expensive Items -->
             <div class="modern-card p-6 bg-white mt-4">
                 <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center mb-5" data-i18n="top_5">Top 5 Highest Expenses</h3>
                 <div id="top-5-expenses" class="space-y-1"></div>
@@ -902,23 +741,17 @@
         <!-- Bottom Navigation Bar -->
         <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-[360px] bg-white/90 backdrop-blur-xl border border-[#EAE6DF] shadow-[0_10px_40px_rgba(28,37,54,0.08)] rounded-2xl p-1.5 flex justify-between items-center">
             <button onclick="switchPage('home')" id="nav-home" class="nav-btn w-1/3 py-3 rounded-[12px] flex flex-col items-center gap-1 nav-active hover:bg-slate-50 transition-colors">
-                <i class="fas fa-plus text-[18px]"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wider" data-i18n="nav_add">Add</span>
+                <i class="fas fa-plus text-[18px]"></i><span class="text-[9px] font-bold uppercase tracking-wider" data-i18n="nav_add">Add</span>
             </button>
             <button onclick="switchPage('history')" id="nav-history" class="nav-btn w-1/3 py-3 rounded-[12px] flex flex-col items-center gap-1 hover:bg-slate-50 transition-colors">
-                <i class="fas fa-list-ul text-[18px]"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wider" data-i18n="nav_history">History</span>
+                <i class="fas fa-list-ul text-[18px]"></i><span class="text-[9px] font-bold uppercase tracking-wider" data-i18n="nav_history">History</span>
             </button>
             <button onclick="switchPage('dashboard')" id="nav-dashboard" class="nav-btn w-1/3 py-3 rounded-[12px] flex flex-col items-center gap-1 hover:bg-slate-50 transition-colors">
-                <i class="fas fa-chart-pie text-[18px]"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wider" data-i18n="nav_stats">Stats</span>
+                <i class="fas fa-chart-pie text-[18px]"></i><span class="text-[9px] font-bold uppercase tracking-wider" data-i18n="nav_stats">Stats</span>
             </button>
         </div>
-    </div> <!-- Closing main-app div -->
+    </div>
 
-    <!-- ============================================== -->
-    <!-- SCRIPT SECTION (UI Logic & Firebase Integrated) -->
-    <!-- ============================================== -->
     <script>
         let expenses = []; 
         let myOverallCategoryChart = null; 
@@ -951,7 +784,7 @@
                 'total_shared': 'Total Shared Expense', 'per_person': 'Per Person:', 'who_owes_who': 'Who owes who?', 'bill_summary': 'Bill Summary:', 'copy': 'Copy', 'scan_to_pay': 'Scan QR Code to pay',
                 'include_amount': 'Include Amount', 'save_image': 'Save as Image', 'select_profile': 'Select Profile', 'scan_api_key_title': 'Scan API Key QR Code', 'scan_api_key_desc': 'Point camera at QR Code containing Gemini API Key',
                 'create_api_key': 'Create API Key at Google AI Studio', 'remember_key': 'Remember Key in this browser (Personal device only)', 'model_desc1': 'Default is Flash-Lite for speed. If text is small or inaccurate, use a clearer image or change model and rescan.',
-                'model_desc2': 'Key is used directly from browser and not sent to Google Sheet. API cost depends on your Google quota/package.', 'attached': 'Attached', 'stop_scan': 'Stop Scan', 'rescan_receipt': 'Rescan Receipt'
+                'model_desc2': 'Key is used directly from browser and not sent to Google Sheet. API cost depends on your Google quota/package.', 'attached': 'Attached', 'stop_scan': 'Stop Scan', 'rescan_receipt': 'Rescan Receipt', 'logout': 'Logout'
             },
             'th': {
                 'app_title': 'MyTrip', 'nav_add': 'บันทึก', 'nav_history': 'ประวัติ', 'nav_stats': 'สถิติ',
@@ -972,7 +805,7 @@
                 'total_shared': 'ยอดหารรวมทั้งหมด', 'per_person': 'ตกคนละ:', 'who_owes_who': 'ใครต้องจ่ายใคร?', 'bill_summary': 'สรุปบิล:', 'copy': 'คัดลอก', 'scan_to_pay': 'สแกน QR เพื่อจ่าย',
                 'include_amount': 'ระบุยอดเงิน', 'save_image': 'บันทึกรูปภาพ', 'select_profile': 'เลือกโปรไฟล์', 'scan_api_key_title': 'สแกน QR โค้ด API Key', 'scan_api_key_desc': 'นำกล้องส่อง QR Code ที่เก็บ Gemini API Key ของคุณไว้',
                 'create_api_key': 'สร้าง API Key ที่ Google AI Studio', 'remember_key': 'จำ Key ในเบราว์เซอร์นี้หลังปิดแท็บ (ใช้เฉพาะเครื่องส่วนตัว)', 'model_desc1': 'ค่าเริ่มต้นใช้ Flash-Lite สำหรับอ่านเร็ว หากตัวอักษรเล็กหรือผลไม่ถูกต้อง ให้เลือกภาพที่ชัดขึ้นหรือเปลี่ยนโมเดลแล้วสแกนซ้ำ',
-                'model_desc2': 'Key ใช้จากเบราว์เซอร์นี้โดยตรงและไม่ส่งไป Google Sheet ค่า API ขึ้นอยู่กับโควตาและแพ็กเกจของ Google', 'attached': 'แนบรูปแล้ว', 'stop_scan': 'หยุดอ่าน', 'rescan_receipt': 'สแกนใบเสร็จอีกครั้ง'
+                'model_desc2': 'Key ใช้จากเบราว์เซอร์นี้โดยตรงและไม่ส่งไป Google Sheet ค่า API ขึ้นอยู่กับโควตาและแพ็กเกจของ Google', 'attached': 'แนบรูปแล้ว', 'stop_scan': 'หยุดอ่าน', 'rescan_receipt': 'สแกนใบเสร็จอีกครั้ง', 'logout': 'ออกจากระบบ'
             }
         };
 
@@ -1284,7 +1117,13 @@
             if(localStorage.getItem('tripDetail')) document.getElementById('trip-detail-header').value = localStorage.getItem('tripDetail');
             fetchExchangeRate(); renderQuickTags(); renderSettings(); renderCategorySettings(); renderPaymentDropdown(); loadGeminiSettings();
             document.getElementById('date').value = new Date().toLocaleDateString('en-CA');
-            loadData();
+            
+            // Show syncing state initially, Firebase will override this when ready
+            const list = document.getElementById('history-list'); 
+            if(list && expenses.length===0) list.innerHTML = '<div class="text-center p-10 text-slate-400 font-bold text-xs"><i class="fas fa-circle-notch fa-spin text-[#D9383A] text-3xl mb-4"></i><br>Syncing Real-time Data...</div>';
+            
+            // Fallback for UI update if offline
+            setTimeout(updateUI, 1500); 
         };
 
         document.addEventListener('click', (e) => {
@@ -1307,11 +1146,6 @@
             if(upL) { localStorage.setItem('paymentLimits', JSON.stringify(limits)); renderSettings(); renderPaymentDropdown(); } if(upC) { localStorage.setItem('categoryLimits', JSON.stringify(lCL)); renderCategorySettings(); }
             loadOmiyageSettings(); updateUI();
         };
-
-        function loadData() {
-            const list = document.getElementById('history-list'); if(list && expenses.length===0) list.innerHTML = '<div class="text-center p-10 text-slate-400 font-bold text-xs"><i class="fas fa-circle-notch fa-spin text-[#D9383A] text-3xl mb-4"></i><br>Syncing Real-time Data...</div>';
-            if (window.fs_initRealtime) window.fs_initRealtime(); else setTimeout(loadData, 500);
-        }
 
         function toggleDay(date) { document.getElementById('details-'+date)?.classList.toggle('active'); document.getElementById('icon-'+date)?.classList.toggle('rotated'); }
         function getIcon(cat) { const icons = { 'Food': 'fa-utensils', 'Transportation': 'fa-train', 'Gasoline': 'fa-gas-pump', 'Toll / ETC': 'fa-road', 'Dessert/Beverage': 'fa-mug-hot', 'Shopping': 'fa-bag-shopping', 'Admission Fee': 'fa-ticket-alt', 'Tops up IC Card': 'fa-battery-full', 'Pre-Order': 'fa-box', 'Refund Pre-Order': 'fa-undo-alt', 'Tax refund': 'fa-hand-holding-dollar', 'Advanced': 'fa-hourglass-half', 'Adjustment': 'fa-sliders', 'Other': 'fa-receipt' }; return icons[cat] || 'fa-receipt'; }
@@ -1410,7 +1244,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
         import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: 'AIzaSyBcMPhGW506qBvPIkqSffxjVWjoZ5jQWh0',
@@ -1425,9 +1259,7 @@
         const button = document.querySelector('button[onclick="window.signInWithGoogle()"]');
         const originalLabel = button?.innerHTML || 'Continue with Google';
         const overlay = document.getElementById('login-overlay');
-        const errorBox = document.createElement('p');
-        errorBox.className = 'mt-3 text-xs text-red-600 whitespace-pre-line break-words';
-        button?.parentElement?.appendChild(errorBox);
+        const errorBox = document.getElementById('login-error-msg');
         let auth, db, busy = false, hideTimer;
 
         // --- FIRESTORE BRIDGE ---
@@ -1445,8 +1277,11 @@
         window.fs_updatePreOrder = async (id, d) => await updateDoc(doc(db, 'trips', TRIP_ID, 'preOrders', id), d);
         window.fs_deletePreOrder = async (id) => await deleteDoc(doc(db, 'trips', TRIP_ID, 'preOrders', id));
 
+        // Initialization function called after User logins successfully
         window.fs_initRealtime = () => {
             if(!db) return;
+            
+            // 1. Listen to Expenses
             if(unsubExp) unsubExp();
             unsubExp = onSnapshot(collection(db, 'trips', TRIP_ID, 'expenses'), (snap) => {
                 window.expenses = [];
@@ -1456,11 +1291,13 @@
                 if(window.updateUI) window.updateUI();
             });
 
+            // 2. Listen to Settings
             if(unsubSet) unsubSet();
             unsubSet = onSnapshot(doc(db, 'trips', TRIP_ID, 'settings', 'global'), (docSnap) => {
                 if(docSnap.exists() && window.applySettingsData) window.applySettingsData(docSnap.data());
             });
 
+            // 3. Listen to Pre-Orders
             if(unsubPre) unsubPre();
             unsubPre = onSnapshot(collection(db, 'trips', TRIP_ID, 'preOrders'), (snap) => {
                 window.preOrderList = []; snap.forEach(d => window.preOrderList.push(d.data()));
@@ -1472,10 +1309,25 @@
         function setBusy(val) { busy = val; if(button) { button.disabled = val; button.innerHTML = val ? 'Connecting...' : originalLabel; } }
         function hideOverlay() { if(!overlay) return; clearTimeout(hideTimer); overlay.classList.add('opacity-0'); hideTimer = setTimeout(() => overlay.classList.add('hidden'), 500); }
         window.skipLogin = hideOverlay;
+        
+        window.updateProfileName = function(newName) {
+            const trimmedName = newName.trim();
+            if (!trimmedName) { document.getElementById('google-user-name').value = currentUser; return; }
+            const oldName = currentUser;
+            currentUser = trimmedName;
+            localStorage.setItem('tripUser', currentUser);
+            const index = tripMembers.indexOf(oldName);
+            if (index !== -1) tripMembers[index] = currentUser;
+            else if (!tripMembers.includes(currentUser)) tripMembers.push(currentUser);
+            localStorage.setItem('tripMembers', JSON.stringify(tripMembers));
+            if (typeof renderMembersSettings === 'function') renderMembersSettings();
+            if (typeof saveSettings === 'function') saveSettings(true);
+            if (window.showToast) window.showToast("Profile name updated!");
+        };
 
         window.signInWithGoogle = async () => {
-            if (busy) return; errorBox.textContent = ''; if (!auth) return;
-            if (!['http:', 'https:'].includes(location.protocol)) { errorBox.textContent = 'Please run on HTTPS or localhost'; return; }
+            if (busy) return; if(errorBox) errorBox.textContent = ''; if (!auth) return;
+            if (!['http:', 'https:'].includes(location.protocol)) { if(errorBox) errorBox.textContent = 'Please run on HTTPS or localhost'; return; }
             setBusy(true); let redirecting = false;
             try {
                 const provider = new GoogleAuthProvider(); provider.setCustomParameters({ prompt: 'select_account' });
@@ -1483,7 +1335,7 @@
                 catch (error) { if (error.code !== 'auth/popup-blocked') throw error;
                     if(window.confirm('Popup blocked. Go to Google Login page?')) { await signInWithRedirect(auth, provider); redirecting = true; }
                 }
-            } catch (error) { errorBox.textContent = error.message; } finally { if (!redirecting) setBusy(false); }
+            } catch (error) { if(errorBox) errorBox.textContent = error.message; } finally { if (!redirecting) setBusy(false); }
         };
 
         window.logoutTrip = async () => { if (auth) await signOut(auth); location.reload(); };
@@ -1495,17 +1347,28 @@
 
             onAuthStateChanged(auth, user => {
                 if (user) {
-                    errorBox.textContent = ''; hideOverlay();
+                    if(errorBox) errorBox.textContent = ''; hideOverlay();
                     const dName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
-                    window.currentUser = dName.split(' ')[0]; localStorage.setItem('tripUser', window.currentUser);
+                    if (currentUser === 'User' || !currentUser) {
+                        window.currentUser = dName.split(' ')[0]; localStorage.setItem('tripUser', window.currentUser);
+                    }
+                    if (!tripMembers.includes(window.currentUser)) {
+                        tripMembers.push(window.currentUser);
+                        localStorage.setItem('tripMembers', JSON.stringify(tripMembers));
+                        if (typeof renderMembersSettings === 'function') renderMembersSettings();
+                        if (typeof saveSettings === 'function') saveSettings(true);
+                    }
+
                     if(window.showToast) window.showToast('Welcome back, ' + window.currentUser + '!');
                     
                     const avImg = document.getElementById('user-avatar-img'), avTxt = document.getElementById('user-avatar');
                     if (user.photoURL && avImg) { avImg.src = user.photoURL; avImg.classList.remove('hidden'); if(avTxt) avTxt.classList.add('hidden'); }
-                    else if (avTxt) { if(avImg) avImg.classList.add('hidden'); avTxt.classList.remove('hidden'); }
+                    else if (avTxt) { if(avImg) avImg.classList.add('hidden'); avTxt.classList.remove('hidden'); if(window.updateUserAvatar) window.updateUserAvatar(); }
                     
                     const nE = document.getElementById('google-user-name'), eE = document.getElementById('google-user-email');
-                    if(nE) nE.textContent = dName; if(eE) eE.textContent = user.email || '';
+                    if(nE) nE.value = window.currentUser; if(eE) eE.textContent = user.email || '';
+                    
+                    if(window.loadOmiyageSettings) window.loadOmiyageSettings();
                     
                     // Initialize Data Sync!
                     if(window.fs_initRealtime) window.fs_initRealtime();
@@ -1514,7 +1377,7 @@
                 }
             });
             getRedirectResult(auth).catch(e => console.log(e));
-        } catch (error) { errorBox.textContent = error.message; }
+        } catch (error) { if(errorBox) errorBox.textContent = error.message; }
     </script>
 </body>
 </html>
