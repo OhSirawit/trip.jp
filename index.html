@@ -645,31 +645,31 @@
         <!-- PAGE 3: SETTINGS (Payment Limits & Members) -->
         <div id="page-settings" class="page-content max-w-xl mx-auto px-5 py-4 space-y-5">
             <div class="modern-card p-5 space-y-3 border border-slate-200">
-                <h3 class="font-bold text-sm">ฐานข้อมูลและสมาชิกทริป</h3>
-                <p id="firestore-status" role="status" class="text-xs whitespace-pre-line">เข้าสู่ระบบเพื่อเชื่อมต่อ Firestore</p>
+                <h3 class="font-bold text-sm" data-i18n="fs_database_members">Database & Trip Members</h3>
+                <p id="firestore-status" role="status" class="text-xs whitespace-pre-line" data-i18n="fs_sign_in">Sign in to connect to Firestore</p>
                 <p id="firestore-active" class="text-xs break-all"></p>
-                <label class="block text-xs font-bold" for="firestore-uid">UID ของคุณ (ส่งให้เจ้าของทริปเพื่อเพิ่มสิทธิ์)</label>
-                <input id="firestore-uid" readonly class="input-style w-full p-3 text-xs" aria-label="UID ของคุณ">
-                <label class="block text-xs font-bold" for="firestore-trip">รหัสทริปที่ต้องการเปิด</label>
-                <input id="firestore-trip" class="input-style w-full p-3 text-xs" placeholder="รหัสทริปจากเจ้าของ">
+                <label class="block text-xs font-bold" for="firestore-uid" data-i18n="fs_uid">Your UID (share with the trip owner for access)</label>
+                <input id="firestore-uid" readonly class="input-style w-full p-3 text-xs" aria-label="Your UID" data-i18n-aria="fs_uid">
+                <label class="block text-xs font-bold" for="firestore-trip" data-i18n="fs_trip_id">Trip ID to open</label>
+                <input id="firestore-trip" class="input-style w-full p-3 text-xs" data-i18n-placeholder="fs_trip_placeholder" placeholder="Trip ID from the owner">
                 <div class="flex gap-2">
-                    <button type="button" onclick="switchFirestoreTrip()" class="rounded-xl bg-slate-800 text-white p-3 text-xs">เปิดทริป</button>
-                    <button type="button" onclick="usePersonalFirestoreTrip()" class="rounded-xl border p-3 text-xs">ทริปส่วนตัวของฉัน</button>
+                    <button type="button" onclick="switchFirestoreTrip()" class="rounded-xl bg-slate-800 text-white p-3 text-xs" data-i18n="fs_open">Open Trip</button>
+                    <button type="button" onclick="usePersonalFirestoreTrip()" class="rounded-xl border p-3 text-xs" data-i18n="fs_personal">My Personal Trip</button>
                 </div>
-                <label class="block text-xs font-bold" for="firestore-member">เพิ่มสมาชิกด้วย Google UID (เจ้าของทริปเท่านั้น)</label>
-                <input id="firestore-member" class="input-style w-full p-3 text-xs" placeholder="วาง UID ของสมาชิก">
-                <button type="button" onclick="addFirestoreMember()" class="rounded-xl border p-3 text-xs">เพิ่มสิทธิ์เข้าทริป</button>
-                <p class="text-xs text-slate-500">สมาชิกที่ได้รับสิทธิ์จะดูและแก้ไขข้อมูลร่วมกันได้ รายชื่อสำหรับหารบิลด้านล่างใช้แทนสิทธิ์เข้าถึงไม่ได้</p>
+                <label class="block text-xs font-bold" for="firestore-member" data-i18n="fs_add_member">Add a member by Google UID (owner only)</label>
+                <input id="firestore-member" class="input-style w-full p-3 text-xs" data-i18n-placeholder="fs_member_placeholder" placeholder="Paste the member’s UID">
+                <button type="button" onclick="addFirestoreMember()" class="rounded-xl border p-3 text-xs" data-i18n="fs_grant">Grant Trip Access</button>
+                <p class="text-xs text-slate-500" data-i18n="fs_members_hint">Authorized members can view and edit shared data. Adding a name to the bill-splitting list below does not grant access.</p>
             </div>
             <div class="modern-card p-5 space-y-3 border border-slate-200">
-                <h3 class="font-bold text-sm">นำเข้าข้อมูลเดิมและสำรองข้อมูล</h3>
-                <p class="text-xs text-slate-500">นำเข้าสู่ทริปปัจจุบัน ไม่ลบ Sheets และข้ามข้อมูลรหัสเดิม รูปใบเสร็จเดิมยังใช้ลิงก์ Drive</p>
-                <button type="button" onclick="importLegacySheets()" class="w-full rounded-xl bg-slate-800 text-white p-3 text-xs">นำเข้าข้อมูลเดิมจาก Google Sheets</button>
-                <label class="block text-xs font-bold" for="firestore-import-file">หรือนำเข้าไฟล์สำรอง JSON</label>
+                <h3 class="font-bold text-sm" data-i18n="fs_import_backup">Import & Backup</h3>
+                <p class="text-xs text-slate-500" data-i18n="fs_import_hint">Import into the current trip. Sheets data is preserved and existing IDs are skipped. Existing receipts keep their Drive links.</p>
+                <button type="button" onclick="importLegacySheets()" class="w-full rounded-xl bg-slate-800 text-white p-3 text-xs" data-i18n="fs_import_sheets">Import from Google Sheets</button>
+                <label class="block text-xs font-bold" for="firestore-import-file" data-i18n="fs_import_json">Or import a JSON backup</label>
                 <input type="file" id="firestore-import-file" accept=".json,application/json" onchange="importFirestoreJson(this)" class="w-full text-xs">
-                <button type="button" onclick="exportFirestoreBackup()" class="w-full rounded-xl border p-3 text-xs">ดาวน์โหลดสำรอง Firestore (JSON พร้อมรูป)</button>
-                <button type="button" onclick="adoptLegacyOfflineQueue()" class="w-full rounded-xl border p-3 text-xs">นำเข้าคิวออฟไลน์จากเวอร์ชันเดิม</button>
-                <button type="button" onclick="syncFirestoreQueue()" class="w-full rounded-xl border p-3 text-xs">ลองซิงก์คิวออฟไลน์อีกครั้ง</button>
+                <button type="button" onclick="exportFirestoreBackup()" class="w-full rounded-xl border p-3 text-xs" data-i18n="fs_export">Download Firestore Backup (JSON with Images)</button>
+                <button type="button" onclick="adoptLegacyOfflineQueue()" class="w-full rounded-xl border p-3 text-xs" data-i18n="fs_legacy_queue">Import Offline Queue from the Previous Version</button>
+                <button type="button" onclick="syncFirestoreQueue()" class="w-full rounded-xl border p-3 text-xs" data-i18n="fs_retry_queue">Retry Offline Sync</button>
             </div>
 
             <div class="flex justify-between items-center mb-4 px-1">
@@ -1158,6 +1158,26 @@
             }
         };
 
+
+        // Firestore controls use the same EN/TH setting as the rest of MyTrip.
+        const firestoreMessages = {"ฐานข้อมูลและสมาชิกทริป": "Database & Trip Members", "เข้าสู่ระบบเพื่อเชื่อมต่อ Firestore": "Sign in to connect to Firestore", "UID ของคุณ (ส่งให้เจ้าของทริปเพื่อเพิ่มสิทธิ์)": "Your UID (share with the trip owner for access)", "รหัสทริปที่ต้องการเปิด": "Trip ID to open", "รหัสทริปจากเจ้าของ": "Trip ID from the owner", "เปิดทริป": "Open Trip", "ทริปส่วนตัวของฉัน": "My Personal Trip", "เพิ่มสมาชิกด้วย Google UID (เจ้าของทริปเท่านั้น)": "Add a member by Google UID (owner only)", "วาง UID ของสมาชิก": "Paste the member’s UID", "เพิ่มสิทธิ์เข้าทริป": "Grant Trip Access", "สมาชิกที่ได้รับสิทธิ์จะดูและแก้ไขข้อมูลร่วมกันได้ รายชื่อสำหรับหารบิลด้านล่างใช้แทนสิทธิ์เข้าถึงไม่ได้": "Authorized members can view and edit shared data. Adding a name to the bill-splitting list below does not grant access.", "นำเข้าข้อมูลเดิมและสำรองข้อมูล": "Import & Backup", "นำเข้าสู่ทริปปัจจุบัน ไม่ลบ Sheets และข้ามข้อมูลรหัสเดิม รูปใบเสร็จเดิมยังใช้ลิงก์ Drive": "Import into the current trip. Sheets data is preserved and existing IDs are skipped. Existing receipts keep their Drive links.", "นำเข้าข้อมูลเดิมจาก Google Sheets": "Import from Google Sheets", "หรือนำเข้าไฟล์สำรอง JSON": "Or import a JSON backup", "ดาวน์โหลดสำรอง Firestore (JSON พร้อมรูป)": "Download Firestore Backup (JSON with Images)", "นำเข้าคิวออฟไลน์จากเวอร์ชันเดิม": "Import Offline Queue from the Previous Version", "ลองซิงก์คิวออฟไลน์อีกครั้ง": "Retry Offline Sync", "รหัสข้อมูลไม่ถูกต้อง": "Invalid record ID.", "กรุณาเข้าสู่ระบบและเลือกทริปก่อนบันทึกข้อมูล": "Sign in and select a trip before saving data.", "ยังไม่มีสิทธิ์เข้าทริป หรือยังไม่ได้ Publish Firestore Rules ตามไฟล์ที่แนบ": "You do not have access to this trip, or the provided Firestore Rules have not been published.", "เชื่อมต่อ Firestore ไม่ได้ กรุณาตรวจอินเทอร์เน็ตและสร้างฐานข้อมูล Firestore ก่อน": "Unable to connect to Firestore. Check your internet connection and create the Firestore database first.", "กรุณาสร้าง Cloud Firestore ฐานข้อมูล (default) ใน Firebase Console ก่อน": "Create the Cloud Firestore (default) database in Firebase Console first.", "ทริปปัจจุบัน: {0}": "Current trip: {0}", "ยังไม่ได้เชื่อมต่อทริป": "No trip connected.", "กรุณารอให้นำเข้าหรือซิงก์คิวเสร็จก่อนเปลี่ยนทริป": "Wait for the import or offline sync to finish before switching trips.", "กรุณาเข้าสู่ระบบก่อน": "Please sign in first.", "ไม่พบทริป หรือเจ้าของทริปยังไม่ได้เพิ่ม UID ของคุณ": "Trip not found, or the owner has not granted access to your UID.", "เชื่อมต่อ Firestore แล้ว": "Connected to Firestore.", "สิทธิ์ในทริปถูกยกเลิก กรุณาเลือกทริปของคุณใหม่": "Your access to this trip was revoked. Please select another trip.", "เปิดทริปส่วนตัวแล้ว กรุณาตรวจสิทธิ์ทริปที่เคยใช้": "Your personal trip is open. Check your access to the previously selected trip.", "พบคิวออฟไลน์จากเวอร์ชัน Sheets: ใช้ปุ่มนำเข้าคิวเดิมด้านล่าง": "An offline queue from the Sheets version was found. Use the import queue button below.", "เฉพาะเจ้าของทริปเท่านั้นที่เพิ่มสิทธิ์ได้": "Only the trip owner can grant access.", "เพิ่มสมาชิกแล้ว ส่งรหัสทริปปัจจุบันให้สมาชิกเปิดใช้งาน": "Member added. Share the current trip ID so they can open the trip.", "รูปแบบ Settings ไม่ถูกต้อง": "Invalid settings format.", "รูปแบบรายจ่ายไม่ถูกต้อง": "Invalid expense format.", "จำนวนเงินในรายจ่ายต้องมากกว่า 0": "The expense amount must be greater than zero.", "รูปใบเสร็จต้องเป็น JPG, PNG หรือ WebP": "The receipt image must be JPG, PNG or WebP.", "รูปใบเสร็จใหญ่เกินไป กรุณาแนบรูปที่เล็กลง (ข้อมูลรูปไม่เกิน 740 KB)": "The receipt is too large. Attach a smaller image (up to 740 KB of image data).", "ไม่มีอินเทอร์เน็ต กรุณาลองอีกครั้งเมื่อออนไลน์": "No internet connection. Try again when online.", "ไม่พบรายจ่ายที่ต้องการแก้ไข": "The expense to update was not found.", "ข้อมูลรับหิ้วไม่ครบ": "Pre-order details are incomplete.", "กรุณาอนุญาต Popup เพื่อเปิดใบเสร็จ": "Allow pop-ups to open the receipt.", "กำลังโหลดใบเสร็จ…": "Loading receipt…", "ไม่พบรูปใบเสร็จ": "Receipt image not found.", "รูปแบบรูปไม่ถูกต้อง": "Invalid image format.", "ใบเสร็จ": "Receipt", "ไม่มีคิวจากเวอร์ชันเดิม": "No offline queue from the previous version was found.", "นำเข้าคิวเก่า {0} รายการสู่ทริปปัจจุบันหรือไม่?": "Import {0} old offline records into the current trip?", "ส่งออกสำรองข้อมูลพร้อมรูปใบเสร็จแล้ว": "Backup exported with receipt images.", "เฉพาะเจ้าของทริปเท่านั้นที่นำเข้าข้อมูลได้": "Only the trip owner can import data.", "ไฟล์ต้องเป็น JSON แบบ {data: [...], preOrders: [...], settings: {...}}": "The file must be JSON in this format: {data: [...], preOrders: [...], settings: {...}}", "preOrders ต้องเป็นรายการ": "preOrders must be an array.", "พบ rowId ซ้ำในไฟล์นำเข้า: {0}": "Duplicate rowId in import file: {0}", "ไฟล์สำรองไม่มีรูปใบเสร็จ {0}": "The backup is missing receipt image {0}", "ข้อมูลรับหิ้วไม่ถูกต้อง": "Invalid pre-order data.", "ทริปหรือบัญชีเปลี่ยนระหว่างนำเข้า กรุณาลองใหม่": "The trip or account changed during import. Please try again.", "กำลังนำเข้า {0}/{1} รายการ…": "Importing {0}/{1} records…", "นำเข้าเสร็จ: เพิ่ม {0} เอกสาร ข้ามข้อมูลเดิม {1} เอกสาร ไม่ลบต้นฉบับ": "Import complete: {0} documents added, {1} existing documents skipped. Source data is preserved.", "นำเข้ารายจ่าย {0} รายการ และรับหิ้ว {1} รายการ สู่ทริป {2}? ข้อมูลรหัสเดิมจะถูกข้าม": "Import {0} expenses and {1} pre-orders into trip {2}? Existing IDs will be skipped.", "กำลังอ่านข้อมูลเดิมจาก Google Sheets…": "Reading existing data from Google Sheets…", "อ่าน Sheets ไม่สำเร็จ: HTTP {0}": "Unable to read Sheets: HTTP {0}", "Apps Script ไม่ได้ส่งข้อมูล JSON ที่คาดไว้": "Apps Script did not return the expected JSON data.", "กรุณาเลือกไฟล์ JSON": "Please select a JSON file.", "กรุณาเข้าสู่ระบบและเชื่อมต่อ Firestore ก่อน": "Sign in and connect to Firestore first.", "บันทึกคิวในเครื่องแล้ว จะซิงก์เมื่อออนไลน์": "Saved to the offline queue. It will sync when online."};
+        Object.assign(i18n.en, {"fs_database_members": "Database & Trip Members", "fs_sign_in": "Sign in to connect to Firestore", "fs_uid": "Your UID (share with the trip owner for access)", "fs_trip_id": "Trip ID to open", "fs_trip_placeholder": "Trip ID from the owner", "fs_open": "Open Trip", "fs_personal": "My Personal Trip", "fs_add_member": "Add a member by Google UID (owner only)", "fs_member_placeholder": "Paste the member’s UID", "fs_grant": "Grant Trip Access", "fs_members_hint": "Authorized members can view and edit shared data. Adding a name to the bill-splitting list below does not grant access.", "fs_import_backup": "Import & Backup", "fs_import_hint": "Import into the current trip. Sheets data is preserved and existing IDs are skipped. Existing receipts keep their Drive links.", "fs_import_sheets": "Import from Google Sheets", "fs_import_json": "Or import a JSON backup", "fs_export": "Download Firestore Backup (JSON with Images)", "fs_legacy_queue": "Import Offline Queue from the Previous Version", "fs_retry_queue": "Retry Offline Sync"});
+        Object.assign(i18n.th, {"fs_database_members": "ฐานข้อมูลและสมาชิกทริป", "fs_sign_in": "เข้าสู่ระบบเพื่อเชื่อมต่อ Firestore", "fs_uid": "UID ของคุณ (ส่งให้เจ้าของทริปเพื่อเพิ่มสิทธิ์)", "fs_trip_id": "รหัสทริปที่ต้องการเปิด", "fs_trip_placeholder": "รหัสทริปจากเจ้าของ", "fs_open": "เปิดทริป", "fs_personal": "ทริปส่วนตัวของฉัน", "fs_add_member": "เพิ่มสมาชิกด้วย Google UID (เจ้าของทริปเท่านั้น)", "fs_member_placeholder": "วาง UID ของสมาชิก", "fs_grant": "เพิ่มสิทธิ์เข้าทริป", "fs_members_hint": "สมาชิกที่ได้รับสิทธิ์จะดูและแก้ไขข้อมูลร่วมกันได้ รายชื่อสำหรับหารบิลด้านล่างใช้แทนสิทธิ์เข้าถึงไม่ได้", "fs_import_backup": "นำเข้าข้อมูลเดิมและสำรองข้อมูล", "fs_import_hint": "นำเข้าสู่ทริปปัจจุบัน ไม่ลบ Sheets และข้ามข้อมูลรหัสเดิม รูปใบเสร็จเดิมยังใช้ลิงก์ Drive", "fs_import_sheets": "นำเข้าข้อมูลเดิมจาก Google Sheets", "fs_import_json": "หรือนำเข้าไฟล์สำรอง JSON", "fs_export": "ดาวน์โหลดสำรอง Firestore (JSON พร้อมรูป)", "fs_legacy_queue": "นำเข้าคิวออฟไลน์จากเวอร์ชันเดิม", "fs_retry_queue": "ลองซิงก์คิวออฟไลน์อีกครั้ง"});
+        const firestorePatterns = Object.entries(firestoreMessages).filter(([source]) => /\{\d+\}/.test(source)).map(([source, target]) => {
+            const parts = source.split(/(\{\d+\})/g);
+            const pattern = parts.map(part => /^\{\d+\}$/.test(part) ? '(.+?)' : part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('');
+            return { pattern: new RegExp('^' + pattern + '$'), target };
+        });
+        window.translateFirestoreText = text => {
+            if (currentLang !== 'en' || typeof text !== 'string') return text;
+            if (Object.hasOwn(firestoreMessages, text)) return firestoreMessages[text];
+            for (const {pattern, target} of firestorePatterns) {
+                const match = text.match(pattern);
+                if (match) return target.replace(/\{(\d+)\}/g, (_, index) => match[Number(index) + 1]);
+            }
+            return text;
+        };
+
         let currentLang = localStorage.getItem('tripLang') || 'en';
 
         function toggleLanguage() {
@@ -1185,6 +1205,12 @@
                     el.placeholder = i18n[currentLang][key];
                 }
             });
+
+            document.documentElement.lang = currentLang;
+            document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+                el.setAttribute('aria-label', i18n[currentLang][el.dataset.i18nAria]);
+            });
+            window.refreshFirestoreLanguage?.();
 
             // Dynamic Button State Fix
             const submitBtn = document.getElementById('submit-btn');
@@ -1543,7 +1569,7 @@
                 if (workId !== receiptWorkId) return;
                 const message = err.message || (currentLang === 'en' ? 'Scan failed' : 'สแกนไม่สำเร็จ');
                 setReceiptStatus(message + (currentLang === 'en' ? ' — Image still attached. Fill manually or rescan.' : ' — รูปยังแนบอยู่ กรอกเองหรือกดสแกนอีกครั้งได้'), true);
-                showToast(message, true);
+                showToast(fsText(message), true);
             } finally {
                 clearInterval(progressTimer);
                 if (receiptProgressTimer === progressTimer) receiptProgressTimer = null;
@@ -3716,7 +3742,7 @@
 
         document.getElementById('expense-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!window.hasFirestoreSession?.()) { showToast('กรุณาเข้าสู่ระบบและเชื่อมต่อ Firestore ก่อน', true); return; }
+            if (!window.hasFirestoreSession?.()) { showToast(window.translateFirestoreText('กรุณาเข้าสู่ระบบและเชื่อมต่อ Firestore ก่อน'), true); return; }
             if (receiptBusy) {
                 showToast(currentLang === 'th' ? 'กรุณารอให้สแกนใบเสร็จเสร็จก่อนบันทึก' : 'Please wait for scan to finish', true);
                 return;
@@ -3765,7 +3791,7 @@
                         ? { action: 'updateExpense', data: payload, rowId: currentEditRowId }
                         : { action: 'addExpense', data: payload };
                     window.queueFirestoreExpense(request);
-                    showToast('บันทึกคิวในเครื่องแล้ว จะซิงก์เมื่อออนไลน์');
+                    showToast(window.translateFirestoreText('บันทึกคิวในเครื่องแล้ว จะซิงก์เมื่อออนไลน์'));
                     cancelEdit();
                     updateUI();
                 } catch (error) {
@@ -3910,9 +3936,16 @@ function context() {
 function tripRef(trip = activeTrip) { return doc(db, 'trips', safeId(trip)); }
 function refFor(group, id, trip = activeTrip) { return doc(db, 'trips', safeId(trip), group, safeId(id)); }
 function colFor(group, trip = activeTrip) { return collection(db, 'trips', safeId(trip), group); }
+let firestoreLastStatus = {text: 'เข้าสู่ระบบเพื่อเชื่อมต่อ Firestore', error: false};
+const fsText = text => window.translateFirestoreText(text);
+window.refreshFirestoreLanguage = () => {
+  refreshControls();
+  status(firestoreLastStatus.text, firestoreLastStatus.error);
+};
 function status(text, error = false) {
+  firestoreLastStatus = {text, error};
   if ($('firestore-status')) {
-    $('firestore-status').textContent = text;
+    $('firestore-status').textContent = fsText(text);
     $('firestore-status').style.color = error ? '#dc2626' : '#475569';
   }
 }
@@ -3925,7 +3958,7 @@ function report(error) {
   };
   const message = hints[error.code] || error.message || String(error);
   status(message, true);
-  if (typeof showToast === 'function') showToast(message, true);
+  if (typeof showToast === 'function') showToast(fsText(message), true);
 }
 function clearData() {
   expenses = [];
@@ -3946,7 +3979,7 @@ function clearData() {
 function refreshControls() {
   if ($('firestore-uid')) $('firestore-uid').value = sessionUid || '';
   if ($('firestore-trip')) $('firestore-trip').value = activeTrip || '';
-  if ($('firestore-active')) $('firestore-active').textContent = activeTrip ? `ทริปปัจจุบัน: ${activeTrip}` : 'ยังไม่ได้เชื่อมต่อทริป';
+  if ($('firestore-active')) $('firestore-active').textContent = fsText(activeTrip ? `ทริปปัจจุบัน: ${activeTrip}` : 'ยังไม่ได้เชื่อมต่อทริป');
 }
 async function openTrip(id) {
   if (syncingQueue || importBusy) throw new Error('กรุณารอให้นำเข้าหรือซิงก์คิวเสร็จก่อนเปลี่ยนทริป');
@@ -4165,7 +4198,7 @@ window.openTripReceipt = async rowId => {
   const preview = window.open('', '_blank');
   if (!preview) return report(new Error('กรุณาอนุญาต Popup เพื่อเปิดใบเสร็จ'));
   preview.document.title = 'MyTrip receipt';
-  preview.document.body.textContent = 'กำลังโหลดใบเสร็จ…';
+  preview.document.body.textContent = fsText('กำลังโหลดใบเสร็จ…');
   preview.opener = null;
   try {
     const {trip} = context();
@@ -4175,9 +4208,9 @@ window.openTripReceipt = async rowId => {
     if (!/^data:image\/(jpeg|png|webp);base64,/.test(dataUrl)) throw new Error('รูปแบบรูปไม่ถูกต้อง');
     if (preview.closed) return;
     const image = preview.document.createElement('img'); image.src = dataUrl;
-    image.alt = 'ใบเสร็จ'; image.style.maxWidth = '100%';
+    image.alt = fsText('ใบเสร็จ'); image.style.maxWidth = '100%';
     preview.document.body.replaceChildren(image);
-  } catch(error) { if (!preview.closed) preview.document.body.textContent=error.message; report(error); }
+  } catch(error) { if (!preview.closed) preview.document.body.textContent=fsText(error.message); report(error); }
 };
 window.queueFirestoreExpense = request => {
   context();
@@ -4214,7 +4247,7 @@ window.adoptLegacyOfflineQueue = () => {
     context();
     const legacy = JSON.parse(localStorage.getItem('offlineQueue') || '[]');
     if (!legacy.length) return status('ไม่มีคิวจากเวอร์ชันเดิม');
-    if (!confirm(`นำเข้าคิวเก่า ${legacy.length} รายการสู่ทริปปัจจุบันหรือไม่?`)) return;
+    if (!confirm(fsText(`นำเข้าคิวเก่า ${legacy.length} รายการสู่ทริปปัจจุบันหรือไม่?`))) return;
     const previous = JSON.parse(localStorage.getItem(scopedKey('offlineQueue')) || '[]');
     const operations = legacy.map((entry,index) => {
       // Sheet row numbers do not identify Firestore records. Imported IDs are deterministic.
@@ -4317,7 +4350,7 @@ async function runImport(load) {
   try {
     context();
     const raw=await load();
-    if(!confirm(`นำเข้ารายจ่าย ${raw.data?.length || 0} รายการ และรับหิ้ว ${raw.preOrders?.length || 0} รายการ สู่ทริป ${activeTrip}? ข้อมูลรหัสเดิมจะถูกข้าม`)) return;
+    if(!confirm(fsText(`นำเข้ารายจ่าย ${raw.data?.length || 0} รายการ และรับหิ้ว ${raw.preOrders?.length || 0} รายการ สู่ทริป ${activeTrip}? ข้อมูลรหัสเดิมจะถูกข้าม`))) return;
     await importSnapshot(raw);
   } catch(error) { report(error); }
   finally { importBusy=false; }
