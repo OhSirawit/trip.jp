@@ -3929,122 +3929,115 @@
 
     <!-- Firebase Auth Module -->
     <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyBcMPhGW506qBvPIkqSffxjVWjoZ5jQWh0',
-  authDomain: 'jp-oh-59f31.firebaseapp.com',
-  projectId: 'jp-oh-59f31',
-  storageBucket: 'jp-oh-59f31.firebasestorage.app',
-  messagingSenderId: '162859226528',
-  appId: '1:162859226528:web:543c217b319dc16e3c80c5',
-  measurementId: 'G-6BX5RE5KC3'
-};
+        const firebaseConfig = {
+            apiKey: 'AIzaSyBcMPhGW506qBvPIkqSffxjVWjoZ5jQWh0',
+            authDomain: 'jp-oh-59f31.firebaseapp.com',
+            projectId: 'jp-oh-59f31',
+            storageBucket: 'jp-oh-59f31.firebasestorage.app',
+            messagingSenderId: '162859226528',
+            appId: '1:162859226528:web:543c217b319dc16e3c80c5',
+            measurementId: 'G-6BX5RE5KC3'
+        };
 
-const button = document.querySelector('button[onclick="window.signInWithGoogle()"]');
-const originalLabel = button?.innerHTML || 'Continue with Google';
-const overlay = document.getElementById('login-overlay');
-const errorBox = document.createElement('p');
-errorBox.className = 'mt-3 text-xs text-red-600 whitespace-pre-line break-words';
-errorBox.setAttribute('role', 'alert');
-button?.parentElement?.appendChild(errorBox);
-let auth;
-let busy = false;
-let hideTimer;
+        const button = document.querySelector('button[onclick="window.signInWithGoogle()"]');
+        const originalLabel = button ? button.innerHTML : 'Continue with Google';
+        const overlay = document.getElementById('login-overlay');
+        const errorBox = document.createElement('div');
+        errorBox.className = 'mt-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-600 whitespace-pre-line break-words hidden font-bold text-left';
+        if (button && button.parentElement) {
+            button.parentElement.appendChild(errorBox);
+        }
+        
+        let auth;
+        let busy = false;
+        let hideTimer;
 
-function setBusy(value) {
-  busy = value;
-  if (!button) return;
-  button.disabled = value;
-  button.innerHTML = value ? 'Connecting...' : originalLabel;
-}
+        function setBusy(value) {
+            busy = value;
+            if (!button) return;
+            button.disabled = value;
+            button.innerHTML = value ? '<i class="fas fa-circle-notch fa-spin text-slate-500"></i><span class="ml-2">Connecting...</span>' : originalLabel;
+        }
 
-function showError(error) {
-  console.error('Google login:', error.code, error.message);
-  const messages = {
-    'auth/unauthorized-domain': 'เพิ่มโดเมน ' + location.hostname + ' ใน Firebase Console → Authentication → Settings → Authorized domains',
-    'auth/operation-not-allowed': 'เปิด Google ใน Firebase Console → Authentication → Sign-in method',
-    'auth/popup-blocked': 'เบราว์เซอร์บล็อก Popup กรุณาอนุญาต Popup แล้วลองอีกครั้ง',
-    'auth/popup-closed-by-user': 'หน้าต่างล็อกอินถูกปิดก่อนเสร็จ กรุณาลองอีกครั้ง',
-    'auth/cancelled-popup-request': 'มีหน้าต่างล็อกอินอื่นเปิดอยู่ กรุณาลองอีกครั้ง',
-    'auth/network-request-failed': 'เชื่อมต่อไม่ได้ กรุณาตรวจอินเทอร์เน็ตและตัวบล็อกเนื้อหา',
-    'auth/operation-not-supported-in-this-environment': 'เปิดเว็บผ่าน HTTPS หรือ localhost แทนการเปิดไฟล์ HTML โดยตรง',
-    'auth/web-storage-unsupported': 'เบราว์เซอร์ไม่อนุญาตให้จัดเก็บข้อมูล กรุณาตรวจการตั้งค่าเบราว์เซอร์',
-    'auth/invalid-api-key': 'Firebase API key ไม่ถูกต้อง กรุณาตรวจ Firebase config'
-  };
-  errorBox.textContent = (messages[error.code] || error.message || 'เข้าสู่ระบบไม่สำเร็จ') + '\n(' + (error.code || 'unknown-error') + ')';
-}
+        function showError(error) {
+            console.error('Google login:', error.code, error.message);
+            errorBox.classList.remove('hidden');
+            
+            // ตรวจสอบ Error คลาสสิก
+            if (error.code === 'auth/operation-not-allowed' || error.message.includes('not enabled')) {
+                errorBox.innerHTML = '<i class="fas fa-exclamation-circle text-rose-500 mr-1"></i> <b>ยังไม่ได้เปิดใช้งาน Google Login</b><br>กรุณาไปที่ Firebase Console &rarr; Authentication &rarr; แท็บ Sign-in method &rarr; กดเพิ่ม Google และกด Enable ครับ';
+            } else if (error.code === 'auth/unauthorized-domain') {
+                errorBox.innerHTML = '<i class="fas fa-exclamation-circle text-rose-500 mr-1"></i> <b>โดเมนยังไม่ได้รับอนุญาต</b><br>ไปที่ Firebase Console &rarr; Authentication &rarr; Settings &rarr; Authorized domains แล้วเพิ่ม ' + location.hostname;
+            } else if (error.code === 'auth/popup-closed-by-user') {
+                errorBox.innerHTML = '<i class="fas fa-exclamation-circle text-rose-500 mr-1"></i> <b>หน้าต่างถูกปิดไปก่อน</b><br>(ถ้าเด้งแล้วปิดเอง แสดงว่าลืมเปิด Google ใน Firebase Console หรือโดเมนยังไม่เซฟครับ)';
+            } else {
+                errorBox.textContent = error.message + ' (' + error.code + ')';
+            }
+        }
 
-function hideOverlay() {
-  if (!overlay) return;
-  clearTimeout(hideTimer);
-  overlay.classList.add('opacity-0');
-  hideTimer = setTimeout(() => overlay.classList.add('hidden'), 500);
-}
+        function hideOverlay() {
+            if (!overlay) return;
+            clearTimeout(hideTimer);
+            overlay.classList.add('opacity-0');
+            hideTimer = setTimeout(() => overlay.classList.add('hidden'), 500);
+        }
 
-window.skipLogin = hideOverlay;
-window.signInWithGoogle = async () => {
-  if (busy) return;
-  errorBox.textContent = '';
-  if (!auth) {
-    errorBox.textContent = 'ระบบ Firebase ยังไม่พร้อม กรุณาโหลดหน้าใหม่และตรวจ Console';
-    return;
-  }
-  if (!['http:', 'https:'].includes(location.protocol)) {
-    errorBox.textContent = 'กรุณาเปิดเว็บผ่าน HTTPS หรือ localhost เช่น VS Code Live Server';
-    return;
-  }
-  setBusy(true);
-  let redirecting = false;
-  try {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      if (error.code !== 'auth/popup-blocked') throw error;
-      const proceed = window.confirm('Popup ถูกบล็อก ต้องการไปหน้าล็อกอิน Google หรือไม่? หากกลับมาแล้วยังล็อกอินไม่ได้ ให้เปิดใช้ Popup แล้วลองอีกครั้ง');
-      if (!proceed) throw error;
-      await signInWithRedirect(auth, provider);
-      redirecting = true;
-    }
-  } catch (error) {
-    showError(error);
-  } finally {
-    if (!redirecting) setBusy(false);
-  }
-};
+        window.skipLogin = hideOverlay;
 
-window.logoutTrip = async () => {
-  if (!auth) return;
-  try {
-    await signOut(auth);
-    location.reload();
-  } catch (error) {
-    showError(error);
-    window.alert(errorBox.textContent);
-  }
-};
+        window.signInWithGoogle = async () => {
+            if (busy) return;
+            errorBox.classList.add('hidden');
+            if (!auth) {
+                if(window.showToast) window.showToast('ระบบ Firebase ยังไม่พร้อม', true);
+                return;
+            }
+            setBusy(true);
+            try {
+                const provider = new GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: 'select_account' });
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                showError(error);
+            } finally {
+                setBusy(false);
+            }
+        };
 
-try {
-  auth = getAuth(initializeApp(firebaseConfig));
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      errorBox.textContent = '';
-      hideOverlay();
-      if (user.displayName && window.showToast) window.showToast('Welcome back, ' + user.displayName.split(' ')[0] + '!');
-    } else if (overlay) {
-      clearTimeout(hideTimer);
-      overlay.classList.remove('hidden');
-      void overlay.offsetWidth;
-      overlay.classList.remove('opacity-0');
-    }
-  }, showError);
-  getRedirectResult(auth).catch(showError);
-} catch (error) {
-  showError(error);
-}
+        window.logoutTrip = async () => {
+            if (!auth) return;
+            try {
+                await signOut(auth);
+                location.reload();
+            } catch (error) {
+                if(window.showToast) window.showToast("Logout failed: " + error.message, true);
+            }
+        };
+
+        try {
+            auth = getAuth(initializeApp(firebaseConfig));
+            onAuthStateChanged(auth, user => {
+                if (user) {
+                    errorBox.classList.add('hidden');
+                    hideOverlay();
+                    if (user.displayName && window.showToast) {
+                        window.showToast('Welcome back, ' + user.displayName.split(' ')[0] + '!');
+                    }
+                } else if (overlay) {
+                    clearTimeout(hideTimer);
+                    overlay.classList.remove('hidden');
+                    void overlay.offsetWidth;
+                    overlay.classList.remove('opacity-0');
+                }
+            }, (error) => {
+                console.error("Auth state error:", error);
+            });
+            getRedirectResult(auth).catch(showError);
+        } catch (error) {
+            console.error("Firebase init error:", error);
+        }
     </script>
 </body>
 </html>
