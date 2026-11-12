@@ -3955,17 +3955,24 @@
             
             if(btn) btn.innerHTML = '<i class="fas fa-circle-notch fa-spin text-slate-500"></i><span class="ml-2">Connecting...</span>';
 
+            // ตรวจสอบว่าเป็นมือถือหรือไม่ ถ้าใช่ให้ใช้ระบบเปลี่ยนหน้า (Redirect) เลย เพราะมือถือมักจะบล็อก Popup
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
             try {
-                // พยายามใช้ Popup แบบเด้งขึ้นมาก่อน
-                await signInWithPopup(auth, provider);
+                if (isMobile) {
+                    await signInWithRedirect(auth, provider);
+                } else {
+                    await signInWithPopup(auth, provider);
+                }
             } catch (error) {
                 console.warn("Popup blocked or failed, trying redirect...", error);
                 
-                // หากโดนบล็อก ให้ใช้วิธี Redirect เปลี่ยนหน้าแทน (สำหรับมือถือ)
-                if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+                // หาก Popup ล้มเหลว (เช่น เด้งแล้วปิดไปเองเพราะตั้งค่าความปลอดภัยเบราว์เซอร์)
+                // ให้บังคับเปลี่ยนหน้าเว็บไปที่หน้าล็อกอิน Google โดยตรง
+                try {
                     await signInWithRedirect(auth, provider);
-                } else {
-                    if(window.showToast) window.showToast("Login failed: " + error.message, true);
+                } catch (fallbackError) {
+                    if(window.showToast) window.showToast("Login failed: " + fallbackError.message, true);
                     if(btn) btn.innerHTML = originalContent;
                 }
             }
