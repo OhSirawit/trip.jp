@@ -1538,7 +1538,7 @@
             const apiKey = getGeminiKey();
             if (!apiKey) throw new Error('กรุณาใส่ Gemini API Key ใน Settings');
             if (!navigator.onLine) throw new Error('ต้องเชื่อมต่ออินเทอร์เน็ตเพื่อสแกนใบเสร็จ');
-            const model = document.getElementById('gemini-model-input').value.trim() || DEFAULT_GEMini_MODEL;
+            const model = document.getElementById('gemini-model-input').value.trim() || DEFAULT_GEMINI_MODEL;
             if (!/^gemini-[a-zA-Z0-9.-]+$/.test(model)) throw new Error('ชื่อโมเดลใน Settings ไม่ถูกต้อง');
             
             const availablePayments = Object.keys(getPaymentLimits()); // Get dynamic payment options
@@ -1610,7 +1610,7 @@
                         };
                         const errorsTh = {
                             400: 'คำขอไม่ถูกต้อง กรุณาตรวจ API Key และโมเดลใน Settings',
-                            401: 'API Key ไม่ถูกต้อง กรุณาตรวจ Key ใน Settings',
+                            401: 'API Key ไม่ถูกต้อง กรุณาตรวจ Keyใน Settings',
                             403: 'API Key ไม่มีสิทธิ์ใช้งาน กรุณาตรวจข้อจำกัด Key และเปิด Gemini API',
                             404: 'ไม่พบโมเดลนี้ กรุณาเปลี่ยนชื่อโมเดลใน Settings',
                             429: 'เกินโควตา Gemini กรุณาตรวจโควตาหรือ Billing แล้วลองใหม่ภายหลัง'
@@ -3928,14 +3928,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // ⚠️ ขั้นตอนที่ 1: นำ firebaseConfig จาก Firebase Console มาวางทับตรงนี้ ⚠️
+        // ใส่ Config ของโปรเจกต์คุณเรียบร้อยแล้ว
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyBcMPhGW506qbVPikqSffxjVWjoZ5jQWh0",
+            authDomain: "jp-oh-59f31.firebaseapp.com",
+            projectId: "jp-oh-59f31",
+            storageBucket: "jp-oh-59f31.firebasestorage.app",
+            messagingSenderId: "162859226528",
+            appId: "1:162859226528:web:543c217b319dc16e3c80c5",
+            measurementId: "G-6BX5RE5KC3"
         };
 
         let app, auth;
@@ -3966,7 +3967,7 @@
             }
         };
 
-        // ฟังก์ชันสำหรับกดข้ามหน้า Login (เพิ่มเข้ามาใหม่)
+        // ฟังก์ชันสำหรับกดข้ามหน้า Login (เผื่อฉุกเฉิน)
         window.skipLogin = () => {
             const overlay = document.getElementById('login-overlay');
             overlay.classList.add('opacity-0');
