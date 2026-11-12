@@ -10,6 +10,10 @@
     <meta name="mobile-web-app-capable" content="yes">
     <!-- Washi Paper Color -->
     <meta name="theme-color" content="#F7F6F2">
+    
+    <!-- PWA / Add to Home Screen Icons -->
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Red_circle_with_airplane.svg/1024px-Red_circle_with_airplane.svg.png">
+    <link rel="manifest" href='data:application/manifest+json,%7B%22name%22%3A%22MyTrip%22%2C%22short_name%22%3A%22MyTrip%22%2C%22display%22%3A%22standalone%22%2C%22start_url%22%3A%22.%2F%22%2C%22background_color%22%3A%22%23F7F6F2%22%2C%22theme_color%22%3A%22%23D9383A%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F0%2F07%2FRed_circle_with_airplane.svg%2F192px-Red_circle_with_airplane.svg.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D'>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -3926,9 +3930,9 @@
     <!-- Firebase Auth Module -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // เปลี่ยนจาก signInWithPopup เป็น signInWithRedirect 
+        import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // ใส่ Config ของโปรเจกต์คุณเรียบร้อยแล้ว
         const firebaseConfig = {
             apiKey: "AIzaSyBcMPhGW506qbVPikqSffxjVWjoZ5jQWh0",
             authDomain: "jp-oh-59f31.firebaseapp.com",
@@ -3953,6 +3957,8 @@
         }
 
         const provider = new GoogleAuthProvider();
+        // บังคับให้หน้าต่างขอสิทธิ์เลือกอีเมลใหม่เสมอ
+        provider.setCustomParameters({ prompt: 'select_account' });
 
         window.signInWithGoogle = async () => {
             if(!auth || firebaseConfig.apiKey === "YOUR_API_KEY") {
@@ -3960,7 +3966,11 @@
                 return;
             }
             try {
-                await signInWithPopup(auth, provider);
+                const btn = document.querySelector('.btn-google, button[onclick="window.signInWithGoogle()"]');
+                if(btn) btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Connecting...';
+                
+                // ใช้แบบ Redirect แทน Popup แก้ปัญหาจอมือถือบล็อกหน้าต่าง
+                await signInWithRedirect(auth, provider);
             } catch (error) {
                 console.error("Login Error:", error);
                 showToast("Login failed: " + error.message, true);
@@ -3976,10 +3986,20 @@
         };
 
         window.logoutTrip = async () => {
-            if(auth) await signOut(auth);
+            if(auth) {
+                await signOut(auth);
+                // เมื่อรีเฟรชหน้าต่าง จะได้โชว์หน้าล็อกอินขึ้นมา
+                window.location.reload(); 
+            }
         };
 
         if(auth) {
+            // เช็คผลจากการ Redirect 
+            getRedirectResult(auth).catch(error => {
+                console.error("Redirect Login Error:", error);
+                showToast("Login Error: " + error.message, true);
+            });
+
             onAuthStateChanged(auth, async (user) => {
                 const overlay = document.getElementById('login-overlay');
                 if (user) {
@@ -3990,13 +4010,27 @@
                     // เก็บ Token ไว้ใช้ส่งไปหา Google Apps Script ในอนาคต
                     window.currentUserToken = await user.getIdToken();
                     
-                    showToast(`Welcome, ${user.email}!`);
+                    // อัปเดตชื่อโปรไฟล์แบบชั่วคราวให้ตรงกับ Google
+                    if(user.displayName) {
+                        const firstName = user.displayName.split(' ')[0];
+                        if(!tripMembers.includes(firstName) && firstName !== currentUser) {
+                           // ถ้าอยากให้แอดเข้ากลุ่มอัตโนมัติเปิดโค้ดบรรทัดล่างได้ แต่ตอนนี้อิงตามที่ตั้งไว้ดีกว่าครับ
+                        }
+                    }
+                    
+                    showToast(`Welcome, ${user.displayName || user.email}!`);
                 } else {
                     // ยังไม่ล็อกอิน โชว์หน้า Login
                     overlay.classList.remove('hidden');
                     // Force reflow
                     void overlay.offsetWidth;
                     overlay.classList.remove('opacity-0');
+                    
+                    // รีเซ็ตปุ่มเผื่อค้าง
+                    const btn = document.querySelector('button[onclick="window.signInWithGoogle()"]');
+                    if(btn && btn.innerHTML.includes('Connecting')) {
+                        btn.innerHTML = `<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google Logo"> Continue with Google`;
+                    }
                 }
             });
         }
