@@ -382,8 +382,11 @@
                     <!-- User Dropdown Menu -->
                     <div id="user-menu" class="hidden absolute top-12 right-0 w-48 modern-card p-2 z-50 shadow-[0_15px_40px_rgba(0,0,0,0.1)] flex-col space-y-1">
                         <div class="px-3 py-2 border-b border-slate-100 mb-1">
-                            <p id="google-user-name" class="text-[12px] font-bold text-slate-800 truncate">Guest</p>
-                            <p id="google-user-email" class="text-[9px] font-medium text-slate-500 truncate">Not logged in</p>
+                            <div class="flex items-center gap-1.5 group" title="Click to edit name">
+                                <input type="text" id="google-user-name" class="text-[13px] font-black text-slate-800 w-full bg-transparent outline-none border-b border-dashed border-transparent focus:border-[#D9383A] transition-colors truncate cursor-text" value="Guest" onchange="window.updateProfileName(this.value)">
+                                <i class="fas fa-pencil-alt text-[9px] text-slate-300 pointer-events-none"></i>
+                            </div>
+                            <p id="google-user-email" class="text-[9px] font-medium text-slate-500 truncate mt-0.5">Not logged in</p>
                         </div>
                         <button onclick="window.logoutTrip()" class="w-full text-left px-3 py-2 text-xs font-bold text-rose-500 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-2">
                             <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
@@ -3952,6 +3955,33 @@
         }
 
         window.skipLogin = hideOverlay;
+
+        // เพิ่มฟังก์ชันสำหรับให้ผู้ใช้อัปเดตชื่อตัวเอง
+        window.updateProfileName = function(newName) {
+            const trimmedName = newName.trim();
+            if (!trimmedName) {
+                document.getElementById('google-user-name').value = currentUser;
+                return;
+            }
+            
+            const oldName = currentUser;
+            currentUser = trimmedName;
+            localStorage.setItem('tripUser', currentUser);
+            
+            // อัปเดตชื่อในรายชื่อเพื่อนร่วมทริปด้วย
+            const index = tripMembers.indexOf(oldName);
+            if (index !== -1) {
+                tripMembers[index] = currentUser;
+            } else if (!tripMembers.includes(currentUser)) {
+                tripMembers.push(currentUser);
+            }
+            
+            localStorage.setItem('tripMembers', JSON.stringify(tripMembers));
+            if (typeof renderMembersSettings === 'function') renderMembersSettings();
+            if (typeof saveSettingsSilently === 'function') saveSettingsSilently();
+            
+            if (window.showToast) window.showToast("Profile name updated!");
+        };
         
         window.signInWithGoogle = async () => {
             if (busy) return;
@@ -4002,10 +4032,12 @@
                     if(errorBox) errorBox.classList.add('hidden');
                     hideOverlay();
                     
-                    // อัปเดตข้อมูลจากบัญชี Google อัตโนมัติ
-                    const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
-                    currentUser = displayName.split(' ')[0]; // ดึงชื่อหน้ามาใช้เป็นชื่อหลัก
-                    localStorage.setItem('tripUser', currentUser);
+                    // อัปเดตข้อมูลจากบัญชี Google (ใช้ชื่อเดิมถ้าเคยแก้ไขไว้แล้ว)
+                    const googleDisplayName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+                    if (currentUser === 'User') {
+                        currentUser = googleDisplayName.split(' ')[0]; // ดึงชื่อหน้ามาใช้เป็นชื่อหลัก
+                        localStorage.setItem('tripUser', currentUser);
+                    }
 
                     // เพิ่มชื่อลงในกลุ่มเพื่อนร่วมทริปอัตโนมัติ (ถ้ายังไม่มีชื่อนี้) 
                     // เพื่อให้สามารถคิดบิล/หารค่าใช้จ่ายกันได้
@@ -4032,7 +4064,7 @@
                     // อัปเดตข้อมูลเมนู Dropdown
                     const nameEl = document.getElementById('google-user-name');
                     const emailEl = document.getElementById('google-user-email');
-                    if(nameEl) nameEl.textContent = displayName;
+                    if(nameEl) nameEl.value = currentUser;
                     if(emailEl) emailEl.textContent = user.email || '';
 
                     loadOmiyageSettings(); // โหลดบัญชีรับเงินของ User นี้เตรียมไว้รับหิ้วของ
