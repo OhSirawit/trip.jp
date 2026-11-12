@@ -3929,103 +3929,122 @@
 
     <!-- Firebase Auth Module -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-        // คอนฟิก Firebase ตามที่คุณได้ส่งมา (รหัสถูกต้องพร้อมใช้งาน)
-        const firebaseConfig = {
-            apiKey: "AIzaSyBcMPhGW506qbVPikqSffxjVWjoZ5jQWh0",
-            authDomain: "jp-oh-59f31.firebaseapp.com",
-            projectId: "jp-oh-59f31",
-            storageBucket: "jp-oh-59f31.firebasestorage.app",
-            messagingSenderId: "162859226528",
-            appId: "1:162859226528:web:543c217b319dc16e3c80c5",
-            measurementId: "G-6BX5RE5KC3"
-        };
+const firebaseConfig = {
+  apiKey: 'AIzaSyBcMPhGW506qbVPikqSffxjVWjoZ5jQWh0',
+  authDomain: 'jp-oh-59f31.firebaseapp.com',
+  projectId: 'jp-oh-59f31',
+  storageBucket: 'jp-oh-59f31.firebasestorage.app',
+  messagingSenderId: '162859226528',
+  appId: '1:162859226528:web:543c217b319dc16e3c80c5',
+  measurementId: 'G-6BX5RE5KC3'
+};
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-        provider.setCustomParameters({ prompt: 'select_account' });
+const button = document.querySelector('button[onclick="window.signInWithGoogle()"]');
+const originalLabel = button?.innerHTML || 'Continue with Google';
+const overlay = document.getElementById('login-overlay');
+const errorBox = document.createElement('p');
+errorBox.className = 'mt-3 text-xs text-red-600 whitespace-pre-line break-words';
+errorBox.setAttribute('role', 'alert');
+button?.parentElement?.appendChild(errorBox);
+let auth;
+let busy = false;
+let hideTimer;
 
-        // ฟังก์ชัน Login ที่ป้องกันการบล็อกหน้าต่าง Pop-up
-        window.signInWithGoogle = async () => {
-            const btn = document.querySelector('button[onclick="window.signInWithGoogle()"]');
-            const originalContent = btn ? btn.innerHTML : 'Continue with Google';
-            
-            if(btn) btn.innerHTML = '<i class="fas fa-circle-notch fa-spin text-slate-500"></i><span class="ml-2">Connecting...</span>';
+function setBusy(value) {
+  busy = value;
+  if (!button) return;
+  button.disabled = value;
+  button.innerHTML = value ? 'Connecting...' : originalLabel;
+}
 
-            // ตรวจสอบว่าเป็นมือถือหรือไม่ ถ้าใช่ให้ใช้ระบบเปลี่ยนหน้า (Redirect) เลย เพราะมือถือมักจะบล็อก Popup
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+function showError(error) {
+  console.error('Google login:', error.code, error.message);
+  const messages = {
+    'auth/unauthorized-domain': 'เพิ่มโดเมน ' + location.hostname + ' ใน Firebase Console → Authentication → Settings → Authorized domains',
+    'auth/operation-not-allowed': 'เปิด Google ใน Firebase Console → Authentication → Sign-in method',
+    'auth/popup-blocked': 'เบราว์เซอร์บล็อก Popup กรุณาอนุญาต Popup แล้วลองอีกครั้ง',
+    'auth/popup-closed-by-user': 'หน้าต่างล็อกอินถูกปิดก่อนเสร็จ กรุณาลองอีกครั้ง',
+    'auth/cancelled-popup-request': 'มีหน้าต่างล็อกอินอื่นเปิดอยู่ กรุณาลองอีกครั้ง',
+    'auth/network-request-failed': 'เชื่อมต่อไม่ได้ กรุณาตรวจอินเทอร์เน็ตและตัวบล็อกเนื้อหา',
+    'auth/operation-not-supported-in-this-environment': 'เปิดเว็บผ่าน HTTPS หรือ localhost แทนการเปิดไฟล์ HTML โดยตรง',
+    'auth/web-storage-unsupported': 'เบราว์เซอร์ไม่อนุญาตให้จัดเก็บข้อมูล กรุณาตรวจการตั้งค่าเบราว์เซอร์',
+    'auth/invalid-api-key': 'Firebase API key ไม่ถูกต้อง กรุณาตรวจ Firebase config'
+  };
+  errorBox.textContent = (messages[error.code] || error.message || 'เข้าสู่ระบบไม่สำเร็จ') + '\n(' + (error.code || 'unknown-error') + ')';
+}
 
-            try {
-                if (isMobile) {
-                    await signInWithRedirect(auth, provider);
-                } else {
-                    await signInWithPopup(auth, provider);
-                }
-            } catch (error) {
-                console.warn("Popup blocked or failed, trying redirect...", error);
-                
-                // หาก Popup ล้มเหลว (เช่น เด้งแล้วปิดไปเองเพราะตั้งค่าความปลอดภัยเบราว์เซอร์)
-                // ให้บังคับเปลี่ยนหน้าเว็บไปที่หน้าล็อกอิน Google โดยตรง
-                try {
-                    await signInWithRedirect(auth, provider);
-                } catch (fallbackError) {
-                    if(window.showToast) window.showToast("Login failed: " + fallbackError.message, true);
-                    if(btn) btn.innerHTML = originalContent;
-                }
-            }
-        };
+function hideOverlay() {
+  if (!overlay) return;
+  clearTimeout(hideTimer);
+  overlay.classList.add('opacity-0');
+  hideTimer = setTimeout(() => overlay.classList.add('hidden'), 500);
+}
 
-        // ฟังก์ชันสำหรับการทดสอบกดข้าม Login
-        window.skipLogin = () => {
-            const overlay = document.getElementById('login-overlay');
-            overlay.classList.add('opacity-0');
-            setTimeout(() => overlay.classList.add('hidden'), 500);
-            if(window.showToast) window.showToast("Preview Mode: Entered without login");
-        };
+window.skipLogin = hideOverlay;
+window.signInWithGoogle = async () => {
+  if (busy) return;
+  errorBox.textContent = '';
+  if (!auth) {
+    errorBox.textContent = 'ระบบ Firebase ยังไม่พร้อม กรุณาโหลดหน้าใหม่และตรวจ Console';
+    return;
+  }
+  if (!['http:', 'https:'].includes(location.protocol)) {
+    errorBox.textContent = 'กรุณาเปิดเว็บผ่าน HTTPS หรือ localhost เช่น VS Code Live Server';
+    return;
+  }
+  setBusy(true);
+  let redirecting = false;
+  try {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      if (error.code !== 'auth/popup-blocked') throw error;
+      const proceed = window.confirm('Popup ถูกบล็อก ต้องการไปหน้าล็อกอิน Google หรือไม่? หากกลับมาแล้วยังล็อกอินไม่ได้ ให้เปิดใช้ Popup แล้วลองอีกครั้ง');
+      if (!proceed) throw error;
+      await signInWithRedirect(auth, provider);
+      redirecting = true;
+    }
+  } catch (error) {
+    showError(error);
+  } finally {
+    if (!redirecting) setBusy(false);
+  }
+};
 
-        // ฟังก์ชัน Logout
-        window.logoutTrip = async () => {
-            if(auth) {
-                await signOut(auth);
-                window.location.reload(); 
-            }
-        };
+window.logoutTrip = async () => {
+  if (!auth) return;
+  try {
+    await signOut(auth);
+    location.reload();
+  } catch (error) {
+    showError(error);
+    window.alert(errorBox.textContent);
+  }
+};
 
-        // สำหรับมือถือที่ถูก Redirect ไปแล้วกลับมา ให้จัดการข้อมูลให้เรียบร้อย
-        getRedirectResult(auth).catch(error => {
-            console.error("Redirect Login Error:", error);
-            if(window.showToast) window.showToast("Login Error: " + error.message, true);
-        });
-
-        // คอยตรวจสอบสถานะตลอดเวลา
-        onAuthStateChanged(auth, async (user) => {
-            const overlay = document.getElementById('login-overlay');
-            if (user) {
-                // หาก Login แล้ว -> ให้ซ่อนหน้ากาก Login ซะ
-                overlay.classList.add('opacity-0');
-                setTimeout(() => overlay.classList.add('hidden'), 500);
-
-                if(user.displayName && window.showToast) {
-                    const firstName = user.displayName.split(' ')[0];
-                    window.showToast(`Welcome back, ${firstName}!`);
-                }
-            } else {
-                // หากยังไม่ Login หรือ Logout แล้ว -> ให้แสดงหน้ากาก Login บังไว้เหมือนเดิม
-                overlay.classList.remove('hidden');
-                // Force reflow สำหรับอนิเมชัน CSS
-                void overlay.offsetWidth;
-                overlay.classList.remove('opacity-0');
-                
-                // รีเซ็ตปุ่ม Login เผื่อค้าง
-                const btn = document.querySelector('button[onclick="window.signInWithGoogle()"]');
-                if(btn && btn.innerHTML.includes('Connecting')) {
-                    btn.innerHTML = `<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google Logo"> Continue with Google`;
-                }
-            }
-        });
+try {
+  auth = getAuth(initializeApp(firebaseConfig));
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      errorBox.textContent = '';
+      hideOverlay();
+      if (user.displayName && window.showToast) window.showToast('Welcome back, ' + user.displayName.split(' ')[0] + '!');
+    } else if (overlay) {
+      clearTimeout(hideTimer);
+      overlay.classList.remove('hidden');
+      void overlay.offsetWidth;
+      overlay.classList.remove('opacity-0');
+    }
+  }, showError);
+  getRedirectResult(auth).catch(showError);
+} catch (error) {
+  showError(error);
+}
     </script>
 </body>
 </html>
