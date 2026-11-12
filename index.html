@@ -211,9 +211,6 @@
                 Continue with Google
             </button>
             <div id="login-error-msg"></div>
-            <button onclick="window.skipLogin()" class="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 text-slate-500 font-bold text-xs py-3 rounded-xl hover:bg-slate-100 transition-colors mt-2">
-                Skip for now (Preview Mode)
-            </button>
         </div>
     </div>
 
@@ -1289,26 +1286,28 @@
                 const t = new Date().toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 const u = document.getElementById('last-updated-text'); if(u) u.innerText = 'Last Updated : ' + t;
                 if(window.updateUI) window.updateUI();
+            }, (error) => {
+                console.error("Sync Error:", error);
+                if(window.showToast) window.showToast("Sync Error: " + error.message, true);
             });
 
             // 2. Listen to Settings
             if(unsubSet) unsubSet();
             unsubSet = onSnapshot(doc(db, 'trips', TRIP_ID, 'settings', 'global'), (docSnap) => {
                 if(docSnap.exists() && window.applySettingsData) window.applySettingsData(docSnap.data());
-            });
+            }, (error) => console.error("Settings Sync Error:", error));
 
             // 3. Listen to Pre-Orders
             if(unsubPre) unsubPre();
             unsubPre = onSnapshot(collection(db, 'trips', TRIP_ID, 'preOrders'), (snap) => {
                 window.preOrderList = []; snap.forEach(d => window.preOrderList.push(d.data()));
                 if(document.getElementById('page-preorder').classList.contains('page-active') && window.renderPreOrderList) window.renderPreOrderList();
-            });
+            }, (error) => console.error("PreOrder Sync Error:", error));
         };
 
         // --- AUTH LOGIC ---
         function setBusy(val) { busy = val; if(button) { button.disabled = val; button.innerHTML = val ? 'Connecting...' : originalLabel; } }
         function hideOverlay() { if(!overlay) return; clearTimeout(hideTimer); overlay.classList.add('opacity-0'); hideTimer = setTimeout(() => overlay.classList.add('hidden'), 500); }
-        window.skipLogin = hideOverlay;
         
         window.updateProfileName = function(newName) {
             const trimmedName = newName.trim();
