@@ -16,7 +16,6 @@
     <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
     <link rel="manifest" href="./manifest.webmanifest">
 
-    <link rel="stylesheet" href="./assets/tailwind.css">
     <link href="./assets/fontawesome.css" rel="stylesheet">
     <script src="./assets/xlsx.js"></script>
     <script src="./assets/chart.js"></script>
@@ -229,6 +228,47 @@ body > nav { padding-top: env(safe-area-inset-top); }
 }
 
     </style>
+    <link rel="stylesheet" href="./assets/tailwind.css">
+
+    <style id="mobile-layout-fix">
+        html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        #main-app { width: 100%; min-width: 0; }
+        #app-header { width: 100%; gap: 12px; }
+        #app-brand { flex: 1 1 0%; min-width: 0; }
+        #app-brand > div:first-child { flex-shrink: 0; }
+        #app-brand > div:last-child { min-width: 0; flex: 1 1 auto; }
+        #trip-detail-header { width: 100%; max-width: 180px; min-width: 0; text-overflow: ellipsis; }
+        #app-actions { flex: 0 0 auto; }
+        #app-actions > * { flex-shrink: 0; }
+        #cash-balance-card { background: #1C2536; color: #fff; }
+        #cash-remaining { min-width: 0; overflow-wrap: anywhere; }
+        #expense-form .grid > div { min-width: 0; }
+        #expense-form input, #expense-form select, #expense-form textarea { min-width: 0; max-width: 100%; }
+        #mobile-tab-bar { bottom: calc(16px + env(safe-area-inset-bottom)); padding-bottom: 8px; }
+        @media (max-width: 640px) {
+            #app-header { padding: 12px; gap: 8px; padding-top: calc(12px + env(safe-area-inset-top)); }
+            #app-brand { gap: 8px; }
+            #app-brand > div:first-child { width: 34px; height: 34px; }
+            #app-actions { gap: 4px; }
+            #app-actions > button, #app-actions > div > button { width: 40px; height: 40px; }
+            #trip-detail-header { padding-left: 0; padding-right: 0; }
+            #top-menu { right: 12px; max-width: calc(100vw - 24px); }
+            #user-menu { position: fixed; top: calc(70px + env(safe-area-inset-top)); right: 12px; max-width: calc(100vw - 24px); }
+            .page-content { padding-left: 16px; padding-right: 16px; }
+            #page-home > .form-card-zen, #cash-balance-card { padding: 20px; }
+            #cash-remaining { font-size: clamp(28px, 9vw, 40px); }
+            #cash-balance-card > .flex:first-of-type { flex-wrap: wrap; gap: 4px 12px; }
+            #page-home h2 { font-size: 18px; }
+            #expense-form input, #expense-form select, #expense-form textarea { font-size: 16px; }
+            body { padding-bottom: calc(112px + env(safe-area-inset-bottom)) !important; }
+        }
+        @media (max-width: 359px) {
+            #app-actions > button, #app-actions > div > button { width: 36px; height: 40px; }
+            #app-brand > div:first-child { width: 30px; height: 30px; }
+            #app-brand { gap: 6px; }
+            #expense-form > .grid { grid-template-columns: minmax(0, 1fr); }
+        }
+    </style>
 </head>
 <body class="pb-32 relative">
     <div id="pwa-connection" role="status" hidden></div>
@@ -386,8 +426,8 @@ body > nav { padding-top: env(safe-area-inset-top); }
     <!-- Main App Content -->
     <div id="main-app">
         <!-- Navigation Bar -->
-        <nav class="sticky top-0 z-50 px-6 py-4 bg-[#F7F6F2]/90 backdrop-blur-xl border-b border-[#EAE6DF] flex justify-between items-center relative">
-            <div class="flex items-center gap-3 relative z-10">
+        <nav id="app-header" class="sticky top-0 z-50 px-6 py-4 bg-[#F7F6F2]/90 backdrop-blur-xl border-b border-[#EAE6DF] flex justify-between items-center relative">
+            <div id="app-brand" class="flex items-center gap-3 relative z-10">
                 <!-- Zen Circular Logo Logo -->
                 <div class="w-10 h-10 bg-[#D9383A] rounded-full flex items-center justify-center text-white shadow-md shadow-[#D9383A]/20">
                     <i class="fas fa-plane text-sm"></i>
@@ -398,7 +438,7 @@ body > nav { padding-top: env(safe-area-inset-top); }
                 </div>
             </div>
 
-            <div class="flex items-center gap-2.5 relative z-10">
+            <div id="app-actions" class="flex items-center gap-2.5 relative z-10">
                 <!-- User Profile Selector -->
                 <div class="relative">
                     <button onclick="toggleDropdown('user-menu')" class="w-10 h-10 flex items-center justify-center rounded-[12px] bg-white shadow-sm border border-[#EAE6DF] focus:outline-none transition-colors hover:border-[#D9383A] overflow-hidden p-0">
@@ -473,7 +513,7 @@ body > nav { padding-top: env(safe-area-inset-top); }
         <div id="page-home" class="page-content page-active max-w-xl mx-auto px-4 py-5 space-y-5">
 
             <!-- Dashboard Widget - Modern Japan Style -->
-            <div class="modern-card p-6 bg-[#1C2536] text-white border-none shadow-[0_10px_40px_rgba(28,37,54,0.25)] relative overflow-hidden rounded-[20px]">
+            <div id="cash-balance-card" class="modern-card p-6 bg-[#1C2536] text-white border-none shadow-[0_10px_40px_rgba(28,37,54,0.25)] relative overflow-hidden rounded-[20px]">
                 <!-- Solid Torii Red Sun -->
                 <div class="absolute -top-10 -right-8 w-32 h-32 bg-[#D9383A] rounded-full pointer-events-none shadow-lg"></div>
                 <!-- Zen Enso Circle (Subtle lines) -->
