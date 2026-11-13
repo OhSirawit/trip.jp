@@ -1,5 +1,5 @@
 /* MyTrip caches only public app files. Firebase data, tokens, receipts and avatars are never cached here. */
-const CACHE = 'mytrip-shell-5a5ddbe54538-download-fix';
+const CACHE = 'mytrip-shell-mobile-layout-20261113';
 const ASSETS = ["./", "./assets/apple-touch-icon.png", "./assets/chart.js", "./assets/fa-brands-400.woff2", "./assets/fa-regular-400.woff2", "./assets/fa-solid-900.woff2", "./assets/firebase-client.js", "./assets/fontawesome.css", "./assets/google.svg", "./assets/html2canvas.js", "./assets/html5-qrcode.js", "./assets/icon-192.png", "./assets/icon-512.png", "./assets/icon-maskable-512.png", "./assets/pwa.js", "./assets/qrcode.js", "./assets/tailwind.css", "./assets/xlsx.js", "./index.html", "./manifest.webmanifest"];
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
