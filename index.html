@@ -182,7 +182,7 @@
         body.dark-mode #bill-modal-content { background-color: #1E293B; border: 1px solid #334155; }
         body.dark-mode #bill-text-area { background-color: #0F172A; color: #cbd5e1; border-color: #334155; }
         body.dark-mode #qr-section { background-color: #0F172A; border-color: #334155; }
-        body.dark-mode #qr-amount-text { color: #f8fafc; }
+        body.dark-mode #qr-account-name, body.dark-mode #qr-amount-text { color: #f8fafc; }
 
         /* Dark Mode for Receipt Modal */
         body.dark-mode #receipt-modal-content { background-color: #1E293B; border: 1px solid #334155; }
@@ -454,6 +454,7 @@ body > nav { padding-top: env(safe-area-inset-top); }
                 <div id="qr-section" class="hidden flex-col items-center justify-center bg-[#F8FAFC] p-4 rounded-xl border border-[#EAE6DF]">
                     <p class="text-[10px] font-black text-[#457B9D] uppercase tracking-widest mb-2"><i class="fas fa-qrcode"></i> Thai QR Payment</p>
                     <div id="promptpay-qr" class="w-48 h-48 rounded-lg shadow-sm bg-white p-2 flex items-center justify-center"></div>
+                    <p id="qr-account-name" class="text-sm font-black text-slate-800 mt-2" style="overflow-wrap:anywhere"></p>
                     <p id="qr-amount-text" class="text-sm font-black text-slate-800 mt-2"></p>
                     <p class="text-[9px] text-slate-500 mt-1 text-center mb-2" data-i18n="scan_to_pay">Scan QR Code to pay</p>
 
@@ -2763,9 +2764,13 @@ body > nav { padding-top: env(safe-area-inset-top); }
                 const payload = generatePromptPayString(currentQRPhone, includeAmount ? Number(currentQRAmount) : 0);
                 if (typeof QRCode !== 'function') throw new Error(currentLang === 'th' ? 'โหลดตัวสร้าง QR ไม่สำเร็จ กรุณาออนไลน์แล้วเปิดแอปใหม่' : 'QR library could not load. Reconnect and reopen the app.');
                 new QRCode(qrContainer, {text: payload, width:176, height:176, colorDark:'#1C2536', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.L});
+                const accountName = document.getElementById('qr-account-name');
+                accountName.textContent = document.getElementById('omiyage-bank').value.trim();
+                accountName.hidden = !accountName.textContent;
                 amountText.textContent = includeAmount
                     ? `${currentLang === 'th' ? 'ยอดชำระ' : 'Amount'}: ${Number(currentQRAmount).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} THB`
-                    : (currentLang === 'th' ? 'ไม่ระบุยอดเงิน — ผู้ชำระกรอกยอดเอง' : 'No fixed amount — payer enters the amount');
+                    : '';
+                amountText.hidden = !includeAmount;
                 qrSection.classList.remove('hidden');qrSection.classList.add('flex');
             } catch (error) {
                 status.textContent = error.message;status.classList.remove('hidden');
