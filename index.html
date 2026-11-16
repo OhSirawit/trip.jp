@@ -308,6 +308,11 @@ body > nav { padding-top: env(safe-area-inset-top); }
     </style>
 <style id="spark-live-alert-styles">#live-trip-alerts{position:fixed;z-index:1100;top:calc(80px + env(safe-area-inset-top));right:16px;width:min(360px,calc(100vw - 32px));display:grid;gap:10px}.live-alert{background:#1c2536;color:white;padding:16px;border-radius:18px;box-shadow:0 12px 36px #1c253633}.live-alert-header{display:flex;gap:12px;align-items:center;justify-content:space-between}.live-alert-header strong{font-size:14px;overflow-wrap:anywhere}.live-alert-header button{font-size:22px;min-width:32px;min-height:32px}.live-alert p{font-size:12px;line-height:1.7;margin:8px 0;overflow-wrap:anywhere}.live-alert-open{font-size:12px;font-weight:700;min-height:36px;color:#fda4af}.live-alert-settings{padding:20px;border:1px solid #eae6df;border-radius:20px;background:white;margin-top:20px}.live-alert-settings h2{font-size:15px;font-weight:800}.live-alert-settings p{font-size:12px;line-height:1.7;color:#64748b;margin:10px 0}.live-alert-settings label{display:flex;gap:10px;align-items:center;font-size:13px;font-weight:700;min-height:44px}.live-alert-settings input{width:20px;height:20px;accent-color:#d9383a}body.dark-mode .live-alert-settings{background:#1e293b;border-color:#334155}</style>
 <style id="push-styles">.push-settings-panel{padding:20px;background:#fff;border:1px solid #eae6df;border-radius:20px;margin-top:20px;min-width:0}.push-settings-panel h2{font-size:15px;font-weight:800}.push-settings-panel p{font-size:12px;line-height:1.8;color:#64748b;margin:10px 0;overflow-wrap:anywhere}.push-settings-panel button{min-height:44px;padding:10px 14px;border:0;border-radius:12px;background:#1c2536;color:white;font-size:13px;font-weight:700}.push-settings-panel button:disabled{opacity:.5}.push-settings-panel [data-push-action=disable]{background:#f1f5f9;color:#475569}body.dark-mode .push-settings-panel{background:#1e293b;border-color:#334155}body.dark-mode .push-settings-panel h2{color:#f8fafc}</style>
+<style id="promptpay-bill-fix">
+#preorder-price{min-width:0;width:0}#page-preorder .flex>div{min-width:0}
+#bill-modal-content{min-width:0}#bill-modal-content h3{min-width:0;overflow-wrap:anywhere}
+#btn-close-bill{flex-shrink:0}#bill-qr-status{overflow-wrap:anywhere}
+</style>
 </head>
 <body class="pb-32 relative">
     <div id="pwa-connection" role="status" hidden></div>
@@ -433,7 +438,7 @@ body > nav { padding-top: env(safe-area-inset-top); }
     <div id="bill-modal" class="fixed inset-0 z-[400] bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center transition-opacity duration-300 opacity-0 px-4">
         <div class="bg-white w-full max-w-sm rounded-[24px] p-6 transform scale-95 translate-y-8 sm:translate-y-0 transition-all duration-300 shadow-2xl flex flex-col max-h-[90vh] border border-[#EAE6DF]" id="bill-modal-content">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-black text-slate-900" data-i18n="bill_summary">Bill Summary: <span id="bill-friend-name" class="text-[#457B9D]"></span></h3>
+                <h3 class="text-lg font-black text-slate-900"><span data-i18n="bill_summary">Bill Summary:</span> <span id="bill-friend-name" class="text-[#457B9D]"></span></h3>
                 <button id="btn-close-bill" onclick="closeBillModal()" class="text-slate-400 hover:text-rose-500 w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 transition-all"><i class="fas fa-times"></i></button>
             </div>
 
@@ -444,6 +449,7 @@ body > nav { padding-top: env(safe-area-inset-top); }
                     <button id="btn-copy-bill" onclick="copyBillTextOnly()" class="absolute top-2 right-2 bg-white text-[#457B9D] p-2 rounded-lg shadow-sm border border-slate-200 hover:bg-[#457B9D] hover:text-white transition-colors text-xs font-bold"><i class="far fa-copy"></i> <span data-i18n="copy">Copy</span></button>
                 </div>
 
+                <p id="bill-qr-status" role="status" class="text-xs text-rose-600 hidden"></p>
                 <!-- QR Section -->
                 <div id="qr-section" class="hidden flex-col items-center justify-center bg-[#F8FAFC] p-4 rounded-xl border border-[#EAE6DF]">
                     <p class="text-[10px] font-black text-[#457B9D] uppercase tracking-widest mb-2"><i class="fas fa-qrcode"></i> Thai QR Payment</p>
@@ -2656,24 +2662,23 @@ body > nav { padding-top: env(safe-area-inset-top); }
         }
 
         function generatePromptPayString(id, amount) {
-            let target = id;
-            let targetType = "02"; 
-            if (id.length === 10) { targetType = "01"; target = "0066" + id.substring(1); } 
-            else if (id.length === 13) { targetType = "02"; } 
-            else if (id.length === 15) { targetType = "03"; }
-
-            let aid = "0016A000000677010111";
-            let subTarget = targetType + target.length.toString().padStart(2, '0') + target;
-            let merchantInfo = aid + subTarget;
-            let merchantAccount = "29" + merchantInfo.length.toString().padStart(2, '0') + merchantInfo;
-
-            let currency = "5303764";
-            let country = "5802TH";
-
-            let amountStr = parseFloat(amount).toFixed(2);
-            let amountField = amount > 0 ? "54" + amountStr.length.toString().padStart(2, '0') + amountStr : "";
-
-            let payload = "000201010212" + merchantAccount + currency + amountField + country + "6304";
+            const targetId = String(id || '').replace(/[\s-]/g, '');
+            if (!/^(0[689][0-9]{8}|[0-9]{13}|[0-9]{15})$/.test(targetId)) {
+                throw new Error(currentLang === 'th' ? 'กรุณาตรวจเลขพร้อมเพย์: เบอร์มือถือ 10 หลัก เลขประจำตัว 13 หลัก หรือ e-Wallet 15 หลัก' : 'Check the PromptPay number: 10-digit Thai mobile, 13-digit ID, or 15-digit e-Wallet.');
+            }
+            const number = Number(amount);
+            if (!Number.isFinite(number) || number < 0 || number > 9999999999.99) {
+                throw new Error(currentLang === 'th' ? 'ยอดเงินสำหรับ QR ไม่ถูกต้อง' : 'Invalid QR payment amount.');
+            }
+            const targetType = targetId.length === 10 ? '01' : targetId.length === 13 ? '02' : '03';
+            const target = targetId.length === 10 ? '0066' + targetId.substring(1) : targetId;
+            const field = (tag, value) => tag + String(value.length).padStart(2, '0') + value;
+            const merchant = field('00', 'A000000677010111') + field(targetType, target);
+            const amountString = number.toFixed(2);
+            if (number > 0 && Number(amountString) === 0) throw new Error('Payment amount must be at least 0.01 THB.');
+            const payload = field('00', '01') + field('01', number > 0 ? '12' : '11')
+                + field('29', merchant) + field('53', '764')
+                + (number > 0 ? field('54', amountString) : '') + field('58', 'TH') + '6304';
             return payload + crc16(payload);
         }
 
@@ -2690,7 +2695,7 @@ body > nav { padding-top: env(safe-area-inset-top); }
             friendItems.forEach(item => {
                 if(item.isBought) {
                     text += `✅ ${item.itemName} (${item.price.toLocaleString()} JPY)\n`;
-                    totalJpy += item.price;
+                    totalJpy += Number(item.price) || 0;
                 } else {
                     text += `⏳ ${item.itemName} (Pending / Out of stock)\n`;
                 }
@@ -2724,18 +2729,17 @@ body > nav { padding-top: env(safe-area-inset-top); }
             document.getElementById('bill-text-area').value = text;
 
             const ppNumberRaw = document.getElementById('omiyage-promptpay') ? document.getElementById('omiyage-promptpay').value : '';
-            currentQRPhone = ppNumberRaw.replace(/[^0-9]/g, ''); 
+            currentQRPhone = ppNumberRaw.replace(/[\s-]/g, ''); 
             currentQRAmount = amountThbForQR;
 
             if (document.getElementById('qr-include-amount')) {
                 document.getElementById('qr-include-amount').checked = true;
             }
 
-            renderQRInModal();
-
             const modal = document.getElementById('bill-modal');
             const content = document.getElementById('bill-modal-content');
             modal.classList.remove('hidden');
+            renderQRInModal();
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 content.classList.remove('scale-95', 'translate-y-8', 'sm:translate-y-0');
@@ -2747,35 +2751,24 @@ body > nav { padding-top: env(safe-area-inset-top); }
             const qrSection = document.getElementById('qr-section');
             const qrContainer = document.getElementById('promptpay-qr');
             const amountText = document.getElementById('qr-amount-text');
+            const status = document.getElementById('bill-qr-status');
             const includeAmount = document.getElementById('qr-include-amount').checked;
-
-            qrContainer.innerHTML = ''; 
-
-            if (currentQRPhone && currentQRPhone.length >= 10 && currentQRAmount > 0) {
-                const amountToEncode = includeAmount ? parseFloat(currentQRAmount) : 0;
-                const payloadStr = generatePromptPayString(currentQRPhone, amountToEncode);
-
-                new QRCode(qrContainer, {
-                    text: payloadStr,
-                    width: 176,
-                    height: 176,
-                    colorDark : "#1C2536",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.L
-                });
-
-                if (includeAmount) {
-                    amountText.innerText = `Amount: ${parseFloat(currentQRAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} THB`;
-                } else {
-                    const bankAccount = document.getElementById('omiyage-bank') ? document.getElementById('omiyage-bank').value : '';
-                    amountText.innerText = bankAccount ? bankAccount : (currentUser || 'Account Info');
-                }
-
-                qrSection.classList.remove('hidden');
-                qrSection.classList.add('flex');
-            } else {
-                qrSection.classList.add('hidden');
-                qrSection.classList.remove('flex');
+            qrContainer.replaceChildren();
+            qrSection.classList.add('hidden');
+            qrSection.classList.remove('flex');
+            status.classList.add('hidden');
+            try {
+                if (!currentQRPhone) throw new Error(currentLang === 'th' ? 'เพิ่มเลขพร้อมเพย์ในตั้งค่าบัญชีรับเงินเพื่อสร้าง QR' : 'Add your PromptPay number in billing settings to generate a QR code.');
+                if (!(Number(currentQRAmount) > 0)) throw new Error(currentLang === 'th' ? 'ต้องมีรายการที่ซื้อแล้วและอัตราแลกเปลี่ยนก่อนสร้าง QR' : 'A purchased item and exchange rate are required to generate the payment QR.');
+                const payload = generatePromptPayString(currentQRPhone, includeAmount ? Number(currentQRAmount) : 0);
+                if (typeof QRCode !== 'function') throw new Error(currentLang === 'th' ? 'โหลดตัวสร้าง QR ไม่สำเร็จ กรุณาออนไลน์แล้วเปิดแอปใหม่' : 'QR library could not load. Reconnect and reopen the app.');
+                new QRCode(qrContainer, {text: payload, width:176, height:176, colorDark:'#1C2536', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.L});
+                amountText.textContent = includeAmount
+                    ? `${currentLang === 'th' ? 'ยอดชำระ' : 'Amount'}: ${Number(currentQRAmount).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} THB`
+                    : (currentLang === 'th' ? 'ไม่ระบุยอดเงิน — ผู้ชำระกรอกยอดเอง' : 'No fixed amount — payer enters the amount');
+                qrSection.classList.remove('hidden');qrSection.classList.add('flex');
+            } catch (error) {
+                status.textContent = error.message;status.classList.remove('hidden');
             }
         }
 
@@ -2825,7 +2818,7 @@ body > nav { padding-top: env(safe-area-inset-top); }
             fakeDiv.style.minHeight = Math.max(ta.scrollHeight, 150) + 'px';
             fakeDiv.style.whiteSpace = 'pre-wrap'; 
             fakeDiv.style.wordWrap = 'break-word';
-            fakeDiv.innerHTML = ta.value.replace(/\n/g, '<br>'); 
+            fakeDiv.textContent = ta.value; 
 
             ta.parentNode.insertBefore(fakeDiv, ta); 
             const oldTaDisplay = ta.style.display;
@@ -2884,7 +2877,8 @@ body > nav { padding-top: env(safe-area-inset-top); }
                 return;
             }
 
-            const grouped = {};
+            const escapeBillText = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+            const grouped = Object.create(null);
             preOrderList.forEach(item => {
                 if (!grouped[item.friendName]) {
                     grouped[item.friendName] = { items: [], totalJpy: 0, boughtJpy: 0 };
@@ -2931,7 +2925,7 @@ body > nav { padding-top: env(safe-area-inset-top); }
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-2">
-                                    <p class="text-[13px] font-bold ${item.isBought ? 'text-slate-400 line-through' : 'text-slate-700'} truncate transition-all">${item.itemName}</p>
+                                    <p class="text-[13px] font-bold ${item.isBought ? 'text-slate-400 line-through' : 'text-slate-700'} truncate transition-all">${escapeBillText(item.itemName)}</p>
                                     ${item.isPaid ? `<span class="text-[8px] bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded shadow-sm uppercase tracking-widest font-black shrink-0">PAID</span>` : ''}
                                 </div>
                                 <p class="text-[10px] font-medium ${item.isBought ? 'text-slate-300' : 'text-slate-500'} transition-all">${item.price.toLocaleString()} JPY</p>
@@ -2951,14 +2945,14 @@ body > nav { padding-top: env(safe-area-inset-top); }
                 groupDiv.innerHTML = `
                     <div class="p-4 bg-[#F8FAFC] flex justify-between items-center border-b border-[#EAE6DF]">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-7 h-7 rounded-full ${friendStyle.bg} ${friendStyle.text} flex items-center justify-center font-black text-[10px] shadow-sm">${friend.charAt(0).toUpperCase()}</div>
-                            <h3 class="text-[14px] font-black text-slate-800">${friend}</h3>
+                            <div class="w-7 h-7 rounded-full ${friendStyle.bg} ${friendStyle.text} flex items-center justify-center font-black text-[10px] shadow-sm">${escapeBillText(friend.charAt(0).toUpperCase())}</div>
+                            <h3 class="text-[14px] font-black text-slate-800">${escapeBillText(friend)}</h3>
                         </div>
                         <div class="flex items-center gap-3">
                             <div class="text-right">
                                 <p class="text-[10px] font-bold text-slate-500">Bought ${groupData.boughtJpy.toLocaleString()} / ${groupData.totalJpy.toLocaleString()} JPY</p>
                             </div>
-                            <button onclick="copyLineBill('${friend}')" class="w-8 h-8 rounded-full bg-[#00B900]/10 text-[#00B900] flex items-center justify-center hover:bg-[#00B900]/20 transition-colors shadow-sm flex-shrink-0" title="Copy LINE Bill"><i class="fab fa-line text-[16px]"></i></button>
+                            <button type="button" data-line-bill class="w-8 h-8 rounded-full bg-[#00B900]/10 text-[#00B900] flex items-center justify-center hover:bg-[#00B900]/20 transition-colors shadow-sm flex-shrink-0" title="Copy LINE Bill" aria-label="Open bill and PromptPay QR"><i class="fab fa-line text-[16px]"></i></button>
                         </div>
                     </div>
                     <div class="px-4">
@@ -2967,6 +2961,7 @@ body > nav { padding-top: env(safe-area-inset-top); }
                     ${thbEquivalent ? `<div class="p-3 bg-slate-50 border-t border-[#EAE6DF]">${thbEquivalent}</div>` : ''}
                 `;
 
+                groupDiv.querySelector('[data-line-bill]').addEventListener('click', () => copyLineBill(friend));
                 container.appendChild(groupDiv);
             });
         }
