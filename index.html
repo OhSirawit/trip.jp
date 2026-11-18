@@ -328,6 +328,15 @@ body.dark-mode .bill-balance{border-color:#334155}body.dark-mode .bill-balance s
 </style>
 <style id="trip-members-styles">.member-overlay[hidden],#trip-member-add[hidden]{display:none!important}.member-overlay{position:fixed;inset:0;z-index:1350;background:#1c253680;backdrop-filter:blur(4px);padding:16px;display:flex;align-items:center;justify-content:center}.member-panel{background:white;color:#1c2536;border-radius:22px;padding:22px;width:100%;max-width:640px;max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overflow-y:auto;box-shadow:0 14px 40px #0003;min-width:0}.member-panel header{display:flex;justify-content:space-between;gap:12px;align-items:center}.member-panel h2{font-size:20px;font-weight:900}.member-panel header button{width:40px;height:40px;background:#f1f5f9;border-radius:50%;font-size:24px;flex-shrink:0}.member-panel p{font-size:12px;color:#64748b;line-height:1.8;margin:10px 0;overflow-wrap:anywhere}#trip-member-add{display:grid;gap:10px;padding:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;margin:16px 0}#trip-member-add label{font-size:12px;font-weight:800}#trip-member-add input{width:100%;min-width:0;min-height:44px;padding:10px;border:1px solid #dbe3ec;border-radius:10px;font-size:14px}#trip-member-add button{background:#1c2536;color:white;border-radius:10px;padding:11px;font-size:12px;font-weight:800;min-height:44px}.member-row{display:flex;gap:12px;justify-content:space-between;border-top:1px solid #e2e8f0;padding:16px 0;flex-wrap:wrap}.member-identity{flex:1 1 230px;min-width:0}.member-row-title{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.member-row-title strong{font-size:14px;overflow-wrap:anywhere}.member-role{font-size:10px;font-weight:800;padding:4px 9px;background:#f1f5f9;border-radius:20px;color:#64748b}.member-role.owner{background:#e9f3f9;color:#457b9d}.member-role.admin{background:#fff1e6;color:#b96a20}.member-identity small{display:block;font-size:11px;color:#64748b;overflow-wrap:anywhere;margin-top:6px}.member-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.member-actions button,.trip-members-button,[data-members-settings]{font-size:11px;font-weight:700;padding:9px 12px;min-height:40px;border:1px solid #dbe3ec;border-radius:10px;background:white;color:#457b9d}.member-actions [data-member-action=remove]{color:#c2414b;border-color:#fecdd3}.member-panel button:disabled{opacity:.5}.member-panel button:focus-visible,.member-panel input:focus-visible{outline:3px solid #457b9d;outline-offset:2px}.trip-card-member-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.trip-card-footer{gap:12px}.trip-card-footer>span{flex-shrink:0}body.dark-mode .member-panel{background:#1e293b;color:#f8fafc}body.dark-mode .member-panel p,body.dark-mode .member-identity small{color:#bdc9d9}body.dark-mode #trip-member-add,body.dark-mode .member-actions button,body.dark-mode .trip-members-button,body.dark-mode #trip-member-add input{background:#0f172a;color:#e2e8f0;border-color:#334155}body.dark-mode .member-row{border-color:#334155}@media(max-width:380px){.member-panel{padding:18px}.trip-card-member-actions{gap:6px}.trip-card-member-actions button{padding-left:10px;padding-right:10px}}
 </style>
+<style>
+#member-confirm-modal[hidden]{display:none!important}#member-confirm-modal{position:fixed;inset:0;z-index:1600;display:grid;place-items:center;padding:20px;background:rgba(28,37,54,.38);backdrop-filter:blur(5px)}
+#member-confirm-modal section{box-sizing:border-box;width:min(100%,430px);max-height:calc(100dvh - 40px);overflow:auto;background:#fff;color:#1c2536;border:1px solid #e4eaf0;border-radius:24px;padding:26px;box-shadow:0 24px 80px #1c253633}
+#member-confirm-symbol{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:#edf5f9;color:#477f98;font-size:26px;margin-bottom:16px}#member-confirm-title{font-size:20px;font-weight:800;line-height:1.4;margin:0 0 18px}
+.member-confirm-identity{padding:14px 16px;border:1px solid #e2e8f0;border-radius:14px;background:#f7f9fb;overflow-wrap:anywhere}.member-confirm-identity strong{display:block;font-size:14px}.member-confirm-identity small{display:block;margin-top:5px;font-size:11px;color:#64748b}
+#member-confirm-message{font-size:13px;line-height:1.8;color:#64748b;margin:16px 0 24px}#member-confirm-modal footer{display:flex;gap:10px}#member-confirm-modal button{flex:1;min-width:0;min-height:46px;padding:10px 14px;border-radius:12px;font-size:12px;font-weight:700;border:1px solid #e2e8f0;background:white;color:#64748b}#member-confirm-modal button:focus-visible{outline:3px solid #80b4cd;outline-offset:3px}#member-confirm-modal #member-confirm-accept{background:#477f98;border-color:#477f98;color:#fff}#member-confirm-modal #member-confirm-accept.danger{background:#d9383a;border-color:#d9383a}
+body.dark-mode #member-confirm-modal section{background:#1e293b;border-color:#334155;color:#f8fafc}body.dark-mode .member-confirm-identity{background:#0f172a;border-color:#334155}body.dark-mode #member-confirm-message,body.dark-mode .member-confirm-identity small{color:#b5c4d8}body.dark-mode #member-confirm-cancel{background:#1e293b;border-color:#475569;color:#e2e8f0}@media(max-width:360px){#member-confirm-modal{padding:14px}#member-confirm-modal section{padding:20px}#member-confirm-modal footer{flex-direction:column-reverse}}
+
+</style>
 </head>
 <body class="pb-32 relative">
     <div id="pwa-connection" role="status" hidden></div>
@@ -346,6 +355,12 @@ body.dark-mode .bill-balance{border-color:#334155}body.dark-mode .bill-balance s
  <p id="trip-members-policy"></p><p id="trip-members-status" role="status"></p>
  <form id="trip-member-add" onsubmit="submitTripMember(event)"><label for="trip-member-uid" id="trip-member-add-label"></label><input id="trip-member-uid" autocomplete="off" maxlength="128" required><button type="submit" id="trip-member-add-button"></button></form>
  <div id="trip-members-list"></div><p id="trip-members-profile-hint"></p>
+</section></div>
+
+<div id="member-confirm-modal" hidden><section role="alertdialog" aria-modal="true" aria-labelledby="member-confirm-title" aria-describedby="member-confirm-message">
+ <div id="member-confirm-symbol" aria-hidden="true">+</div><h2 id="member-confirm-title"></h2>
+ <div class="member-confirm-identity"><strong id="member-confirm-name"></strong><small id="member-confirm-uid"></small></div>
+ <p id="member-confirm-message"></p><footer><button type="button" id="member-confirm-cancel" onclick="finishMemberConfirm(false)">Cancel</button><button type="button" id="member-confirm-accept" onclick="finishMemberConfirm(true)">Confirm</button></footer>
 </section></div>
 
     <!-- Login Overlay -->
@@ -3905,7 +3920,36 @@ window.ExpenseDuplicateModel=(()=>{
         let memberView={open:false,id:null,trip:null,profiles:{},uid:null,busy:false,loading:false,epoch:0,focus:null};
         const mt=(th,en)=>currentLang==='th'?th:en;
         function memberNode(tag,text,cls){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(cls)node.className=cls;return node;}
+        let memberConfirmResolve=null,memberConfirmFocus=null;
+        function finishMemberConfirm(accepted=false){
+            const resolve=memberConfirmResolve;memberConfirmResolve=null;
+            document.getElementById('member-confirm-modal').hidden=true;
+            document.getElementById('trip-members-modal').inert=false;
+            if(memberView.open){const focus=memberConfirmFocus?.isConnected?memberConfirmFocus:document.querySelector('#trip-members-modal header button');focus?.focus();}
+            memberConfirmFocus=null;resolve?.(accepted);
+        }
+        function askMemberConfirm(action,uid,name){
+            if(memberConfirmResolve)return Promise.resolve(false);
+            const remove=action==='remove',promote=action==='promote';
+            const title=remove?mt('นำสมาชิกออกจากทริป','Remove member from trip'):promote?mt('แต่งตั้ง Admin','Make Admin'):mt('ถอดสิทธิ์ Admin','Remove Admin role');
+            const message=remove?mt('สมาชิกคนนี้จะเข้าใช้ทริปไม่ได้อีก แต่รายการค่าใช้จ่ายเดิมยังอยู่ครบ','This member will lose access to this trip. Their past expenses will be kept.')
+                :promote?mt('Admin สามารถเพิ่มและนำสมาชิกทั่วไปออกได้ แต่เปลี่ยนสิทธิ์เจ้าของหรือ Admin คนอื่นไม่ได้','Admins can add and remove regular members. They cannot change the owner or other Admins.')
+                :mt('บุคคลนี้จะกลับเป็นสมาชิกทั่วไป และยังเข้าใช้ทริปได้ตามเดิม','This person will become a regular member and keep access to the trip.');
+            document.getElementById('member-confirm-title').textContent=title;
+            document.getElementById('member-confirm-message').textContent=message;
+            document.getElementById('member-confirm-name').textContent=name===uid?mt('บัญชีสมาชิก','Member account'):name;
+            document.getElementById('member-confirm-uid').textContent=uid;
+            document.getElementById('member-confirm-cancel').textContent=mt('ยกเลิก','Cancel');
+            const button=document.getElementById('member-confirm-accept');button.textContent=remove?mt('นำออกจากทริป','Remove from trip'):promote?mt('ตั้งเป็น Admin','Make Admin'):mt('ถอดสิทธิ์ Admin','Remove Admin role');
+            button.classList.toggle('danger',remove);document.getElementById('member-confirm-symbol').textContent=remove?'−':promote?'+':'−';
+            memberConfirmFocus=document.activeElement;document.getElementById('trip-members-modal').inert=true;
+            document.getElementById('member-confirm-modal').hidden=false;
+            document.getElementById('member-confirm-cancel').focus();
+            return new Promise(resolve=>{memberConfirmResolve=resolve;});
+        }
+
         function closeTripMembers(){
+            finishMemberConfirm(false);
             window.endTripMemberWatch?.();document.getElementById('trip-members-modal').hidden=true;
             memberView={...memberView,open:false,id:null,trip:null,profiles:{},uid:null,busy:false,epoch:memberView.epoch+1};
             document.getElementById('trip-members-list').replaceChildren();document.getElementById('trip-member-uid').value='';memberView.focus?.focus?.();
@@ -3962,11 +4006,10 @@ window.ExpenseDuplicateModel=(()=>{
         }
         async function changeTripMember(action,uid,name=uid){
             if(memberView.busy||!memberView.open)return;
-            const question=action==='remove'?mt(`นำ ${name} ออกจากทริป? สิทธิ์เข้าถึงจะถูกยกเลิก แต่รายจ่ายเดิมยังอยู่`,`Remove ${name} from this trip? Access will be revoked; past expenses stay.`)
-                :action==='promote'?mt(`ตั้ง ${name} เป็น Admin สำหรับเพิ่ม–ลบสมาชิกทั่วไป?`,`Make ${name} an Admin who can add/remove regular members?`)
-                :action==='demote'?mt(`ถอดสิทธิ์ Admin ของ ${name}? บุคคลนี้ยังเป็นสมาชิกอยู่`,`Remove Admin rights from ${name}? They will remain a member.`):'';
-            if(question&&!confirm(question))return;
-            const id=memberView.id,epoch=memberView.epoch;memberView.busy=true;refreshTripMembersLanguage();
+            const id=memberView.id,epoch=memberView.epoch;
+            if(action!=='add'&&!await askMemberConfirm(action,uid,name))return;
+            if(!memberView.open||memberView.id!==id||memberView.epoch!==epoch||memberView.busy)return;
+            memberView.busy=true;refreshTripMembersLanguage();
             document.getElementById('trip-members-status').textContent=mt('กำลังบันทึก…','Saving…');
             try{const result=await window.mutateTripMembership(id,action,uid);if(!memberView.open||memberView.id!==id||memberView.epoch!==epoch)return;
                 document.getElementById('trip-members-status').textContent=result==='exists'?mt('บัญชีนี้เป็นสมาชิกอยู่แล้ว','This account is already a member'):result==='gone'?mt('บัญชีนี้ไม่ได้อยู่ในทริปแล้ว','This account is no longer a member'):mt('บันทึกสมาชิกและสิทธิ์แล้ว','Membership updated');
@@ -3976,6 +4019,13 @@ window.ExpenseDuplicateModel=(()=>{
         }
         function submitTripMember(event){event.preventDefault();const uid=document.getElementById('trip-member-uid').value.trim();if(uid)changeTripMember('add',uid);}
         document.addEventListener('keydown',event=>{
+            if(memberConfirmResolve){
+                if(event.key==='Escape'){event.preventDefault();finishMemberConfirm(false);return;}
+                if(event.key==='Tab'){const cancel=document.getElementById('member-confirm-cancel'),accept=document.getElementById('member-confirm-accept');
+                    if(event.shiftKey&&document.activeElement===cancel){event.preventDefault();accept.focus();}
+                    else if(!event.shiftKey&&document.activeElement===accept){event.preventDefault();cancel.focus();}}
+                return;
+            }
             const modal=document.getElementById('trip-members-modal');if(modal.hidden)return;
             if(event.key==='Escape'){closeTripMembers();return;}
             if(event.key!=='Tab')return;
