@@ -1,4 +1,4 @@
-/* Firebase receives DATA-ONLY pushes. Session checks happen before any notification is displayed. */
+]/* Firebase receives DATA-ONLY pushes. Session checks happen before any notification is displayed. */
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 const PUSH_DB='mytrip-push-v1:'+self.registration.scope;
 let pushDatabase;
