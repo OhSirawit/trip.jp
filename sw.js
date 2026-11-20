@@ -95,15 +95,27 @@ firebase.initializeApp({apiKey:'AIzaSyBcMPhGW506qBvPIkqSffxjVWjoZ5jQWh0',authDom
 firebase.messaging().onBackgroundMessage(payload=>serializePushWork(()=>displayTripPush(payload.data)));
 
 /* MyTrip caches only public app files. Firebase data, tokens, receipts and avatars are never cached here. */
-const CACHE = 'mytrip-shell-ver19112300';
+const APP_VERSION='Ver.19112342';
+const CACHE = 'mytrip-shell-ver19112342';
 const ASSETS = ["./", "./assets/apple-touch-icon.png", "./assets/chart.js", "./assets/fa-brands-400.woff2", "./assets/fa-regular-400.woff2", "./assets/fa-solid-900.woff2", "./assets/firebase-client.js", "./assets/fontawesome.css", "./assets/google.svg", "./assets/html2canvas.js", "./assets/html5-qrcode.js", "./assets/icon-192.png", "./assets/icon-512.png", "./assets/icon-maskable-512.png", "./assets/pwa.js", "./assets/qrcode.js", "./assets/tailwind.css", "./assets/xlsx.js", "./index.html", "./manifest.webmanifest"];
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
 const assetUrls = new Set(ASSETS.map(path=>new URL(path,SCOPE).href));
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));
+ event.waitUntil((async()=>{
+  const url=new URL(SHELL);url.searchParams.set('_mytrip_release',APP_VERSION);
+  const response=await fetch(url.href,{cache:'no-store',credentials:'same-origin'});if(!response.ok)throw Error('MyTrip release unavailable');
+  const html=await response.clone().text(),version=html.match(/<meta\s+name=["']app-version["']\s+content=["'](Ver\.\d{8})["']/)?.[1];
+  if(version!==APP_VERSION)throw Error('MyTrip page and worker versions do not match');
+  const cache=await caches.open(CACHE);
+  await cache.addAll(ASSETS.filter(path=>path!=='./'&&path!=='./index.html').map(path=>new Request(new URL(path,SCOPE).href,{cache:'reload'})));
+  await cache.put(SHELL,response.clone());await cache.put(SCOPE.href,response);
+ })());
 });
 self.addEventListener('message', event => {
+  if(event.data?.type==='GET_APP_VERSION'){
+   event.waitUntil((async()=>{const response=await caches.match(SHELL,{cacheName:CACHE});const html=response?await response.text():'';const shellVersion=html.match(/<meta\s+name=["']app-version["']\s+content=["'](Ver\.\d{8})["']/)?.[1]||null;event.ports?.[0]?.postMessage({version:APP_VERSION,shellVersion});})());return;
+  }
   if (event.data?.type === 'ACTIVATE_UPDATE') self.skipWaiting();
 });
 self.addEventListener('activate', event => {
