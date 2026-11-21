@@ -347,7 +347,7 @@ body.dark-mode #member-confirm-modal section{background:#1e293b;border-color:#33
 .app-version{display:block;font-size:10px;font-weight:500;color:#afc0d9;margin-top:4px;letter-spacing:.03em}body.dark-mode .trip-edit-button,body.dark-mode .trip-list-controls button{background:#1e293b;border-color:#475569;color:#d8e7f4}body.dark-mode #trip-editor-modal section{background:#1e293b;border-color:#334155;color:#f8fafc}body.dark-mode #trip-editor-form input{background:#0f172a;border-color:#475569;color:#f8fafc}body.dark-mode #trip-editor-close,body.dark-mode #trip-editor-cancel,body.dark-mode #trip-delete-cancel{background:#334155;color:#e2e8f0;border-color:#475569}body.dark-mode .trip-delete-summary{background:#402832;border-color:#704454}body.dark-mode #trip-editor-subtitle,body.dark-mode #trip-edit-date-hint,body.dark-mode #trip-delete-note,body.dark-mode .app-version{color:#b5c4d8}@media(max-width:440px){.trip-list-heading{align-items:flex-start;flex-wrap:wrap}.trip-edit-dates{grid-template-columns:minmax(0,1fr)}#trip-editor-modal{padding:14px}#trip-editor-modal section{padding:20px}.trip-manager-tools{flex-wrap:wrap}}
 
 </style>
-<meta name="app-version" content="Ver.22110038">
+<meta name="app-version" content="Ver.22110051">
 <style>
 .trip-purge-button{min-height:42px;border:1px solid #f5d6d6;border-radius:12px;background:#152137;color:#d9383a;padding:9px 12px;font-size:11px;font-weight:700}.trip-purge-button:disabled{opacity:.55}.trip-retention-note{font-size:11px;line-height:1.7;color:#9a5b34;margin:14px 0}#trip-trash-retention{padding:14px 16px;border:1px solid #f0e1d5;border-radius:14px;background:#fff8f1;color:#83583b;font-size:12px;line-height:1.8;margin:12px 0 16px}
 #trip-purge-modal[hidden]{display:none!important}#trip-purge-modal{position:fixed;inset:0;z-index:1550;display:grid;place-items:center;padding:20px;background:#1c253666;backdrop-filter:blur(5px)}#trip-purge-modal section{box-sizing:border-box;width:min(100%,460px);max-height:calc(100dvh - 40px);overflow:auto;border-radius:24px;background:#152137;color:#f3f6ff;padding:26px;border:1px solid #30435f;box-shadow:0 24px 80px #1c253633}#trip-purge-modal header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}#trip-purge-title{font-size:21px;font-weight:800}#trip-purge-close{width:38px;min-width:38px;height:38px;border-radius:50%;background:#152137;font-size:23px}.trip-purge-identity{padding:14px;border-radius:14px;background:#fef4f4;border:1px solid #f5d8d8;margin-top:20px;overflow-wrap:anywhere}.trip-purge-identity strong{display:block;font-size:14px}.trip-purge-identity small{display:block;font-size:11px;color:#afc0d9;margin-top:5px}#trip-purge-warning{font-size:13px;line-height:1.8;margin:16px 0;color:#7a4144}#trip-purge-label{font-size:12px;font-weight:700;display:block;overflow-wrap:anywhere;margin-bottom:8px}#trip-purge-typed{box-sizing:border-box;width:100%;min-width:0;border:1px solid #30435f;border-radius:12px;padding:12px;background:#152137;color:inherit;font-size:13px}#trip-purge-status{font-size:12px;line-height:1.8;color:#d9383a;margin-top:10px}#trip-purge-modal footer{display:flex;gap:10px;margin-top:20px}#trip-purge-modal footer button{flex:1;min-height:46px;border:1px solid #30435f;border-radius:12px;background:#152137;color:#afc0d9;padding:10px;font-size:12px;font-weight:700}#trip-purge-modal #trip-purge-accept{background:#d9383a;border-color:#d9383a;color:#fff}#trip-purge-accept:disabled{opacity:.4}#trip-purge-modal :focus-visible{outline:3px solid #80b4cd;outline-offset:3px}
@@ -477,6 +477,7 @@ body #pwa-update button:focus-visible{outline:3px solid #101b26;outline-offset:3
 <style id="trip-closeout-theme">
 body .closeout-dialog{background:#0b1222;color:#eff5ff;border:1px solid #415775;border-radius:22px;padding:24px;width:calc(100% - 28px);max-width:980px;max-height:90dvh;overflow:auto}body .closeout-dialog::backdrop{background:#050a14b8}body .closeout-dialog header{display:flex;justify-content:space-between;align-items:center;gap:12px}body .closeout-dialog h2{font-size:26px;font-weight:800}body .closeout-dialog h3{font-size:20px;font-weight:700;margin:22px 0 12px}body .closeout-dialog p{font-size:14px;line-height:1.7;margin:8px 0;color:#b9cbe3}body .closeout-dialog button,body .closeout-launch{border:1px solid #506584;border-radius:12px;padding:12px 16px;min-height:44px;background:#1d3048;color:#f3f6ff;font-size:14px;font-weight:700;cursor:pointer}body .closeout-dialog button:disabled{opacity:.5;cursor:wait}body .closeout-dialog button:focus-visible,body .closeout-launch:focus-visible{outline:3px solid #c5ff39;outline-offset:3px}.closeout-actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}.closeout-card,.closeout-hero{background:#172439;border:1px solid #354d6c;border-radius:16px;padding:18px;margin:14px 0}.closeout-hero strong{font-size:36px;color:#c5ff39}.closeout-card strong{font-size:24px}.closeout-notes{background:#302b1a;border:1px solid #806d38;border-radius:12px;padding:14px}.closeout-notes p{color:#ffdda2!important}.closeout-table-wrap{overflow-x:auto;margin:14px 0}.closeout-dialog table{border-collapse:collapse;width:100%;min-width:560px}.closeout-dialog th,.closeout-dialog td{font-size:14px;padding:12px 8px;text-align:left;border-bottom:1px solid #354d6c;overflow-wrap:anywhere}.closeout-dialog th{color:#c5ff39}.closeout-dialog summary{cursor:pointer;font-weight:700;padding:16px 0}.closeout-launch{margin:12px 0}.closeout-print-frame{position:fixed;width:1px;height:1px;left:-10000px;top:0;border:0}@media(max-width:600px){body .closeout-dialog{width:100%;height:100dvh;max-height:100dvh;max-width:100%;border-radius:0;padding:20px 16px calc(24px + env(safe-area-inset-bottom))}.closeout-hero strong{font-size:29px}.closeout-actions button{flex:1}}
 </style>
+<style id="closeout-readiness-theme">.closeout-readiness{background:#172439;border:1px solid #c5ff39;border-radius:16px;padding:18px;margin:18px 0}.closeout-readiness>strong{color:#c5ff39;font-size:20px}.closeout-check-group{padding:14px 0;border-top:1px solid #354d6c;margin-top:14px}.closeout-check-group h4{font-size:16px;font-weight:700}.closeout-check-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #354d6c}.closeout-check-row span{overflow-wrap:anywhere;min-width:0;font-size:14px}.closeout-check-row button{flex-shrink:0}.closeout-rate-field{padding:16px;border:1px solid #c5ff39;border-radius:14px;margin:16px 0}.closeout-rate-field[hidden]{display:none}.closeout-rate-field label{display:block;font-weight:700;font-size:16px;margin-bottom:8px}.closeout-rate-field input{width:100%;padding:12px;background:#0d192b;color:#f3f6ff;border:1px solid #506584;border-radius:10px;min-height:44px}.closeout-rate-field p{font-size:14px;line-height:1.6;margin-top:8px;color:#b9cbe3}@media(max-width:500px){.closeout-check-row{align-items:stretch;flex-direction:column}.closeout-check-row button{width:100%}}</style>
 </head>
 <body class="pb-32 relative">
     <div id="pwa-connection" role="status" hidden></div>
@@ -552,7 +553,7 @@ body .closeout-dialog{background:#0b1222;color:#eff5ff;border:1px solid #415775;
                 Skip for now (Preview Mode)
             </button>
         </div>
-        <div class="mt-4 text-center w-full max-w-sm"><div class="app-update-control"><button type="button" class="pwa-action pwa-secondary" data-pwa-check>Check for update</button><span class="app-version" data-app-version>Ver.22110038</span></div><p class="text-xs text-slate-500 mt-2" data-pwa-check-status role="status" aria-live="polite"></p></div>
+        <div class="mt-4 text-center w-full max-w-sm"><div class="app-update-control"><button type="button" class="pwa-action pwa-secondary" data-pwa-check>Check for update</button><span class="app-version" data-app-version>Ver.22110051</span></div><p class="text-xs text-slate-500 mt-2" data-pwa-check-status role="status" aria-live="polite"></p></div>
     </div>
 
     <!-- Toast Notification -->
@@ -692,7 +693,7 @@ body .closeout-dialog{background:#0b1222;color:#eff5ff;border:1px solid #415775;
     <section id="trip-manager" hidden aria-labelledby="trip-manager-title">
         <header class="trip-manager-header">
             <div class="trip-manager-brand"><span class="trip-manager-logo" aria-hidden="true"><i class="fas fa-plane"></i></span><div><strong>MyTrip</strong><p id="trip-manager-email"></p></div></div>
-            <div class="trip-manager-tools"><div class="app-update-control"><button type="button" data-pwa-check>Check for update</button><span class="app-version" data-app-version>Ver.22110038</span></div><button id="trip-manager-language" type="button" onclick="toggleLanguage()" aria-label="Change language">EN</button><button type="button" onclick="logoutTrip()" data-trips-text="signout">Sign out</button></div>
+            <div class="trip-manager-tools"><div class="app-update-control"><button type="button" data-pwa-check>Check for update</button><span class="app-version" data-app-version>Ver.22110051</span></div><button id="trip-manager-language" type="button" onclick="toggleLanguage()" aria-label="Change language">EN</button><button type="button" onclick="logoutTrip()" data-trips-text="signout">Sign out</button></div>
         </header>
         <div class="trip-manager-intro"><p class="trip-eyebrow">MYTRIP / JOURNEYS</p><h1 id="trip-manager-title" data-trips-text="title">My Trips</h1><p data-trips-text="subtitle">Choose a journey or create a new one. Each trip has its own expenses, budget and members.</p></div>
         <p class="text-xs text-slate-500 mt-2" data-pwa-check-status role="status" aria-live="polite"></p>
@@ -1028,7 +1029,7 @@ body .closeout-dialog{background:#0b1222;color:#eff5ff;border:1px solid #415775;
                 <p class="text-xs text-slate-500" data-pwa-text="description">Add MyTrip to your Home Screen for quick access and a full-screen app experience.</p>
                 <button id="pwa-install-button" type="button" class="pwa-action" data-pwa-text="install">Add to Home Screen</button>
                 <p id="pwa-install-help"></p>
-                <div><div class="app-update-control"><button type="button" class="pwa-action pwa-secondary" data-pwa-check>Check for update</button><span class="app-version" data-app-version>Ver.22110038</span></div><p class="text-xs text-slate-500 mt-2" data-pwa-check-status role="status" aria-live="polite"></p></div>
+                <div><div class="app-update-control"><button type="button" class="pwa-action pwa-secondary" data-pwa-check>Check for update</button><span class="app-version" data-app-version>Ver.22110051</span></div><p class="text-xs text-slate-500 mt-2" data-pwa-check-status role="status" aria-live="polite"></p></div>
                 <p id="pwa-installed" hidden class="text-xs text-emerald-600" data-pwa-text="installed">MyTrip is running as an installed app.</p>
             </section>
 
@@ -5381,9 +5382,24 @@ window.localizeWorkspaceToast=message=>{
   if(!rows.length)list.append(n('p',w('ยังไม่มีรายการที่ตรงกับเงื่อนไข','No matching records'),'pretrip-note'));
   for(const row of rows){const r=showTrash?row.expense:row,card=n('article',undefined,'pretrip-card'),info=n('div');info.append(n('h3',r.title),n('strong',(r.status==='pending'?w('รอจ่าย ','Pending '):r.kind==='refund'?'+ ':'− ')+money(r.amountMinor)),n('p',(category[r.category]?.[th()?0:1]||r.category)+' · '+(payments[r.payment]?.[th()?0:1]||r.payment)+' · '+(r.status==='pending'?w('ครบกำหนด: ','Due: ')+r.dueDate:r.date)));info.append(n('span',paidLabel(r)+(r.status==='pending'&&r.dueDate<today()?w(' · เกินกำหนด',' · Overdue'):r.status==='pending'&&r.dueDate===today()?w(' · ครบกำหนดวันนี้',' · Due today'):''),'pretrip-payment-badge '+(r.status==='pending'?'is-pending':'is-paid')));if(r.note)info.append(n('p',r.note,'pretrip-note'));const buttons=n('div',undefined,'pretrip-actions'),log=n('button',w('ประวัติ','History'));log.type='button';log.onclick=()=>audit(row);buttons.append(log);if(can(r,s)){if(showTrash){const b=n('button',w('กู้คืน','Restore'));b.type='button';b.onclick=()=>remove(row,true);buttons.append(b);}else{const edit=n('button',w('แก้ไข','Edit')),del=n('button',w('ย้ายไปถังขยะ','Move to trash'));edit.type=del.type='button';edit.onclick=()=>open(row);del.onclick=()=>remove(row);buttons.append(edit,del);if(r.status==='pending'){const paid=n('button',w('บันทึกว่าจ่ายแล้ว','Record payment'));paid.type='button';paid.onclick=()=>open({...row,status:'paid',date:today()});buttons.prepend(paid);}}}card.append(info,buttons);list.append(card);}
  }
+ window.openPreTripRecord=(recordId,markPaid=false)=>{const s=state(),row=s.rows.find(r=>r.id===recordId);if(!row||!valid(s)||!can(row,s)||busy||dialog.open)return false;open(markPaid&&row.status==='pending'?{...row,status:'paid',date:today()}:row);return dialog.open;};
  window.renderPreTrip=render;const originalSwitch=window.switchPage;window.switchPage=function(id){page.classList.remove('page-active');if(id!=='pretrip')return originalSwitch(id);originalSwitch('tools');el('page-tools').classList.remove('page-active');page.classList.add('page-active');render();window.scrollTo(0,0);};
  for(const name of ['applyLanguage','updateUI','refreshWorkspaceAccess','editItem','cancelEdit']){const original=window[name];if(typeof original==='function')window[name]=function(...args){const result=original.apply(this,args);render();return result;};}
  window.addEventListener('focus',render);if(typeof window.setTimeout==='function'){const tick=()=>setTimeout(()=>{render();tick();},86400000-((Date.now()+7*3600000)%86400000)+200);tick();}window.addEventListener('online',render);window.addEventListener('offline',render);render();
+})();
+</script>
+<script id="closeout-rate-editor">(()=>{
+ const form=document.getElementById('expense-form');if(!form)return;
+ const box=document.createElement('div');box.className='closeout-rate-field';box.hidden=true;
+ const label=document.createElement('label'),input=document.createElement('input'),hint=document.createElement('p');input.id='closeout-missing-rate';label.htmlFor=input.id;input.type='number';input.min='0.000001';input.max='100';input.step='any';input.inputMode='decimal';box.append(label,input,hint);form.prepend(box);
+ const text=()=>{const th=document.documentElement.lang==='th';label.textContent=th?'เติมเรทที่ใช้จริง · THB ต่อ 1 JPY':'Add actual rate · THB per 1 JPY';hint.textContent=th?'รายการนี้ยังไม่มีเรท ใส่เรทจากการชำระเงินจริง เช่น 0.22 แล้วกดบันทึกแก้ไข ไม่ใช้เรทวันนี้แทนให้อัตโนมัติ':'This record has no saved rate. Enter the actual payment rate, e.g. 0.22, then save the edit. Today’s rate is not substituted.';};
+ let target=null;
+ const originalRate=window.expenseFormRate;window.expenseFormRate=function(){return target&&currentEditRowId===target&&!box.hidden?Number(input.value):originalRate();};
+ const edit=window.editItem;window.editItem=function(recordId){const result=edit.apply(this,arguments);const row=expenses.find(r=>r.rowId===recordId);const missing=row&&!(Number.isFinite(Number(row.rate))&&Number(row.rate)>0);target=missing&&currentEditRowId===recordId?recordId:null;box.hidden=!target;input.disabled=!target;input.required=!!target;input.value='';text();if(target)window.calculateTHB?.();return result;};
+ const cancel=window.cancelEdit;window.cancelEdit=function(){target=null;box.hidden=true;input.required=false;input.disabled=true;input.value='';return cancel.apply(this,arguments);};
+ input.addEventListener('input',()=>window.calculateTHB?.());
+ form.addEventListener('submit',event=>{if(target&&currentEditRowId===target&&(!Number.isFinite(Number(input.value))||Number(input.value)<=0||Number(input.value)>100)){event.preventDefault();event.stopImmediatePropagation();input.reportValidity();input.focus();}},true);
+ new MutationObserver(text).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});text();input.disabled=true;
 })();
 </script>
 <script id="trip-closeout-model">window.TripCloseoutModel=(()=>{
@@ -5417,10 +5433,53 @@ window.localizeWorkspaceToast=message=>{
  function labels(){for(const b of launchers)b.textContent=w('สรุปจบทริป · THB + JPY','Trip close-out · THB + JPY');title.textContent=w('สรุปจบทริป','Trip close-out');close.textContent=w('ปิด','Close');refresh.textContent=w('สร้างสรุปใหม่','Refresh summary');pdf.textContent=w('บันทึก PDF / พิมพ์','Save PDF / Print');}
  function card(label,value,hero=false){const e=n('section',undefined,hero?'closeout-hero':'closeout-card');e.append(n('p',label),n('strong',value));content.append(e);return e;}
  function table(parent,heads,rows){const wrap=n('div',undefined,'closeout-table-wrap'),t=n('table'),thead=n('thead'),tr=n('tr');heads.forEach(h=>tr.append(n('th',h)));thead.append(tr);t.append(thead);const body=n('tbody');for(const row of rows){const tr=n('tr');row.forEach(c=>tr.append(n('td',String(c??''))));body.append(tr);}if(!rows.length){const tr=n('tr'),td=n('td',w('ไม่มีรายการ','No records'));td.colSpan=heads.length;tr.append(td);body.append(tr);}t.append(body);wrap.append(t);parent.append(wrap);}
+ function sameContext(c){return c&&c.trip===window.currentFirestoreTrip?.()&&c.uid===window.getPreTripState?.().uid&&window.hasFirestoreSession?.();}
+ async function fixRecord(kind,recordId){
+  const c={...context};if(!sameContext(c))return;
+  const dirty=id('details')?.value.trim()||id('amount')?.value.trim();
+  if(kind==='jpy'&&dirty&&!await window.appConfirm(w('มีข้อมูลในฟอร์มรายจ่าย จะเปิดรายการนี้แทนหรือไม่?','There is an expense draft. Open this record instead?')))return;
+  if(!sameContext(c))return;
+  dismiss();
+  if(kind==='jpy'){
+   const exists=window.getTripCloseoutSource?.().jpy?.some(r=>String(r.rowId)===recordId);
+   if(!exists)return;
+   window.editItem?.(recordId);id('closeout-missing-rate')?.focus();
+  }else{
+   window.switchPage?.('pretrip');
+   if(!window.openPreTripRecord?.(recordId,true))window.showToast?.(w('เปิดรายการไม่ได้หรือไม่มีสิทธิ์แก้ไข ตรวจรายการในหน้าก่อนเดินทาง','Record unavailable or you cannot edit it. Review the pre-travel page.'),true);
+  }
+ }
+ function readiness(m,pre,source){
+  const box=n('section',undefined,'closeout-readiness');box.id='closeout-readiness';
+  const missing=m.rows.filter(r=>r.valid&&r.thb===null),pending=pre.filter(r=>r.status==='pending');
+  const sync=source.sync||{},syncIssue=!!(sync.pending||sync.working||sync.corrupt||sync.error),connection=source.cached||!navigator.onLine;
+  const openCount=missing.length+pending.length+m.invalid+(syncIssue?1:0)+(connection?1:0);
+  report.needsReview=openCount>0;
+  box.append(n('h3',w('ตรวจความครบก่อนออกรายงาน','Check report readiness')),n('strong',openCount?w('ยังมีจุดที่ต้องตรวจ: ','Items to review: ')+openCount:w('ผ่านการตรวจข้อมูลเบื้องต้น','Basic data checks passed')));
+  box.append(n('p',w('ตรวจเรท สถานะซิงก์ และรายการค้างจ่าย ไม่ได้ยืนยันว่าบันทึกค่าใช้จ่ายจริงครบทุกใบหรือไม่มีรายการซ้ำ','Checks rates, sync status and pending payments. This does not verify that every real expense was recorded or that there are no duplicates.')));
+  const addGroup=(heading,items,action)=>{
+   const group=n('div',undefined,'closeout-check-group');group.append(n('h4',heading+' · '+items.length));
+   if(!items.length)group.append(n('p',w('ไม่พบรายการที่ต้องแก้','No issues found')));
+   for(const row of items.slice(0,50)){const line=n('div',undefined,'closeout-check-row');line.append(n('span',row.label));if(action){const b=n('button',action.label);b.type='button';b.onclick=()=>fixRecord(action.kind,row.id);line.append(b);}group.append(line);}
+   if(items.length>50)group.append(n('p',w('แสดง 50 รายการแรก ตรวจต่อได้ในหน้าประวัติ/ก่อนเดินทาง','Showing the first 50 records. Review the rest in History / Before travel.')));
+   box.append(group);
+  };
+  addGroup(w('ขาดเรท JPY → THB','Missing JPY → THB rates'),missing.map(r=>({id:r.id,label:(r.item.details||r.category||r.id)+' · '+(r.date||'—')+' · '+(r.jpy/100).toLocaleString()+' JPY'})),{kind:'jpy',label:w('แก้ไขเรท','Fix rate')});
+  addGroup(w('รายการก่อนเดินทางรอจ่าย','Pending pre-travel payments'),pending.map(r=>({id:r.id,label:r.title+' · '+money(r.amountMinor)+' · '+w('ครบกำหนด ','Due ')+(r.dueDate||'—')})),{kind:'pre',label:w('บันทึกการจ่าย','Record payment')});
+  const syncGroup=n('div',undefined,'closeout-check-group');syncGroup.append(n('h4',w('สถานะการซิงก์','Sync status')));
+  syncGroup.append(n('p',syncIssue?w('รอซิงก์ ','Pending sync ')+(Number(sync.pending)||0)+w(' รายการ · ตรวจการบันทึกและข้อผิดพลาดก่อน',' records · review saving and errors first'):w('ไม่มีคิวรายจ่าย JPY รอซิงก์','No JPY expenses queued')));
+  if(syncIssue){const b=n('button',w('ลองซิงก์ / ตรวจใหม่','Retry sync / Check again'));b.type='button';b.disabled=!!sync.working||!navigator.onLine;b.onclick=async()=>{const c={...context};b.disabled=true;try{await window.retryExpenseSync?.();}catch{}if(sameContext(c)&&dialog.open)collect();};syncGroup.append(b);}
+  if(connection)syncGroup.append(n('p',w('ออฟไลน์หรือข้อมูลรอยืนยันจากเซิร์ฟเวอร์ เชื่อมต่อแล้วกดสร้างสรุปใหม่','Offline or waiting for server confirmation. Connect and refresh the summary.')));
+  box.append(syncGroup);
+  if(m.invalid)box.append(n('p',w('ข้อมูลยอดเงิน/สถานะผิดรูปแบบที่ไม่รวม: ','Invalid amount/status records excluded: ')+m.invalid+w(' รายการ กรุณาตรวจทั้งสองบัญชี',' records. Review both ledgers.')));
+  content.append(box);
+  pdf.textContent=report.needsReview?w('PDF ชั่วคราว / พิมพ์','Provisional PDF / Print'):w('บันทึก PDF / พิมพ์','Save PDF / Print');
+ }
  function paint(){
   labels();content.replaceChildren();pdf.disabled=true;
   if(!report||!valid())return;
-  const {model:m,pre,trip,createdAt,warnings}=report;
+  const {model:m,pre,trip,createdAt,warnings,source}=report;
+  readiness(m,pre,source);
   content.append(n('h3',trip.name||trip.id));content.append(n('p',(window.formatTripDateRange?.(trip.start,trip.end)||'')+' · '+new Date(createdAt).toLocaleString(th()?'th-TH':'en-GB',{timeZone:'Asia/Bangkok'})+' · '+w('เวลาไทย','Bangkok time')));
   const notes=n('aside',undefined,'closeout-notes');for(const x of warnings)notes.append(n('p',x));if(warnings.length)content.append(notes);
   card(w('ค่าใช้จ่ายสุทธิทั้งทริป','Whole-trip net spending'),m.complete?money(m.net):w('ยอดยังไม่ครบ','Incomplete total'),true);
@@ -5442,6 +5501,7 @@ window.localizeWorkspaceToast=message=>{
   content.append(n('p',w('ใช้เฉพาะรายการปัจจุบันทั้งทริป ไม่ใช้ตัวกรองประวัติ/สถิติ ไม่รวมรายการในถังขยะ แปลง JPY ด้วยเรทที่บันทึกแยกต่อรายการและปัดเป็นสตางค์ ไม่บวกยอดแลกเงินหรือเงินสดเริ่มต้น ไม่มีการตัดรายการซ้ำอัตโนมัติ รายงานนี้ไม่ล็อกหรือแก้ไขข้อมูล','Uses current whole-trip records independently of filters. Trash excluded. JPY uses saved per-record rates rounded to satang. Excludes exchange deposits and opening cash. No automatic duplicate removal. This report does not lock or modify records.')));
   pdf.disabled=false;
  }
+ function signature(s){return JSON.stringify({ready:s?.ready,cached:s?.cached,pre:s?.pre,jpy:s?.jpy,trip:s?.trip,sync:s?.sync});}
  function collect(){
   if(!valid()){dismiss();return;}removeFrame();const source=window.getTripCloseoutSource?.();report=null;
   if(!source?.ready){content.replaceChildren();pdf.disabled=true;status.textContent=w('ข้อมูลยังโหลดไม่ครบหรือมีข้อผิดพลาด กรุณารอแล้วสร้างสรุปใหม่','Data is not fully loaded or has an error. Wait and refresh.');return;}
@@ -5459,13 +5519,13 @@ window.localizeWorkspaceToast=message=>{
   if(model.legacy)warnings.push(w('มีรายการก่อนเดินทาง JPY เดิม ','Legacy pre-travel JPY records: ')+model.legacy+w(' รายการ รวมอยู่ในบัญชี JPY แล้ว ตรวจว่าซ้ำกับ THB หรือไม่','; included in the JPY ledger. Check for duplicates in THB.'));
   warnings.push(w('ตรวจสอบรายการที่บันทึกทั้ง THB และ JPY ว่าไม่ใช่ค่าใช้จ่ายเดียวกันก่อนใช้ยอดสรุป','Review entries recorded in both THB and JPY for duplicates before using totals.'));
   if(!source.trip.end||source.trip.end>=window.PreTripModel.today())warnings.push(w('ทริปยังไม่สิ้นสุดหรือยังไม่ได้กำหนดวันสิ้นสุด นี่คือยอดสะสม','The trip has not ended or has no end date. This is a cumulative summary.'));
-  report={model,pre,trip:{...source.trip},createdAt:new Date().toISOString(),warnings};status.textContent=w('สรุปจากข้อมูลที่โหลด ณ เวลานี้ กดสร้างสรุปใหม่เมื่อข้อมูลเปลี่ยน','Snapshot of currently loaded data. Refresh after records change.');paint();
+  report={model,pre,trip:{...source.trip},createdAt:new Date().toISOString(),warnings,signature:signature(source),source:{sync:{...source.sync},cached:source.cached}};status.textContent=w('สรุปจากข้อมูลที่โหลด ณ เวลานี้ กดสร้างสรุปใหม่เมื่อข้อมูลเปลี่ยน','Snapshot of currently loaded data. Refresh after records change.');paint();
  }
  function open(){const s=window.getPreTripState?.();if(!window.hasFirestoreSession?.()||!s?.uid)return;previousFocus=document.activeElement;context={uid:s.uid,trip:window.currentFirestoreTrip()};labels();if(!dialog.open)dialog.showModal();collect();}
  refresh.onclick=collect;
  pdf.onclick=()=>{
-  if(!report||!valid())return;removeFrame();const token=++epoch;frame=n('iframe');frame.title=w('รายงานสรุปจบทริป','Trip close-out report');frame.className='closeout-print-frame';frame.setAttribute('aria-hidden','true');document.body.append(frame);
-  const doc=document.implementation.createHTMLDocument('MyTrip trip close-out'),meta=doc.createElement('meta');meta.setAttribute('charset','utf-8');doc.head.append(meta);const style=doc.createElement('style');style.textContent='@page{size:A4;margin:14mm}body{font:12px Tahoma,Arial,sans-serif;color:#172439;line-height:1.6}h2{font-size:24px}strong{font-size:22px}section,aside{padding:12px;border:1px solid #ccd3df;margin:12px 0;break-inside:avoid}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{border-bottom:1px solid #ddd;padding:7px;text-align:left;overflow-wrap:anywhere}tr{break-inside:avoid}thead{display:table-header-group}p{overflow-wrap:anywhere}summary{font-weight:bold}';doc.head.append(style);doc.body.append(doc.importNode(title,true),doc.importNode(content,true));for(const d of doc.querySelectorAll('details'))d.open=true;doc.body.append(doc.createTextNode('MyTrip · '+(window.MYTRIP_VERSION||'')+' · '+w('เลือกบันทึกเป็น PDF ในหน้าต่างพิมพ์','Choose Save as PDF in the print dialog')));
+  if(!report||!valid())return;if(signature(window.getTripCloseoutSource?.())!==report.signature){collect();status.textContent=w('ข้อมูลเปลี่ยนแล้ว สร้างสรุปล่าสุดให้แล้ว กรุณาตรวจและกด PDF อีกครั้ง','Data changed. Review the refreshed summary and press PDF again.');return;}removeFrame();const token=++epoch;frame=n('iframe');frame.title=w('รายงานสรุปจบทริป','Trip close-out report');frame.className='closeout-print-frame';frame.setAttribute('aria-hidden','true');document.body.append(frame);
+  const doc=document.implementation.createHTMLDocument('MyTrip trip close-out'),meta=doc.createElement('meta');meta.setAttribute('charset','utf-8');doc.head.append(meta);const style=doc.createElement('style');style.textContent='@page{size:A4;margin:14mm}body{font:12px Tahoma,Arial,sans-serif;color:#172439;line-height:1.6}h2{font-size:24px}strong{font-size:22px}section,aside{padding:12px;border:1px solid #ccd3df;margin:12px 0;break-inside:avoid}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{border-bottom:1px solid #ddd;padding:7px;text-align:left;overflow-wrap:anywhere}tr{break-inside:avoid}thead{display:table-header-group}p{overflow-wrap:anywhere}summary{font-weight:bold}';doc.head.append(style);doc.body.append(doc.importNode(title,true),doc.importNode(content,true));for(const b of doc.querySelectorAll('button'))b.remove();for(const d of doc.querySelectorAll('details'))d.open=true;if(report.needsReview){const note=doc.createElement('h2');note.textContent=w('รายงานชั่วคราว · ยังมีรายการต้องตรวจ','Provisional report · items need review');doc.body.prepend(note);}doc.body.append(doc.createTextNode('MyTrip · '+(window.MYTRIP_VERSION||'')+' · '+w('เลือกบันทึกเป็น PDF ในหน้าต่างพิมพ์','Choose Save as PDF in the print dialog')));
   frame.onload=async()=>{const current=frame;try{await current.contentDocument?.fonts?.ready;if(token!==epoch||!valid()||frame!==current)return;current.contentWindow.focus();current.contentWindow.print();}catch{status.textContent=w('เปิดหน้าต่างพิมพ์ไม่สำเร็จ กรุณาลองใหม่','Could not open printing. Please try again.');}};frame.srcdoc='<!doctype html>'+doc.documentElement.outerHTML;
  };
  for(const key of ['resetPreTripUI','resetTripToolsUI']){const original=window[key];window[key]=function(...args){if(context)dismiss();return original?.apply(this,args);};}
@@ -6885,7 +6945,7 @@ firebase/app/dist/esm/index.esm.js:
 </script>
     <script data-mytrip-pwa>(() => {
   'use strict';
-  const appVersion = 'Ver.22110038';
+  const appVersion = 'Ver.22110051';
   window.MYTRIP_VERSION = appVersion;
   let deferredInstall = null;
   let registration = null;
