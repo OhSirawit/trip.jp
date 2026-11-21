@@ -95,8 +95,8 @@ firebase.initializeApp({apiKey:'AIzaSyBcMPhGW506qBvPIkqSffxjVWjoZ5jQWh0',authDom
 firebase.messaging().onBackgroundMessage(payload=>serializePushWork(()=>displayTripPush(payload.data)));
 
 /* MyTrip caches only public app files. Firebase data, tokens, receipts and avatars are never cached here. */
-const APP_VERSION='Ver.21112129';
-const CACHE = 'mytrip-shell-ver21112129';
+const APP_VERSION='Ver.21112149';
+const CACHE = 'mytrip-shell-ver21112149';
 const ASSETS = ["./", "./assets/apple-touch-icon.png", "./assets/chart.js", "./assets/fa-brands-400.woff2", "./assets/fa-regular-400.woff2", "./assets/fa-solid-900.woff2", "./assets/firebase-client.js", "./assets/fontawesome.css", "./assets/google.svg", "./assets/html2canvas.js", "./assets/html5-qrcode.js", "./assets/icon-192.png", "./assets/icon-512.png", "./assets/icon-maskable-512.png", "./assets/pwa.js", "./assets/qrcode.js", "./assets/tailwind.css", "./assets/xlsx.js", "./index.html", "./manifest.webmanifest"];
 const SCOPE = new URL(self.registration.scope);
 const SHELL = new URL('./index.html', SCOPE).href;
